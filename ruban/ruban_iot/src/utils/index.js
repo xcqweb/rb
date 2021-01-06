@@ -20,6 +20,9 @@ const Incomplete = {
     props: {
       status: '500',
       title: '页面正在开发中...'
+    },
+    style: {
+      width: '100%'
     }
   }) }
 }
@@ -78,3 +81,8 @@ export function isURL (string) {
   const reg = new RegExp(str, 'i')
   return reg.test(string)
 }
+
+/* 判断 页面 是否在 iframe 打开
+* @return {boolean}
+* */
+export const isIframeOpen = window.frameElement && window.frameElement.tagName === 'IFRAME'

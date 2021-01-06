@@ -2,7 +2,6 @@
   <div class="login">
     <div class="login__header">
       <img class="login__logo" :src="logo">
-      <div class="login__title">{{title}}</div>
     </div>
     <p-form-model class="login__form" ref="form" :model="form" :rules="rules" @keyup.enter.native="submit">
       <p-form-model-item v-if="errMsg">
@@ -37,7 +36,6 @@ export default {
   data() {
     return {
       logo: system.logo,
-      title: system.name,
       form: {
         username: '',
         password: ''
@@ -89,11 +87,6 @@ export default {
 .login__logo {
   max-height: 50px;
   margin-right: 16px;
-}
-.login__title {
-  color: rgb(0, 0, 0, 0.85);
-  font-size: 33px;
-  font-weight: bold;
 }
 .login__form {
   width: 368px;

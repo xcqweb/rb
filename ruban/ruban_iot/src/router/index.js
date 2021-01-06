@@ -5,7 +5,7 @@ import { auth } from 'poros/utils'
 import store from '../store'
 import Home from '@/layouts/Home.vue'
 import system from '../config/system'
-import { firstUpperCase, getViewComponent, getLayoutComponent } from '@/utils'
+import { firstUpperCase, getViewComponent, getLayoutComponent, isIframeOpen } from '@/utils'
 import defaultRoutes from '@/router/defaultRoutes'
 // 解决 router.push 相同路由时报错问题
 const originRouterPush = VueRouter.prototype.push
@@ -104,16 +104,17 @@ function getComponentName(url) {
 }
 
 // iframe组件
-const createIframe = src => ({
-  render(h) { return h('iframe', { attrs: { src }, style: 'display: block; width: 100%;height: 100%;border: none;' }) }
-})
+const IframePage = () => import('@/views/iframePage')
 
 /** 根据menus创建动态路由 */
 export function createRouteByMenus() {
   const newRoutes = []
-  if(!store.state.poros.menus.length) return newRoutes
+  const { menus } = store.state.poros
+  if(!Array.isArray(menus) || menus.length === 0) {
+    return newRoutes
+  }
   const routesMap = new Map()
-  let queues = [].concat(store.state.poros.menus), item = null
+  let queues = [].concat(menus), item = null
   while(item = queues.shift()) {
     if(item.children && item.children.length) {
       queues = queues.concat(item.children)
@@ -122,18 +123,25 @@ export function createRouteByMenus() {
       let component = null
       const newRoute = {
         path: item.url,
-        meta: { title: item.name, auth: true }
+        meta: {
+          title: item.name,
+          auth: true,
+          keepAlive: item.keepAlive,
+          newTabOpen: item.newTabOpen,
+          componentName: ''
+        }
       }
       if(item.target === 'render') {
         newRoute.name = getComponentName(item.url)
         component = getViewComponent(item.componentPath)
       } else {
-        newRoute.name = `iframe${item.id}`
-        newRoute.path = '/' + newRoute.name
-        component = createIframe(item.url)
+        newRoute.path = `/iframe/${item.id}`
+        newRoute.meta.url = item.url
+        component = IframePage
       }
       newRoute.component = component
-      if(self.frameElement && self.frameElement.tagName == "IFRAME") {
+      newRoute.meta.componentName = component.name
+      if(isIframeOpen) {
         newRoutes.push(newRoute)
       } else {
         const layout = component.layout || 'Home'

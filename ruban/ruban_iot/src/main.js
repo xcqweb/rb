@@ -22,7 +22,10 @@ const isMac = /macintosh|mac os x/i.test(navigator.userAgent);
 const bodyEle = document.querySelector('body')
 bodyEle.style.fontFamily = isMac ? 'inherit' : 'ruban'
 Vue.config.productionTip = false
-
+// 开发环境 允许使用 Vue开发者工具
+if (process.env.NODE_ENV === 'development') {
+  Vue.config.devtools = true
+}
 Vue.use(SvgIcon)
 
 Vue.use(Poros, {
