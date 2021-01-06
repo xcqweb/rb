@@ -31,18 +31,68 @@
       <p-form-model-item label="描述" prop="remark">
         <p-input v-model.trim="model.remark" placeholder="请输入描述内容" />
       </p-form-model-item>
-      <p-form-model-item label="指令变量">
+      <p-form-model-item>
+        <span slot="label" class="required-doc">指令变量</span>
+        <p-form-model
+            ref="paramsValidateForm"
+            :model="paramsValidateForm"
+          >
         <ul>
-          <li class="flex" v-for="(item, index) in varList" :class="{mt10: index !== 0}">
-            <p-input v-model="item.commandVarMark" placeholder="请输入变量标识" />
-            <p-input v-model="item.commandVarValue" class="mr6 ml6" placeholder="请输入默认值" />
-            <p-input v-model="item.remark" placeholder="请输入注释" />
-            <p-icon class="ml6" type='delete' :style="{fontSize: '16px',cursor: 'pointer'}" @click="delVar(index)" v-show="hideDelBtn" />
+          <li class="flex" v-for="(item, index) in paramsValidateForm.varList" :class="{mt10: index !== 0}">
+            <p-form-model-item
+            :prop="'varList.' + index + '.commandVarMark'"
+            :rules="[
+              {
+                message: '请输入变量标识',
+                trigger: 'blur',
+                required: true,
+              },
+              {
+                message: '变量标识仅支持中文、字母、数字（整数）或下划线“_”',
+                pattern: pattern.name2Reg
+              },
+              {
+                type: 'string',
+                max: 20,
+                message: '变量标识限制为20个字符'
+              },
+            ]"
+            >
+              <p-input v-model="item.commandVarMark" :disabled='item.isDefault' placeholder="请输入变量标识" />
+            </p-form-model-item>
+            <p-form-model-item
+            class="mr6"
+            :prop="'varList.' + index + '.commandVarValue'"
+            :rules="[
+              {
+                type: 'string',
+                max: 25,
+                message: '默认值限制为25个字符'
+              },
+            ]"
+            >
+              <p-input v-model="item.commandVarValue" class="mr6 ml6" placeholder="请输入默认值" />
+            </p-form-model-item>
+            <p-form-model-item
+            class="ml6"
+            :prop="'varList.' + index + '.remark'"
+            :rules="[
+              {
+                type: 'string',
+                max: 50,
+                message: '注释限制为50个字符'
+              },
+            ]"
+            >
+              <p-input v-model="item.remark" :disabled='item.isDefault' :placeholder="!item.isDefault && '请输入注释'" />
+            </p-form-model-item>
+            <p-icon class="ml6 icon" type='delete' :style="{fontSize: '16px',cursor: 'pointer', visibility: (hideDelBtn && !item.isDefault) ? 'visible' : 'hidden'}" @click="delVar(index)" />
           </li>
         </ul>
         <span class="viewDetail">
           <span @click="addVar"><p-icon type="plus"/>新增变量</span>
         </span>
+        </p-form-model>
       </p-form-model-item>
     </p-form-model>
   </p-modal>
@@ -56,8 +106,11 @@ export default {
   mixins: [modalMixins],
   data() {
     return {
+      pattern,
+      paramsValidateForm: {
+        varList: []
+      },
       commandTemplateList: [],
-      varList: [],
       model: {},
       rules: {
         commandName: [
@@ -96,7 +149,7 @@ export default {
   },
   computed: {
     hideDelBtn() {
-      return this.varList.length !== 1
+      return this.paramsValidateForm.varList.length !== 1
     },
   },
   created() {
@@ -104,7 +157,7 @@ export default {
     this.$watch('visible', (val) => {
       if (val) {
         this.model = {...this.options}
-        this.varList = this.options.innerData && this.$deepCopy(this.options.innerData) || [{}]
+        this.paramsValidateForm.varList = this.options.innerData && this.$deepCopy(this.options.innerData) || [{}]
       }
     });
   },
@@ -116,14 +169,16 @@ export default {
     },
     getCommandAttrList(id) {
       this.$API.getModelCommandAttrList({id}).then( res => {
-        this.varList = res.data
+        this.paramsValidateForm.varList = res.data.map( item => {
+          return {...item, isDefault: true}
+        })
       })
     },
     addVar() {
-      this.varList.push({})
+      this.paramsValidateForm.varList.push({})
     },
     delVar(index) {
-      this.varList.splice(index, 1)
+      this.paramsValidateForm.varList.splice(index, 1)
     },
     cancel() {
       this.$refs.form.resetFields()
@@ -147,13 +202,13 @@ export default {
           }else if(type === 'first-add'){//新增模型时添加
             message = '添加成功'
             this.$message.success(message)
-            this.$emit('callback', {type, ...this.model,id: this.uuid(),innerData: this.varList})
+            this.$emit('callback', {type, ...this.model,id: this.uuid(),innerData: this.paramsValidateForm.varList})
             this.cancel()
             return
           }else if(type === 'first-edit'){//新增模型时编辑
             message = '修改成功'
             this.$message.success(message)
-            this.$emit('callback', {type, ...this.model, innerData: this.varList})
+            this.$emit('callback', {type, ...this.model, innerData: this.paramsValidateForm.varList})
             this.cancel()
             return
           }
@@ -172,78 +227,10 @@ export default {
 </script>
 
 <style lang="less">
-.platform-menu {
-  &-icon {
-    &-selected,
-    &-wrap {
-      .anticon,
-      .iconfont {
-        font-size: 24px;
-        vertical-align: middle;
-      }
-    }
-
-    &-selected,
-    &-choose {
-      width: 30px;
-      height: 30px;
-      line-height: 30px;
-      text-align: center;
-      cursor: pointer;
-    }
-
-    &-choose {
-      color: @c-bg-4;
-      border: 1px dashed @c-bg-4;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      // background-color: @c-bg-2;
-    }
-
-    &-wrap {
-      display: flex;
-      flex-wrap: wrap;
-      width: 300px;
-      box-shadow: 0px 2px 4px 0px rgba(4, 12, 44, 0.25);
-      background-color: @c-white;
-
-      .icon-item {
-        position: relative;
-        width: 60px;
-        height: 50px;
-        line-height: 50px;
-        text-align: center;
-        cursor: pointer;
-
-        &:hover {
-          background-color: @c-bg-3;
-        }
-
-        &::before,
-        &:not(:nth-child(5n))::after {
-          content: "";
-          position: absolute;
-          background-color: @c-bg-1;
-        }
-
-        &::before {
-          left: 0;
-          bottom: 0;
-          width: 100%;
-          height: 1px;
-        }
-
-        &:not(:nth-child(5n)) {
-          &::after {
-            right: 0;
-            bottom: 0;
-            width: 1px;
-            height: 100%;
-          }
-        }
-      }
-    }
+.flex{
+  align-items: inherit;
+  .icon{
+    line-height: 32px;
   }
 }
 </style>

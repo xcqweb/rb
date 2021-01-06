@@ -215,10 +215,12 @@ export default {
     callback(res) {
       const {type, ...data} = res
       if(type === 'first-add') {
-          this.tableData.push(data)
+        this.tableData.push(data)
+        this.$emit('input', this.tableData)
       }else if (type === 'first-edit'){
         const $index = this.tableData.findIndex( item => item.id === data.id)
         this.$set(this.tableData, $index, {...data})
+        this.$emit('input', this.tableData)
       }
     }
   }

@@ -8,10 +8,13 @@
   .poros-form-item{
     margin-bottom: 20px;
   }
-  .poros-form-item-label > label::after{
+  .poros-form-item-label > label{
+    color: @c-text-light-4;
+    &::after{
       content: '';
       position: relative;
       margin-right: 0;
+    }
     }
   .poros-form-item-label > label.poros-form-item-required{
     &::after{

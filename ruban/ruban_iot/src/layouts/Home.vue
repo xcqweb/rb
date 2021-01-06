@@ -61,9 +61,9 @@
     </p-layout-header>
 
     <div class="content-wrap">
-      <p-sider-menu ref="slider" :collapsed="false" />
+      <p-sider-menu :collapsed="false" />
 
-      <p-layout-content>
+      <p-layout-content class="layout-content">
         <p-router-tabs scroll/>
       </p-layout-content>
     </div>
@@ -155,10 +155,16 @@
       },
     },
     mounted() {
-      this.$store.commit('setBarInstance',this.$refs.slider.$el)
       // 获取登录用户信息
       this.$store.dispatch('requireUserInfo')
       this.$store.dispatch('requestSysUid')
+    },
+    watch: {
+      systemName (val) {
+        if (val) {
+          document.title = val
+        }
+      }
     }
   }
 </script>
@@ -176,6 +182,7 @@
     .right {
       display: flex;
     }
+    .left {
     .system-nav {
       display: flex;
       justify-content: center;
@@ -197,6 +204,19 @@
       margin-left: 20px;
       white-space: nowrap;
 
+        &.system-nav2 {
+          display: flex;
+          width: 200px;
+          margin-left: 0;
+          padding-left: 20px;
+          span {
+            flex: 1;
+            width: 0;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+          }
+        }
       img {
         max-height: 30px;
         margin-right: 6px;
@@ -204,11 +224,10 @@
 
       span {
         font-size: 16px;
+          font-weight: bold;
         color: @sys-menu-bgcolor;
       }
     }
-    .system-nav2{
-      width: calc(200px - 20px);
     }
     .right {
       align-items: center;
@@ -225,7 +244,7 @@
         }
 
         &-icon {
-          margin-right: 10px;
+          margin-right: 5px;
           font-size: 14px;
 
           &.poros-avatar {
@@ -238,11 +257,12 @@
 
   .content-wrap {
     flex:1;
+    height: 0; // 防止溢出
     display: flex;
+    .layout-content {
+      min-width: 0;
   }
 
-  .p-layout-content {
-    overflow: auto;
   }
 </style>
 <style lang="less">

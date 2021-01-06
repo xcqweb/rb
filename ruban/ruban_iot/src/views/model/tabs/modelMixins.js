@@ -8,7 +8,8 @@ export default {
     list: Object, //父组件数据
     add: Boolean, //是否是在新增页面使用
     filter: Boolean, //是否显示表格头部筛选
-    modelId: String
+    modelId: String,
+    value: Array, //table数据
   },
   data() {
     return {

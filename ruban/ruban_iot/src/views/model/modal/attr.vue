@@ -28,17 +28,67 @@
             <p-select-option v-for="item in attrType" :key="item.value" :value="item.value">{{item.text}}</p-select-option>
           </p-select>
       </p-form-model-item>
-      <p-form-model-item prop="range">
+      <p-form-model-item>
         <span slot="label" class="required-doc">枚举范围</span>
-        <div class="flex" v-for="(item, index) in emunList" :class="{mt10: index !== 0}">
-          <p-input class="mr6" v-model.trim="item.range" placeholder="请输入枚举值" />
-          <p-input v-model.trim="item.rangeName" placeholder="请输入显示名称" />
-          <p-icon class="ml6 mr6 f14" type="delete" @click="delEmun(index)" v-show="hideDelBtn" />
-        </div>
-        <span class="viewDetail">
-          <span @click="addEmun" v-show="hideAddBtn"><p-icon type="plus"/>新增枚举</span>
-          <span class="c-text mt6 ml10">(最多添加10个枚举项)</span>
-        </span>
+        <p-form-model
+            ref="paramsValidateForm"
+            :model="paramsValidateForm"
+          >
+          <div class="flex" v-for="(item, index) in paramsValidateForm.emunList" :class="{mt10: index !== 0}">
+            <p-form-model-item
+            :prop="'emunList.' + index + '.range'"
+            :rules="[
+              {
+                message: '请输入枚举值',
+                trigger: 'blur',
+                required: true,
+              },
+              {
+                message: '枚举值仅支持中文、字母、数字（整数和小数）或下划线“_”',
+                pattern: pattern.name2Reg
+              },
+              {
+                type: 'string',
+                max: 25,
+                message: '枚举值限制为25个字符'
+              },
+            ]"
+            >
+              <p-input class="mr6" v-model.trim="item.range" placeholder="请输入枚举值" />
+            </p-form-model-item>
+            <p-form-model-item
+            class="ml6"
+            :prop="'emunList.' + index + '.rangeName'"
+            :rules="[
+              {
+                message: '请输入显示名称',
+                trigger: 'blur',
+                required: true,
+              },
+              {
+                message: '显示名称仅支持中文、字母、数字（整数和小数）或下划线“_”',
+                pattern: pattern.name2Reg
+              },
+              {
+                message: '显示名称仅支持中文、字母、数字（整数和小数）或下划线“_”',
+                pattern: pattern.name4Reg
+              },
+              {
+                type: 'string',
+                max: 25,
+                message: '显示名称限制为25个字符'
+              },
+            ]"
+            >
+              <p-input v-model.trim="item.rangeName" placeholder="请输入显示名称" />
+            </p-form-model-item>
+            <p-icon class="ml6 mr6 f14 icon" type="delete" @click="delEmun(index)" v-show="hideDelBtn" />
+          </div>
+          <span class="viewDetail">
+            <span @click="addEmun" v-show="hideAddBtn"><p-icon type="plus"/>新增枚举</span>
+            <span class="c-text mt6 ml10">(最多添加10个枚举项)</span>
+          </span>
+        </p-form-model>
       </p-form-model-item>
       <p-form-model-item label="获取方式" prop="createOption">
         <p-select v-model="model.createOption">
@@ -57,9 +107,12 @@ export default {
   mixins: [modalMixins],
   data() {
     return {
+      pattern,
       getType,
       attrType,
-      emunList: [{range: '',rangeName: ''}],
+      paramsValidateForm: {
+        emunList: [{range: '',rangeName: ''}],
+      },
       model: {},
       rules: {
         attributeName: [
@@ -94,26 +147,26 @@ export default {
   },
   computed: {
     hideDelBtn() {
-      return this.emunList.length !== 1
+      return this.paramsValidateForm.emunList.length !== 1
     },
     hideAddBtn() {
-      return this.emunList.length < 10
+      return this.paramsValidateForm.emunList.length < 10
     }
   },
   created() {
     this.$watch('visible', (val) => {
       if (val) {
         this.model = {attributeType: '0',createOption: '0', ...this.options}
-        this.emunList = this.options.innerData && this.$deepCopy(this.options.innerData) || [{range: '',rangeName: ''}]
+        this.paramsValidateForm.emunList = this.options.innerData && this.$deepCopy(this.options.innerData) || [{range: '',rangeName: ''}]
       }
     });
   },
   methods: {
     addEmun() {
-      this.emunList.push({range: '',rangeName: ''})
+      this.paramsValidateForm.emunList.push({range: '',rangeName: ''})
     },
     delEmun(index) {
-      this.emunList.splice(index,1)
+      this.paramsValidateForm.emunList.splice(index,1)
     },
     cancel() {
       this.$refs.form.resetFields()
@@ -122,43 +175,41 @@ export default {
     },
     confirm() {
       this.$refs.form.validate(valid => {
-        if (valid) {
-          this.loading = true
-          let enumMap = {}
-          this.emunList.forEach(item => {
-            enumMap = {...enumMap,...item}
-          })
-          const data = Object.assign({enumMap}, this.model)
-          let func
-          let message
-          const {type} = this.options
-          if (type === 'add') {
-            func = this.$API.addModelAttr
-            message = '添加成功'
-          } else if(type === 'edit') {
-            func = this.$API.editModelAttr
-            message = '修改成功'
-          }else if(type === 'first-add'){//新增模型时添加
-            message = '添加成功'
-            this.$message.success(message)
-            this.$emit('callback', {type, ...this.model,id: this.uuid(),innerData: this.emunList})
-            this.cancel()
-            return
-          }else if(type === 'first-edit'){//新增模型时编辑
-            message = '修改成功'
-            this.$message.success(message)
-            this.$emit('callback', {type, ...this.model, innerData: this.emunList})
-            this.cancel()
-            return
+        this.$refs.paramsValidateForm.validate( valid2 => {
+          if (valid && valid2) {
+            this.loading = true
+            const data = Object.assign({enumMap: this.paramsValidateForm.emunList}, this.model)
+            let func
+            let message
+            const {type} = this.options
+            if (type === 'add') {
+              func = this.$API.addModelAttr
+              message = '添加成功'
+            } else if(type === 'edit') {
+              func = this.$API.editModelAttr
+              message = '修改成功'
+            }else if(type === 'first-add'){//新增模型时添加
+              message = '添加成功'
+              this.$message.success(message)
+              this.$emit('callback', {type, ...this.model,id: this.uuid(),innerData: this.paramsValidateForm.emunList})
+              this.cancel()
+              return
+            }else if(type === 'first-edit'){//新增模型时编辑
+              message = '修改成功'
+              this.$message.success(message)
+              this.$emit('callback', {type, ...this.model, innerData: this.paramsValidateForm.emunList})
+              this.cancel()
+              return
+            }
+            func(data).then(res => {
+              this.cancel()
+              this.$message.success(message)
+              this.$emit('callback')
+            }).catch(() => {
+              this.loading = false
+            })
           }
-          func(data).then(res => {
-            this.cancel()
-            this.$message.success(message)
-            this.$emit('callback')
-          }).catch(() => {
-            this.loading = false
-          })
-        }
+        })
       })
     },
   }
@@ -166,78 +217,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.platform-menu {
-  &-icon {
-    &-selected,
-    &-wrap {
-      .anticon,
-      .iconfont {
-        font-size: 24px;
-        vertical-align: middle;
-      }
-    }
-
-    &-selected,
-    &-choose {
-      width: 30px;
-      height: 30px;
-      line-height: 30px;
-      text-align: center;
-      cursor: pointer;
-    }
-
-    &-choose {
-      color: @c-bg-4;
-      border: 1px dashed @c-bg-4;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      // background-color: @c-bg-2;
-    }
-
-    &-wrap {
-      display: flex;
-      flex-wrap: wrap;
-      width: 300px;
-      box-shadow: 0px 2px 4px 0px rgba(4, 12, 44, 0.25);
-      background-color: @c-white;
-
-      .icon-item {
-        position: relative;
-        width: 60px;
-        height: 50px;
-        line-height: 50px;
-        text-align: center;
-        cursor: pointer;
-
-        &:hover {
-          background-color: @c-bg-3;
-        }
-
-        &::before,
-        &:not(:nth-child(5n))::after {
-          content: "";
-          position: absolute;
-          background-color: @c-bg-1;
-        }
-
-        &::before {
-          left: 0;
-          bottom: 0;
-          width: 100%;
-          height: 1px;
-        }
-
-        &:not(:nth-child(5n)) {
-          &::after {
-            right: 0;
-            bottom: 0;
-            width: 1px;
-            height: 100%;
-          }
-        }
-      }
-    }
+.flex{
+  align-items: inherit;
+  .icon{
+    line-height: 32px;
   }
 }
 </style>

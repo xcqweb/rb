@@ -317,10 +317,12 @@ export default {
         if(type === 'first-add') {
           data.innerData = []
           this.tableData.push(data)
+          this.$emit('input', this.tableData)
         }else if (type === 'first-edit'){
           const $index = this.tableData.findIndex( item => item.id === data.id)
           const innerData = this.tableData[$index].innerData || []
           this.$set(this.tableData, $index, {...data,innerData})
+          this.$emit('input', this.tableData)
         }else{
 
         }
@@ -331,6 +333,7 @@ export default {
               item.innerData.push(data)
             }
           })
+          this.$emit('input', this.tableData)
         }else if (type === 'first-edit'){
           this.tableData.forEach( item => {
             if (data.paramId === item.id) { //monitorId
@@ -338,6 +341,7 @@ export default {
               item.innerData.splice($index, 1, data)
             }
           })
+          this.$emit('input', this.tableData)
         }else{
           
         }

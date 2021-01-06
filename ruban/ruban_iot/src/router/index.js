@@ -79,6 +79,7 @@ router.beforeEach(async function(to, from, next) {
   if(getToken()) {
     if(!store.state.poros.menus) {
       await store.dispatch('requestMenus')
+      console.log(createRouteByMenus(),defaultRoute)
       router.addRoutes([
         ...createRouteByMenus(),
         ...defaultRoute,

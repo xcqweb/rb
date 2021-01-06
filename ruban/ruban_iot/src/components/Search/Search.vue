@@ -4,7 +4,7 @@
       <p-select-option v-for="(item, index) in selectList" :value='item.key' :key='index'>{{item.name}}</p-select-option>
     </p-select>
     <p-range-picker v-if="extra" style="width: 160px;margin-right: 10px;" v-model="keyword"  @change="onSearch"/>
-    <p-input-search v-if="!extra"  allow-clear v-model="keyword" placeholder="请输入" style="width: 160px;margin-right: 10px;" @search="onSearch" />
+    <p-input-search v-if="!extra"  allow-clear v-model="keyword" :placeholder="`请输入${comLabel}`" style="width: 160px;margin-right: 10px;" @search="onSearch" />
     <p-button class="reset" @click="reset" icon="reload" />
   </div>
 </template>
@@ -33,6 +33,12 @@ export default {
     },
     extra() {
       return this.selectType === 'time'
+    },
+    comLabel() {
+      const temp = this.selectList.find(item => this.selectType === item.key)
+      if (temp){
+        return temp.name
+      }
     }
   },
   watch: {

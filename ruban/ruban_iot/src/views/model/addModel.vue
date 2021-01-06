@@ -87,13 +87,13 @@
     <page-title>模型定义</page-title>
     <p-tabs>
       <p-tab-pane key="attr" tab="属性">
-        <Attr addBtn add />
+        <Attr v-model="model.attrData" addBtn add />
       </p-tab-pane>
       <p-tab-pane key="data" tab="数据">
-        <Data addBtn add />
+        <Data v-model="model.paramData" addBtn add />
       </p-tab-pane>
       <p-tab-pane key="command" tab="指令">
-        <Command addBtn add />
+        <Command v-model="model.commandData" addBtn add />
       </p-tab-pane>
     </p-tabs>
     <div slot="footer" class="tr">
@@ -105,13 +105,11 @@
 
 <script>
 
-import tabClose from '@/mixins/close-tab'
 import Data from './tabs/data.vue'
 import Attr from './tabs/attr.vue'
 import Command from './tabs/command.vue'
 import {rateType,judgeType} from '@/utils/baseData'
 export default {
-  mixins: [tabClose],
   components: {
     Data,
     Attr,
@@ -119,6 +117,11 @@ export default {
   },
   data() {
     return {
+      model: {
+        attrData: [],
+        paramData: [],
+        commandData: [],
+      },
       form: this.$form.createForm(this),
       loading: false,
       rateUnit: '1',
@@ -127,11 +130,11 @@ export default {
       judgeType
     }
   },
-  activated() {
+  mounted() {
     window.addEventListener('beforeunload', this.refreshHandler, false);
     this.form.setFieldsValue({ruleType: '0',rate: 1,ruleNum: 5})
   },
-  deactivated() {
+  beforeDestroy() {
     window.removeEventListener('beforeunload', this.refreshHandler, false);
   },
   methods: {
@@ -141,6 +144,8 @@ export default {
       return;
     },
     submit() {
+      console.log(this.model)
+      return
       this.form.validateFields((err,values) => {
         if(!err) {
           console.log(err,values)
