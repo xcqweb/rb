@@ -1,0 +1,95 @@
+// 默认分页 ——————————————
+.poros-table-pagination{
+  color: @c-text-light-4;
+  font-size: @f-default;
+  .poros-pagination-item{
+    min-width: @h-primary;
+    height: @h-primary;
+    margin-right: 5px;
+    // border: none;
+    border-color: @c-bg-1;
+    border-radius: @border-radius-primary;
+  }
+  .poros-pagination-item a{
+    color: @c-text-light-4;
+    // background-color: @c-bg-2;
+    border-radius: @border-radius-primary;
+    &:hover{
+      background-color: @c-bg-1;
+      color: @c-text;
+    }
+  }
+  .poros-select{
+    color: @c-text-light-4;
+    font-size: @f-default;
+  }
+  .poros-pagination-total-text{
+    height: @h-primary;
+    margin-right: 10px;
+  }
+  .poros-select-selection{
+    border-radius: @border-radius-primary;
+    border-color: @c-bg-1;
+    background-color: @c-white;
+  }
+  .poros-select-selection--single{
+    height: @h-primary;
+  }
+  .poros-pagination-prev, .poros-pagination-next, .poros-pagination-jump-prev, .poros-pagination-jump-next{
+    height: @h-primary;
+    min-width: @h-primary;
+    margin-right: 5px;
+  }
+  .poros-pagination-options-quick-jumper{
+    height: @h-primary;
+  }
+  .poros-pagination-options-quick-jumper input{
+    height: @h-primary;
+    line-height: @h-primary;
+    border-radius: @border-radius-primary;
+  }
+  .poros-pagination-options{
+    margin-left: 5px;
+  }
+  .poros-pagination-prev .poros-pagination-item-link, .poros-pagination-next .poros-pagination-item-link{
+    line-height: @h-primary;
+    border-radius: @border-radius-primary;
+    border-color: @c-bg-1;
+    // border: none;
+    // background-color: @c-bg-2;
+    &:hover{
+      background-color: @c-bg-1;
+      color: @c-text;
+    }
+  }
+  .poros-pagination-disabled a, .poros-pagination-disabled:hover a, .poros-pagination-disabled:focus a, .poros-pagination-disabled .poros-pagination-item-link, .poros-pagination-disabled:hover .poros-pagination-item-link, .poros-pagination-disabled:focus .poros-pagination-item-link{
+    background-color: @c-bg-2;
+    &:hover{
+      background-color: @c-bg-2;
+      color: @c-text-light-3;
+    }
+  }
+  .poros-pagination-item-active a{
+    color: @c-white !important;
+    background: @c-primary !important;
+    border-radius: @border-radius-primary !important;
+  }
+  .poros-select-open .poros-select-selection{
+    box-shadow: none;
+  }
+  .poros-select-focused .poros-select-selection, .poros-select-selection:focus, .poros-select-selection:active{
+    box-shadow: none;
+  }
+  .poros-select-arrow{
+    color: @c-text-light-4;
+  }
+  .poros-select-dropdown-menu-item:hover:not(.poros-select-dropdown-menu-item-disabled){
+    background: @c-bg-2;
+  }
+  .poros-select-dropdown-menu-item-selected{
+    background: @c-bg-2;
+  }
+  .poros-select-dropdown-menu-item{
+    font-size: @f-default;
+  }
+}

@@ -1,0 +1,42 @@
+.poros-modal {
+  color: @c-text;
+  padding-bottom: 0;
+
+  &-header {
+    padding: 12px 20px;
+  }
+
+  &-footer {
+    button + button {
+      margin-left: 10px;
+    }
+  }
+  .poros-modal-title{
+    font-size: @f-big;
+    line-height: @f-big-line-height;
+  }
+  // 确认对话框
+  .poros-modal-body{
+    padding: 30px 20px 20px 30px;
+    max-height: 510px;
+    overflow: auto;
+    /deep/.poros-form-item{
+      margin-bottom: 10px;
+    }
+  }
+  .poros-modal-confirm-body > .porosicon{
+    &.exclamation{
+      color: @c-white;
+      background: @modal-c-icon-1;
+      border-radius: 50%;
+      font-size: 20px;
+      margin-right: 10px;
+      svg{
+        transform: scale(0.7);
+      }
+    }
+  }
+  .poros-modal-confirm-body > .porosicon + .poros-modal-confirm-title + .poros-modal-confirm-content{
+    margin-left: 32px;
+  }
+}
