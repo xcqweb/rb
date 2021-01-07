@@ -1,0 +1,36 @@
+.poros-transfer{
+  .poros-transfer-list{
+    width: 240px;
+    height: 360px;
+    .poros-transfer-list-header{
+      height: 32px;
+      display: flex;
+      align-items: center;
+      padding: 0 0 0 10px;
+      background: #F0F1F3;
+      .poros-transfer-list-header-selected{
+        padding-left: 5px;
+        &>:nth-child(1){
+          position: absolute;
+          right: 12px;
+        }
+        .poros-transfer-list-header-title{
+          position: initial;
+        }
+      }
+    }
+    .poros-transfer-list-body{
+      padding-top: 42px;
+      .poros-transfer-list-body-search-wrapper{
+        padding: 10px;
+        top: -8px;
+        .poros-transfer-list-search-action{
+          &>.porosicon{
+            color: #040C2C;
+            font-size: 14px;
+          }
+        }
+      }
+    }
+  }
+}

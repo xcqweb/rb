@@ -1,0 +1,50 @@
+// 默认表格 ——————————————
+.poros-table-default{
+  font-size: @f-default;
+  color: @c-text;
+  line-height: @f-default-line-height;
+  .poros-table-thead > tr > th, .poros-table-tbody > tr > td{
+    color: @c-text;
+  }
+  .poros-table-thead > tr > th{
+    padding: 6px 10px;
+    font-weight: 500;
+    background: @c-bg-2;
+  }
+  .poros-table-tbody > tr > td{
+    padding: 14px 10px;
+    font-weight: 400;
+  }
+  .poros-table-thead > tr.poros-table-row-hover:not(.poros-table-expanded-row):not(.poros-table-row-selected) > td, .poros-table-tbody > tr.poros-table-row-hover:not(.poros-table-expanded-row):not(.poros-table-row-selected) > td, .poros-table-thead > tr:hover:not(.poros-table-expanded-row):not(.poros-table-row-selected) > td, .poros-table-tbody > tr:hover:not(.poros-table-expanded-row):not(.poros-table-row-selected) > td{
+    background: @c-bg-3;
+  }
+  .poros-table-thead > tr > th .porosicon-filter, .poros-table-thead > tr > th .poros-table-filter-icon{
+    right: auto;
+  }
+  .operateBtn{
+    cursor: pointer;
+    /* &:hover{
+      color: @c-primary;
+    } */
+  }
+  .operateBtn + .operateBtn{
+    margin-left: 10px;
+  }
+}
+.poros-table-default .poros-table-thead > tr.poros-table-row-hover:not(.poros-table-expanded-row):not(.poros-table-row-selected) > td, 
+.poros-table-default .poros-table-tbody > tr.poros-table-row-hover:not(.poros-table-expanded-row):not(.poros-table-row-selected) > td, 
+.poros-table-default .poros-table-thead > tr:hover:not(.poros-table-expanded-row):not(.poros-table-row-selected) > td, 
+.poros-table-default .poros-table-tbody > tr:hover:not(.poros-table-expanded-row):not(.poros-table-row-selected) > td{
+  .operateBtn{
+    color: @c-primary;
+    text-decoration: underline;
+  }
+}
+
+.innerTable{
+  .poros-table-thead,.poros-table-tbody{
+    tr>th,tr>td{
+      background: #F7F7F8 !important;
+    }
+  }
+}

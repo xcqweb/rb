@@ -1,0 +1,37 @@
+// input输入框 ——————————————
+@input-height-base: 30px;
+
+.poros-input-affix-wrapper:hover .poros-input:not(.poros-input-disabled){
+  border-color: @c-primary-light;
+  background-color: @c-primary1;
+}
+.poros-input-number:hover,
+.poros-input:hover{
+  border-color: @c-primary-light;
+  background-color: @c-primary1;
+}
+.poros-input-number-focused,
+.poros-input:focus{
+  border-color: @c-primary-light !important;
+  box-shadow: 0 0 0 1px @c-primary-light !important;
+  background-color: @c-white  !important;
+}
+.poros-input[disabled]{
+  background: @c-white;
+  color: @c-text;
+  cursor: default;
+  border-color: @c-white;
+  &:hover{
+    border-color: @c-white;
+  }
+}
+.poros-input-number{
+  border-radius: @border-radius-primary;
+}
+.poros-input-search{
+  .poros-input-affix-wrapper{
+    .porosicon{
+      color: #040C2C;
+    }
+  }
+}
