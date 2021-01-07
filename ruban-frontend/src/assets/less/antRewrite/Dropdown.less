@@ -1,0 +1,19 @@
+// dropdown
+.poros-dropdown {
+  .poros-dropdown-menu-item, .poros-dropdown-menu-submenu-title{
+    line-height: @f-default-line-height;
+  }
+  .poros-dropdown-menu-item:hover, .poros-dropdown-menu-submenu-title:hover{
+    background-color: @c-bg-6;
+    > span,>i{
+      color: @c-primary;
+    }
+  }
+  .poros-dropdown-menu-item.selected, 
+  .poros-dropdown-menu-submenu-title.selected{
+    background: @c-primary;
+    > span,>i{
+      color: @c-white;
+    }
+  }
+}
