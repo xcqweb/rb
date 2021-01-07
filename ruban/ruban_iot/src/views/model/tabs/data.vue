@@ -323,6 +323,8 @@ export default {
           const innerData = this.tableData[$index].innerData || []
           this.$set(this.tableData, $index, {...data,innerData})
           this.$emit('input', this.tableData)
+        }else if(type === 'add'){
+
         }else{
 
         }
@@ -342,8 +344,10 @@ export default {
             }
           })
           this.$emit('input', this.tableData)
+        }else if(type === 'add'){
+
         }else{
-          
+
         }
       }
     }

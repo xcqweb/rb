@@ -90,7 +90,7 @@
       },
 
       systemName () {
-        return system.name || this.getSystemName()
+        return this.system.name || this.getSystemName()
       },
 
       customButton () {
@@ -102,7 +102,7 @@
       getSystemName() {
         try {
           const { sysList } = this.$store.state.poros
-          const currentSystem = sysList.find(item => item.sysCode === system.code)
+          const currentSystem = sysList.find(item => item.sysCode === this.system.code)
 
           return currentSystem.sysName
         } catch (e) {

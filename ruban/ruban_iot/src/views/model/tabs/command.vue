@@ -186,6 +186,10 @@ export default {
         const $index = this.tableData.findIndex( item => item.id === data.id)
         this.$set(this.tableData, $index, data)
         this.$emit('input', this.tableData)
+      }else if(type === 'add'){
+
+      }else{
+
       }
     }
   }

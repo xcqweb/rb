@@ -29,7 +29,7 @@
           </p-select>
       </p-form-model-item>
       <p-form-model-item label="精度" prop="precision">
-        <p-input-number style="width:100%" :max='999999999' :min='0' v-model.trim="model.precision" placeholder="请输入计算精度" />
+        <p-input-number style="width:100%" :min='0' v-model.trim="model.precision" placeholder="请输入计算精度" />
       </p-form-model-item>
       <p-form-model-item label="单位" prop="unit">
         <p-input v-model.trim="model.unit" placeholder="请输入单位" />
@@ -67,7 +67,7 @@ export default {
           {
             type: 'string',
             max: 25,
-            message: '参数名称限制为25个字符'
+            message: '参数名称长度限制为25个字符'
           },
           {
             type: 'string',
@@ -82,13 +82,16 @@ export default {
           },
           {
             max: 20,
-            message: '参数标识限制为20个字符'
+            message: '参数标识长度限制为20个字符'
           },
           {
             type: 'string',
             message: '参数标识仅支持数字、字母或下划线“_”',
             pattern: pattern.nameReg
           },
+        ],
+        precision: [
+          { type: 'number', max: 999999999, message: '计算精度长度限制为9个字符' },
         ],
         unit: [
           {
@@ -138,22 +141,18 @@ export default {
           }
           const data = Object.assign({}, this.model)
           let func
-          let message
+          let message = '操作成功！'
           const {type} = this.options
           if (type === 'add') {
             func = this.$API.addModelParams
-            message = '添加成功'
           } else if(type === 'edit') {
             func = this.$API.editModelParams
-            message = '修改成功'
           } else if(type === 'first-add'){//新增模型时添加
-            message = '添加成功'
             this.$message.success(message)
             this.$emit('callback', {type,modal: 'param', ...this.model,id: this.uuid()})
             this.cancel()
             return
           }else if(type === 'first-edit'){//新增模型时编辑
-            message = '修改成功'
             this.$message.success(message)
             this.$emit('callback', {type,modal: 'param', ...this.model})
             this.cancel()
@@ -162,7 +161,7 @@ export default {
           this.cancel()
           func(data).then(res => {
             this.cancel()
-            this.$message.success(message)
+            this.$message.success('message')
             this.$emit('callback')
           }).catch(() => {
             this.loading = false

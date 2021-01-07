@@ -38,7 +38,7 @@
             :model="paramsValidateForm"
           >
         <ul>
-          <li class="flex" v-for="(item, index) in paramsValidateForm.varList" :class="{mt10: index !== 0}">
+          <li class="flex" v-for="(item, index) in paramsValidateForm.varList">
             <p-form-model-item
             :prop="'varList.' + index + '.commandVarMark'"
             :rules="[
@@ -54,7 +54,7 @@
               {
                 type: 'string',
                 max: 20,
-                message: '变量标识限制为20个字符'
+                message: '变量标识长度限制为20个字符'
               },
             ]"
             >
@@ -67,7 +67,7 @@
               {
                 type: 'string',
                 max: 25,
-                message: '默认值限制为25个字符'
+                message: '默认值长度限制为25个字符'
               },
             ]"
             >
@@ -79,8 +79,8 @@
             :rules="[
               {
                 type: 'string',
-                max: 50,
-                message: '注释限制为50个字符'
+                max: 25,
+                message: '注释长度限制为25个字符'
               },
             ]"
             >
@@ -90,7 +90,7 @@
           </li>
         </ul>
         <span class="viewDetail">
-          <span @click="addVar"><p-icon type="plus"/>新增变量</span>
+          <span @click="addVar"><p-icon type="plus"/>添加变量</span>
         </span>
         </p-form-model>
       </p-form-model-item>
@@ -121,7 +121,7 @@ export default {
           {
             type: 'string',
             max: 25,
-            message: '指令名称限制为25个字符'
+            message: '指令名称长度限制为25个字符'
           },
           {
             type: 'string',
@@ -136,7 +136,7 @@ export default {
           },
           {
             max: 20,
-            message: '指令标识限制为20个字符'
+            message: '指令标识长度限制为20个字符'
           },
           {
             type: 'string',
@@ -168,6 +168,7 @@ export default {
       })
     },
     getCommandAttrList(id) {
+      this.$refs.paramsValidateForm.resetFields()
       this.$API.getModelCommandAttrList({id}).then( res => {
         this.paramsValidateForm.varList = res.data.map( item => {
           return {...item, isDefault: true}
@@ -182,44 +183,44 @@ export default {
     },
     cancel() {
       this.$refs.form.resetFields()
+      this.$refs.paramsValidateForm.resetFields()
       this.loading = false
       this.visible = false
     },
     confirm() {
       this.$refs.form.validate(valid => {
-        if (valid) {
-          this.loading = true
-          const data = Object.assign({}, this.model)
-          let func
-          let message
-          const {type} = this.options
-          if (type === 'add') {
-            func = this.$API.addModelCommand
-            message = '添加成功'
-          } else if(type === 'edit') {
-            func = this.$API.editModelCommand
-            message = '修改成功'
-          }else if(type === 'first-add'){//新增模型时添加
-            message = '添加成功'
-            this.$message.success(message)
-            this.$emit('callback', {type, ...this.model,id: this.uuid(),innerData: this.paramsValidateForm.varList})
-            this.cancel()
-            return
-          }else if(type === 'first-edit'){//新增模型时编辑
-            message = '修改成功'
-            this.$message.success(message)
-            this.$emit('callback', {type, ...this.model, innerData: this.paramsValidateForm.varList})
-            this.cancel()
-            return
+        this.$refs.paramsValidateForm.validate( valid2 => {
+          if (valid && valid2) {
+            this.loading = true
+            const varList = this.$deepCopy(this.paramsValidateForm.varList)
+            const data = Object.assign({}, this.model)
+            let func
+            let message = '操作成功！'
+            const {type} = this.options
+            if (type === 'add') {
+              func = this.$API.addModelCommand
+            } else if(type === 'edit') {
+              func = this.$API.editModelCommand
+            }else if(type === 'first-add'){//新增模型时添加
+              this.$message.success(message)
+              this.$emit('callback', {type, ...this.model,id: this.uuid(),innerData: varList})
+              this.cancel()
+              return
+            }else if(type === 'first-edit'){//新增模型时编辑
+              this.$message.success(message)
+              this.$emit('callback', {type, ...this.model, innerData: varList})
+              this.cancel()
+              return
+            }
+            func(data).then(res => {
+              this.cancel()
+              this.$message.success(message)
+              this.$emit('callback')
+            }).catch(() => {
+              this.loading = false
+            })
           }
-          func(data).then(res => {
-            this.cancel()
-            this.$message.success(message)
-            this.$emit('callback')
-          }).catch(() => {
-            this.loading = false
-          })
-        }
+        })
       })
     },
   }

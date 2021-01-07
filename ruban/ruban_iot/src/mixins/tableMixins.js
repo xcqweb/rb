@@ -16,7 +16,9 @@ export default {
     }
   },
   mounted() {
-    this.getTableData(); 
+    if (!this.add) {
+      this.getTableData(); 
+    }
   },
   methods: {
     reset(){

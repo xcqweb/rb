@@ -25,7 +25,21 @@
           :placeholder="`请输入${this.comLabel}名称`"
         />
       </p-form-item>
-      <p-form-item label="描述">
+      <p-form-item label="所属模型" v-if="isDevice">
+        <p-select 
+          v-decorator="[
+          'descript',
+          {rules: [
+            {required:true,message: '请选择所属模型',trigger: 'change' },
+          ]}
+          ]"
+          placeholder="请选择所属模型"
+        >
+          <p-select-option v-for="item in modelList" :key="item.value" :value="item.value">{{item.text}}</p-select-option>
+        </p-select>
+
+      </p-form-item>
+      <p-form-item label="描述" v-else>
         <p-textarea 
           autocomplete='off'
           v-decorator="[
@@ -58,11 +72,12 @@ export default {
     return{
       form: this.$form.createForm(this),
       loading: false,
+      modelList: []
     }
   },
   computed: {
     componentId() {
-      return this.comType === 'device' ? 'AttrInfo' : 'BindingDevice'
+      return this.isDevice ? 'AttrInfo' : 'BindingDevice'
     },
     comTitle() {
       return `新增${this.comLabel}`
@@ -72,10 +87,13 @@ export default {
       return type
     },
     comPageTitle() {
-      return this.comType === 'device' ? '属性信息' : '绑定设备'
+      return this.isDevice ? '属性信息' : '绑定设备'
     },
     comLabel() {
-      return this.comType === 'device' ? '设备' : '组合'
+      return this.isDevice ? '设备' : '组合'
+    },
+    isDevice() {
+      return this.comType === 'device'
     }
   },
   methods: {

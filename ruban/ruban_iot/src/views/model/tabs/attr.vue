@@ -19,7 +19,7 @@
         :columns="columns"
         :customRow='customRow'
         :data-source="tableData">
-        <template slot="operation" slot-scope="text, record, index">
+        <template slot="operation" slot-scope="record, index">
           <span class="operateBtn" @click="attrHandler(record, 'edit')">编辑</span>
           <span class="operateBtn" @click="delClick(record, index)">删除</span>
         </template>
@@ -31,13 +31,10 @@
             :data-source="record.innerData"
             :pagination="false"
             :loading='record.loading'
-            row-key="code"
+            :row-key="id"
             style="margin:10px 0;"
             class="innerTable"
           >
-          <template slot="pushMsgTemplate" slot-scope="item">
-            <a href='javascript:;' @click="clickHandler(3, item || {})">{{item && item.tplName}}</a>
-          </template>
           </p-table>
       </p-table>
     </div>
@@ -122,7 +119,6 @@ export default {
         },
         {
           title: '操作',
-          dataIndex: 'operate',
           align: 'right',
           width: 120,
           scopedSlots: { customRender: 'operation' },
@@ -221,6 +217,10 @@ export default {
         const $index = this.tableData.findIndex( item => item.id === data.id)
         this.$set(this.tableData, $index, {...data})
         this.$emit('input', this.tableData)
+      }else if(type === 'add'){
+
+      }else{
+
       }
     }
   }

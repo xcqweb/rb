@@ -87,8 +87,8 @@ export const attrTypeList = ['文本','日期','数值','枚举']
 
 //获取类型
 export const getType = [
-  {text: '数据上报',value: '0'},
-  {text: '手动填写',value: '1'},
+  {text: '手动填写',value: '0'},
+  {text: '数据上报',value: '1'},
 ]
 export const getTypeList = ['数据上报','手动填写']
 
@@ -106,8 +106,9 @@ export const paramType = [
   {text: '32位整型',value: '2'},
   {text: '双精度浮点型',value: '3'},
   {text: '布尔型',value: '4'},
+  {text: '字符',value: '5'},
 ]
-export const paramTypeList = ['浮点型','日期','32位整型','双精度浮点型','布尔型']
+export const paramTypeList = ['浮点型','日期','32位整型','双精度浮点型','布尔型','字符']
 
 //设备网络
 export const deviceNetType = [

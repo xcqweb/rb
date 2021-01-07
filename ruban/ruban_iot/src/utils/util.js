@@ -191,3 +191,45 @@ export const funDownload = (url, fileName) => {
   }
   x.send();
 }
+
+/**重复提示输入标红
+ * config = {
+ *  list: Array [{key: valu}], 要做重复判断的数据, 
+ *  tip: String, 重复时提示信息, //非必传
+ *  ref: Object, 列表dom,
+ *  target: String // input class,
+ *  key: String, 需要验证的数据字段
+ * }
+ */
+export function validateRepeat(config) {
+  try {
+    const snList = config.list.map( (key) => {
+        return key[config.key];
+    });
+    const repeatSnList = [...new Set(snList)];
+    const repeatIndex = [];
+    for (const [index, item] of snList.entries()) {
+      if (item && snList.indexOf(item) !== index) {
+        repeatIndex.push(index);
+      }
+    }
+    console.log(repeatIndex)
+    const snListDom = Array.from(config.ref.querySelectorAll(`${config.target ? config.target : 'input' }`));
+    for (let [index, item] of snListDom.entries()) {
+      item.style.border = '1px solid #dcdee2';
+      for (const key of repeatIndex) {
+        if (key === index + (config.fix || 0)) {
+          item.style.border = '1px solid #E9614C';
+          break;
+        }
+      } 
+    }
+    config.that.$message.destroy();
+    if (repeatIndex.length && snList.length > repeatSnList.length) {
+      config.that.$message.error(config.tip || '名称重复');
+      return true;
+    }
+  }catch{
+    console.error('error');
+  }
+}

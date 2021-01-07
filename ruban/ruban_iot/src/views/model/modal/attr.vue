@@ -28,13 +28,13 @@
             <p-select-option v-for="item in attrType" :key="item.value" :value="item.value">{{item.text}}</p-select-option>
           </p-select>
       </p-form-model-item>
-      <p-form-model-item>
+      <p-form-model-item v-show="isEmun">
         <span slot="label" class="required-doc">枚举范围</span>
         <p-form-model
             ref="paramsValidateForm"
             :model="paramsValidateForm"
           >
-          <div class="flex" v-for="(item, index) in paramsValidateForm.emunList" :class="{mt10: index !== 0}">
+          <div class="flex" v-for="(item, index) in paramsValidateForm.emunList" v-if="isEmun">
             <p-form-model-item
             :prop="'emunList.' + index + '.range'"
             :rules="[
@@ -45,16 +45,16 @@
               },
               {
                 message: '枚举值仅支持中文、字母、数字（整数和小数）或下划线“_”',
-                pattern: pattern.name2Reg
+                pattern: pattern.name4Reg
               },
               {
                 type: 'string',
                 max: 25,
-                message: '枚举值限制为25个字符'
+                message: '枚举值长度限制为25个字符'
               },
             ]"
             >
-              <p-input class="mr6" v-model.trim="item.range" placeholder="请输入枚举值" />
+              <p-input class="mr6 w160" v-model.trim="item.range" placeholder="请输入枚举值" />
             </p-form-model-item>
             <p-form-model-item
             class="ml6"
@@ -66,21 +66,17 @@
                 required: true,
               },
               {
-                message: '显示名称仅支持中文、字母、数字（整数和小数）或下划线“_”',
+                message: '显示名称仅支持中文、字母、数字或下划线“_”',
                 pattern: pattern.name2Reg
-              },
-              {
-                message: '显示名称仅支持中文、字母、数字（整数和小数）或下划线“_”',
-                pattern: pattern.name4Reg
               },
               {
                 type: 'string',
                 max: 25,
-                message: '显示名称限制为25个字符'
+                message: '显示名称长度限制为25个字符'
               },
             ]"
             >
-              <p-input v-model.trim="item.rangeName" placeholder="请输入显示名称" />
+              <p-input class="w160" v-model.trim="item.rangeName" placeholder="请输入显示名称" />
             </p-form-model-item>
             <p-icon class="ml6 mr6 f14 icon" type="delete" @click="delEmun(index)" v-show="hideDelBtn" />
           </div>
@@ -103,6 +99,7 @@
 import modalMixins from '@/mixins/modal'
 import pattern from '@/utils/pattern'
 import {getType,attrType} from '@/utils/baseData'
+import {validateRepeat} from '@/utils/util'
 export default {
   mixins: [modalMixins],
   data() {
@@ -119,7 +116,7 @@ export default {
           {
             type: 'string',
             max: 25,
-            message: '属性名称限制为25个字符'
+            message: '属性名称长度限制为25个字符'
           },
           {
             type: 'string',
@@ -134,7 +131,7 @@ export default {
           },
           {
             max: 20,
-            message: '属性标识限制为20个字符'
+            message: '属性标识长度限制为20个字符'
           },
           {
             type: 'string',
@@ -151,6 +148,13 @@ export default {
     },
     hideAddBtn() {
       return this.paramsValidateForm.emunList.length < 10
+    },
+    isEmun() {
+      return this.model.attributeType === '3'
+    },
+    isEdit() {
+      const {type} = this.options
+      return type === 'edit' || type === 'first-edit'
     }
   },
   created() {
@@ -170,34 +174,51 @@ export default {
     },
     cancel() {
       this.$refs.form.resetFields()
+      this.$refs.paramsValidateForm.resetFields()
       this.loading = false
       this.visible = false
+    },
+    valid() {
+      return (validateRepeat({
+        list: this.paramsValidateForm.emunList,
+        ref: this.$refs.paramsValidateForm.$el,
+        tip: '枚举值重复!',
+        key: 'range',
+        that: this,
+        fix: 1,
+      }) || validateRepeat({
+        list: this.paramsValidateForm.emunList,
+        ref: this.$refs.paramsValidateForm.$el,
+        tip: '显示名称重复!',
+        key: 'rangeName',
+        that: this,
+      }));
     },
     confirm() {
       this.$refs.form.validate(valid => {
         this.$refs.paramsValidateForm.validate( valid2 => {
           if (valid && valid2) {
+            if (this.valid()) {
+              return
+            }
             this.loading = true
-            const data = Object.assign({enumMap: this.paramsValidateForm.emunList}, this.model)
+            const emunList = this.$deepCopy(this.paramsValidateForm.emunList)
+            const data = Object.assign({enumMap: emunList}, this.model)
             let func
-            let message
+            let message = '操作成功！'
             const {type} = this.options
             if (type === 'add') {
               func = this.$API.addModelAttr
-              message = '添加成功'
             } else if(type === 'edit') {
               func = this.$API.editModelAttr
-              message = '修改成功'
             }else if(type === 'first-add'){//新增模型时添加
-              message = '添加成功'
               this.$message.success(message)
-              this.$emit('callback', {type, ...this.model,id: this.uuid(),innerData: this.paramsValidateForm.emunList})
+              this.$emit('callback', {type, ...this.model,id: this.uuid(),innerData: emunList})
               this.cancel()
               return
             }else if(type === 'first-edit'){//新增模型时编辑
-              message = '修改成功'
               this.$message.success(message)
-              this.$emit('callback', {type, ...this.model, innerData: this.paramsValidateForm.emunList})
+              this.$emit('callback', {type, ...this.model, innerData: emunList})
               this.cancel()
               return
             }

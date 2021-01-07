@@ -23,27 +23,6 @@
           placeholder="请输入模型名称"
         />
       </p-form-item>
-      <p-form-item label="上报频率">
-        <div class="flex">
-          <p-input-number
-            style="width:160px"
-            :min='1'
-            :max='999999999'
-            class="mr6"
-            autocomplete='off'
-            v-decorator="[
-            'rate',
-             {rules: [
-              {type: 'number',required: true, message: '请输入上报频率',trigger: 'change' },
-            ]}]"
-            placeholder="请输入上报频率"
-          />
-          <p-select v-model="rateUnit" style="width:160px">
-            <p-select-option v-for="item in rateType" :key="item.value" :value="item.value">{{item.text}}</p-select-option>
-          </p-select>
-          <p class="ml6"> / 次</p>
-        </div>
-      </p-form-item>
       <p-form-item label="异常判断">
         <p-select v-decorator="['ruleType']" style="width:500px">
           <p-select-option v-for="item in judgeType" :key="item.value" :value="item.value">{{item.text}}</p-select-option>
@@ -55,12 +34,12 @@
           <p-input-number
             style="width:160px"
             :min='1'
-            :max='999999999'
             class="mr6 ml6"
             autocomplete='off'
             v-decorator="['ruleNum',
              {rules: [
               { required: true, message: '请输入判断机制' },
+              { type: 'number', max: 999999999, message: '判断机制长度限制为9个字符' },
             ]}]"
             placeholder="请输入判断机制"
           />
@@ -124,7 +103,6 @@ export default {
       },
       form: this.$form.createForm(this),
       loading: false,
-      rateUnit: '1',
       ruleUnit: '1',
       rateType,
       judgeType
@@ -132,7 +110,7 @@ export default {
   },
   mounted() {
     window.addEventListener('beforeunload', this.refreshHandler, false);
-    this.form.setFieldsValue({ruleType: '0',rate: 1,ruleNum: 5})
+    this.form.setFieldsValue({ruleType: '0',ruleNum: 5})
   },
   beforeDestroy() {
     window.removeEventListener('beforeunload', this.refreshHandler, false);
