@@ -9,7 +9,7 @@
   >
     <div class="content">
       <span class="required-doc">移动位置：</span>
-      <Device-tree class="content_border f1" v-model="chooseNode" showLine showIcon/>
+      <Device-tree ref="tree" class="content_border f1" v-model="chooseNode" showLine showIcon/>
     </div>
   </p-modal>
 </template>
@@ -28,6 +28,9 @@ export default {
     visible(val) {
       if(!val) {
         this.chooseNode = null
+        this.loading = false
+      }else{
+        this.$refs.tree.initTree()
       }
     }
   },
@@ -37,8 +40,9 @@ export default {
         this.$message.error('请选择节点！')
         return
       }
+      this.loading = true
       console.log(this.chooseNode)
-      this.$emit('callback', this.chooseNode)
+      this.$emit('callback', {node: this.chooseNode}, 3)
       this.$emit('input', false)
     }
   },

@@ -7,7 +7,7 @@
           <p-icon type="pause" style="color: #040C2C" v-drag="dragBack" />
         </div>
         <div class="platform-org-left" ref="drag" :style="{width: `${comWidth}px`}">
-          <div class="tree-content pt10">
+          <div class="tree-content">
             <Device-tree showLine showIcon showOperator />
           </div>
         </div>

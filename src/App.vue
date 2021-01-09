@@ -17,6 +17,9 @@
         zhCN,
         isIframeOpen
       }
+    },
+    created() {
+      this.$store.commit('getAlarmLevelList')
     }
   }
 </script>

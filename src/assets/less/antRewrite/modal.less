@@ -25,15 +25,23 @@
       margin-bottom: 10px;
     }
   }
-  .poros-modal-confirm-body > .porosicon{
-    &.exclamation{
-      color: @c-white;
-      background: @modal-c-icon-1;
-      border-radius: 50%;
-      font-size: 20px;
-      margin-right: 10px;
-      svg{
-        transform: scale(0.7);
+  .poros-modal-confirm-body {
+    .poros-modal-confirm-title{
+      color: @c-text;
+    }
+    .poros-modal-confirm-content{
+      color: @c-text-light-2;
+    }
+    &> .porosicon{
+      &.exclamation{
+        color: @c-white;
+        background: @modal-c-icon-1;
+        border-radius: 50%;
+        font-size: 20px;
+        margin-right: 10px;
+        svg{
+          transform: scale(0.7);
+        }
       }
     }
   }

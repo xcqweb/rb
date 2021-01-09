@@ -90,8 +90,13 @@ module.exports = {
         changeOrigin: true
       },
       '/tree': {
-        target: 'http://kong.poros-platform.10.74.158.71.nip.io/api',
-        pathRewrite: {"^/tree": "/tree"},
+        target: 'http://10.8.7.24:8030/api',
+        pathRewrite: {"^/tree": ""},
+        changeOrigin: true
+      },
+      '/ch': {
+        target: 'http://10.8.7.76:8030/api',
+        pathRewrite: {"^/ch": ""},
         changeOrigin: true
       },
       // 图片

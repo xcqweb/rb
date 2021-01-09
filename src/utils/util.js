@@ -1,4 +1,5 @@
 import store from "../store/";
+import {formualList} from '@/utils/baseData'
 const CryptoJS = require("crypto");
 // 下载文件
 export const downloadFile = url => {
@@ -232,4 +233,26 @@ export function validateRepeat(config) {
   }catch{
     console.error('error');
   }
+}
+
+export function analysisFormula(formula) {
+  let re = {}
+  formualList.forEach( item => {
+    const items = formula.split(item.text) 
+    if (items.length > 1) {
+      const str = items[1]
+      re = {
+        ...item,
+        limit: item.value,
+      }
+      if (str.includes('~')) {
+        const arr = str.split('~')
+        re.firstVal = arr[0]
+        re.secondVal = arr[1]
+      }else{
+        re.firstVal = items[1]
+      }
+    }
+  })
+  return re
 }

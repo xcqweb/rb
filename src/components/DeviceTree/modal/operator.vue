@@ -17,11 +17,11 @@
       :wrapper-col="{span: 20}"
       label-align="left"
     >
-      <p-form-model-item label="父亲节点" prop="parentNode">
-        <p-input :value="model.parentNode" disabled />
+      <p-form-model-item label="父亲节点" prop="parentName">
+        <p-input :value="model.parentName" disabled />
       </p-form-model-item>
-      <p-form-model-item label="节点名称" prop="nodeName">
-        <p-input v-model.trim="model.nodeName" placeholder="请输入节点名称" />
+      <p-form-model-item label="节点名称" prop="locationName">
+        <p-input v-model.trim="model.locationName" placeholder="请输入节点名称" />
       </p-form-model-item>
     </p-form-model>
   </p-modal>
@@ -37,11 +37,12 @@ export default {
     return {
       emunList: [{range: '',rangeName: ''}],
       model: {
+        parentId: this.options.parentId || '',
         parentName: this.options.parentName || '',
-        nodeName: this.options.name || '',
+        locationName: this.options.locationName || '',
       },
       rules: {
-        nodeName: [
+        locationName: [
           {
             required: true,
             message: '请输入节点名称'
@@ -64,8 +65,9 @@ export default {
     this.$watch('visible', (val) => {
       if (val) {
         this.model = {
+          parentId: this.options.parentId || '',
           parentName: this.options.parentName || '',
-          nodeSign: this.options.name || '',
+          locationName: this.options.locationName || '',
         }
       }
     });
@@ -81,20 +83,19 @@ export default {
         if (valid) {
           this.loading = true
           const data = Object.assign({}, this.model)
-          data.parentCode = this.options.parentCode
+          delete data.parentName
+          data.parentId = this.options.parentId
           let func
-          let message
+          let message = '提交成功！'
           if (!this.options.isEdit) {
-            func = addOrg
-            message = '添加成功'
+            func = this.$API.addLocation
           } else {
-            func = modOrg
-            message = '修改成功'
+            func = this.$API.renameLocation
           }
           func(data).then(res => {
             this.cancel()
             this.$message.success(message)
-            this.$emit('callback', {...data, p_isLeaf: this.options.selectedItem.isLeaf}, this.options.isEdit ? 1 : 0)
+            this.$emit('callback', {...data, id: res.data.id, p_isLeaf: this.options.selectedItem.isLeaf}, this.options.isEdit ? 1 : 0)
           }).catch(() => {
             this.loading = false
           })

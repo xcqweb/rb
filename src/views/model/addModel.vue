@@ -66,13 +66,13 @@
     <page-title>模型定义</page-title>
     <p-tabs>
       <p-tab-pane key="attr" tab="属性">
-        <Attr v-model="model.attrData" addBtn add />
+        <Attr v-model="model.modelAttributeAddParamList" addBtn add />
       </p-tab-pane>
       <p-tab-pane key="data" tab="数据">
-        <Data v-model="model.paramData" addBtn add />
+        <Data v-model="model.modelParamAddParamList" addBtn add />
       </p-tab-pane>
       <p-tab-pane key="command" tab="指令">
-        <Command v-model="model.commandData" addBtn add />
+        <Command v-model="model.modelCommandAddParamList" addBtn add />
       </p-tab-pane>
     </p-tabs>
     <div slot="footer" class="tr">
@@ -97,9 +97,9 @@ export default {
   data() {
     return {
       model: {
-        attrData: [],
-        paramData: [],
-        commandData: [],
+        modelAttributeAddParamList: [],
+        modelParamAddParamList: [],
+        modelCommandAddParamList: [],
       },
       form: this.$form.createForm(this),
       loading: false,
@@ -110,7 +110,7 @@ export default {
   },
   mounted() {
     window.addEventListener('beforeunload', this.refreshHandler, false);
-    this.form.setFieldsValue({ruleType: '0',ruleNum: 5})
+    this.form.setFieldsValue({ruleType: 0,ruleNum: 5})
   },
   beforeDestroy() {
     window.removeEventListener('beforeunload', this.refreshHandler, false);
@@ -123,18 +123,20 @@ export default {
     },
     submit() {
       console.log(this.model)
-      return
       this.form.validateFields((err,values) => {
         if(!err) {
           console.log(err,values)
           const params = {
-            rateUnit: this.rateUnit,
-            ruleUnit: this.rateUnit,
-            ...values
+            modelAddParam: {
+              ruleUnit: this.ruleUnit,
+              ...values
+            },
+            ...this.model,
           }
           this.loading = true
           this.$API.addModel(params).then( res => {
-            this.$message.success('新增成功！')
+            this.$message.success('提交成功！')
+            this.cancel()
             this.loading = false
           }).catch( () => {
             this.loading = false
@@ -144,9 +146,15 @@ export default {
     },
     cancel() {
       this.$router.go(-1)
+      this.model = {
+        attrData: [],
+        paramData: [],
+        commandData: [],
+      }
+      this.form.resetFields()
     },
     back(){
-      this.$router.go(-1)
+      this.cancel()
     }
   }
 }

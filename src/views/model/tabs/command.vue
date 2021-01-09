@@ -3,7 +3,7 @@
     <Page-title v-if="isDevice">指令列表</Page-title>
     <div class="c_searchArea" :class="{fd:!addBtn}">
       <p-button @click="commandHandler" type="primary" v-if="addBtn">新增指令</p-button>
-      <Search :selectList='selectList' v-model="keyword" v-if="search" />
+      <Search :selectList='selectList' v-model="keyword" @search='onSearch' @reset="reset" v-if="search" />
     </div>
     <div class="tableCon">
       <p-table
@@ -76,9 +76,6 @@ export default {
           dataIndex: 'commandVarValue',
           title: '默认值',
           ellipsis: true,
-          // customRender: (item) => {
-          //   return <span>{['禁用', '启用'][item]}</span>;
-          // },
         },
         {
           dataIndex: 'remark',
@@ -104,8 +101,21 @@ export default {
     } 
   },
   methods: {
+    expandhandler(modelCommandId) {
+      if (!modelCommandId) {
+        return
+      }
+      this.$API.getModelCommandVarList({modelCommandId}).then( res => {
+        this.tableData.forEach( item => {
+          if (item.id === modelCommandId) {
+            this.$set(item, 'innerData',res.data.records)
+          }
+        })
+      })
+    },
     getTableData({searchKey = this.selectList[0].key,keyword} = {}){
       const param = {
+        modelId: this.modelId,
         searchKey,
         keyword,
         limit: this.pagination.pageSize,
@@ -115,6 +125,10 @@ export default {
       this.$API.getModelCommandList(param).then( res =>{
         if ( res.code === 0 ){
           this.tableData = res.data.records || [];
+          this.tableData.forEach( item => {
+            this.$set(item, 'innerData', [])
+          })
+          this.expandhandler(this.expandedRowKeys[0])
           this.pagination.total = res.data.total;
         }
         this.loading = false;
@@ -127,6 +141,7 @@ export default {
       this.visible = true
       this.componentId = 'CommandModal'
       this.options = {}
+      this.options.modelId = this.$route.query.id
       if (type === 'edit') {
         this.title = '编辑指令'
         if (this.add) {
@@ -148,34 +163,35 @@ export default {
       const that = this;
       this.$confirm({
         centered: true,
-        title: type ? '确定要发送指令吗' : '确定要删除吗？',
+        title: type === 'command' ? '确定要发送指令吗' : '确定要删除吗？',
         icon: h => <p-icon class="exclamation" type="exclamation-circle" />,
         content: (h, params) => {
-          const str = type ? `确定要向设备 "${row.name}" 发送指令 停机 吗？` : `确定删除该指令"${row.name}"吗？`;
-          return h('div', {
-          }, str);
+          const str = type === 'command' ? `确定要向设备 "${row.name}" 发送指令 停机 吗？` : `确定删除指令"${row.commandName}"吗？`;
+          return h('div', str);
         },
         onOk() {
-          if (that.add) {
-            that.tableData.splice(index, 1)
-            that.expandedRowKeys = that.expandedRowKeys.filter( item => item !== row.commandId)
-          }else{
-          that.$API.delModelCommand(row.id).then( res =>{
-            if ( res.code === 0 ){
-              that.$message.success('删除成功');
-              that.getTableData();
+          if (type === 'del') { //删除指令
+            if (that.add) {
+              that.tableData.splice(index, 1)
+              that.expandedRowKeys = that.expandedRowKeys.filter( item => item !== row.id)
+            }else{
+              that.$API.delModelCommand({id: row.id}).then( res =>{
+                if ( res.code === 0 ){
+                  that.$message.success('删除成功');
+                  if (that.tableData.length <= 1 && that.pagination.current > 1) {
+                    that.pagination.current --
+                  }
+                  that.getTableData()
+                }
+              }).catch( e =>{
+                console.log(e);
+              });
             }
-          }).catch( e =>{
-            console.log(e);
-          });
+          }else{//发送指令
+
           }
         },
       });
-    },
-    tableChange(pagination, filters, sorter){
-      this.filteredInfo1 = filters
-      this.getTableData(); 
-      console.log(pagination, filters, sorter);
     },
     callback(res) {
       const {type, ...data} = res
@@ -186,10 +202,8 @@ export default {
         const $index = this.tableData.findIndex( item => item.id === data.id)
         this.$set(this.tableData, $index, data)
         this.$emit('input', this.tableData)
-      }else if(type === 'add'){
-
       }else{
-
+        this.getTableData();
       }
     }
   }

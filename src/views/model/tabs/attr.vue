@@ -17,7 +17,6 @@
         :indentSize="30"
         :expandedRowKeys='expandedRowKeys'
         :columns="columns"
-        :customRow='customRow'
         :data-source="tableData">
         <template slot="operation" slot-scope="record, index">
           <span class="operateBtn" @click="attrHandler(record, 'edit')">编辑</span>
@@ -59,20 +58,20 @@ export default {
   components: {AttrModal},
   data() {
     return {
-      filtersList1: attrType,
-      filtersList2: getType,
+      filtersList1: this.add ? [] : attrType,
+      filtersList2: this.add ? [] : getType,
       selectList: [
         {name:'属性名称',key: 'attributeName'},
         {name:'属性标识',key: 'attributeMark'},
       ],
       innerColumns: [
         {
-          dataIndex: 'range',
+          dataIndex: 'enumKey',
           title: '枚举值',
           ellipsis: true
         },
         {
-          dataIndex: 'rangeName',
+          dataIndex: 'enumValue',
           title: '显示名称',
           ellipsis: true,
         },
@@ -82,15 +81,16 @@ export default {
   computed: {
     columns(){
       let { filteredInfo1 } = this;
+      let that = this
       return [
-        {
-          title: '属性名称',
-          dataIndex: 'attributeName',
-          ellipsis: true,
-        },
         {
           title: '属性标识',
           dataIndex: 'attributeMark',
+          ellipsis: true,
+        },
+        {
+          title: '属性名称',
+          dataIndex: 'attributeName',
           ellipsis: true,
         },
         {
@@ -99,7 +99,7 @@ export default {
           dataIndex: 'attributeType',
           filterMultiple: false,
           filteredValue: filteredInfo1.attributeType || null,
-          filters: this.filter && this.filtersList1,
+          filters: this.$arrayItemToString(this.filtersList1),
           width: 120,
           customRender: function(data) {
             return attrTypeList[data]
@@ -111,7 +111,7 @@ export default {
           dataIndex: 'createOption',
           filterMultiple: false,
           filteredValue: filteredInfo1.createOption || null,
-          filters: this.filter && this.filtersList2,
+          filters: this.$arrayItemToString(this.filtersList2),
           width: 120,
           customRender: function(data) {
             return getTypeList[data]
@@ -127,13 +127,32 @@ export default {
     } 
   },
   methods: {
-    customRow(record, index) {
-      const isExpand = !record.innerData || !record.innerData.length
-      return{
-        attrs: {class: isExpand ? 'noExpand' : ''}
+    customExpandIcon(props) {
+      const isEmun = props.record.attributeType === 3
+      if (!this.isShowExpand) {
+        return null
       }
+      if (props.expanded) {
+        return <a class='expand-icon' style={{marginRight:'10px'}} onClick={() => {
+          props.onExpand(props.record)
+        }}><span class={isEmun ? 'iconfont iconic_jiantou' : ''}></span></a>
+      }  
+      return <a class='expand-icon' style={{marginRight:isEmun ? '10px' : '26px'}} onClick={() => {
+        props.onExpand(props.record)
+      }}><span class={isEmun ? 'iconfont iconjiantouxiangzuoshangyitiao' : ''}></span></a>
     },
-    
+    expandhandler(modelAttributeId) {
+      if (!modelAttributeId) {
+        return
+      }
+      this.$API.getModelAttrEmunList({modelAttributeId}).then( res => {
+        this.tableData.forEach( item => {
+          if (item.id === modelAttributeId) {
+            this.$set(item, 'innerData',res.data.records)
+          }
+        })
+      })
+    },
     getTableData({searchKey = this.selectList[0].key,keyword} = {}){
       const param = {
         modelId: this.modelId,
@@ -148,7 +167,13 @@ export default {
       this.$API.getModelAttrList(param).then( res =>{
         if ( res.code === 0 ){
           this.tableData = res.data.records || [];
+          this.tableData.forEach( item => {
+            if (item.attributeType === 3) {
+              this.$set(item, 'innerData', [])
+            }
+          })
           this.pagination.total = res.data.total;
+          this.expandhandler(this.expandedRowKeys[0])
         }
         this.loading = false;
       }).catch( e =>{
@@ -160,7 +185,8 @@ export default {
       this.visible = true
       this.componentId = 'AttrModal'
       this.options = {}
-      if (type) {
+      this.options.modelId = this.$route.query.id
+      if (type === 'edit') {
         this.title = '编辑属性'
         if (this.add) {
           this.options = {...item, type: 'first-edit'}
@@ -184,8 +210,7 @@ export default {
         icon: h => <p-icon class="exclamation" type="exclamation-circle" />,
         content: (h, params) => {
           const str = `确定删除该角色"${attributeName}"吗？`;
-          return h('div', {
-          }, str);
+          return h('div', str);
         },
         onOk() {
           if (that.add) {
@@ -195,7 +220,10 @@ export default {
           that.$API.delModelAttr({id}).then( res =>{
             if ( res.code === 0 ){
               that.$message.success('删除成功');
-              that.getTableData();
+              if (that.tableData.length <= 1 && that.pagination.current > 1) {
+                that.pagination.current --
+              }
+              that.getTableData()
             }
           }).catch( e =>{
             console.log(e);
@@ -203,10 +231,6 @@ export default {
           }
         },
       });
-    },
-    tableChange(pagination, filters, sorter){
-      this.filteredInfo1 = filters
-      this.getTableData(); 
     },
     callback(res) {
       const {type, ...data} = res
@@ -217,24 +241,23 @@ export default {
         const $index = this.tableData.findIndex( item => item.id === data.id)
         this.$set(this.tableData, $index, {...data})
         this.$emit('input', this.tableData)
-      }else if(type === 'add'){
-
       }else{
-
+        this.getTableData();
       }
     }
   }
 };
 </script>
 
-<style lang="less">
-.model{
-  .routePageTitle{
-    font-size: @f-big;
-    line-height: 1;
-    padding: 13px 20px;
-    line-height:22px;
-    border-bottom: 1px solid @c-bg-1;
+<style lang="less" scoped>
+/deep/.tableCon{
+    .noExpand {
+      .expand-icon{
+        visibility: hidden;
+      }
+      & ~ .poros-table-expanded-row{
+        display: none;
+      }
+    }
   }
-}
 </style>

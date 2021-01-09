@@ -37,11 +37,19 @@ export default {
     },
     expand(expanded, record) {
       const id = record.id
-      if(this.expandedRowKeys.includes(id) && !expanded){
-        this.expandedRowKeys = this.expandedRowKeys.filter( item => item !== id)
-      } else {
-        this.expandedRowKeys.push(id)
+      // if(this.expandedRowKeys.includes(id) && !expanded){
+      //   this.expandedRowKeys = this.expandedRowKeys.filter( item => item !== id)
+      // } else {
+      //   this.expandedRowKeys.push(id)
+      // }
+      this.expandedRowKeys = expanded ? [id] : []
+      if (this.expandhandler && !this.add) { //新增模型时不走此方法
+        this.expandhandler(id)
       }
+    },
+    tableChange(pagination, filters, sorter){
+      this.filteredInfo1 = filters
+      this.getTableData(); 
     },
   },
 }

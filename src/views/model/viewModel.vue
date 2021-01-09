@@ -2,7 +2,7 @@
   <page content='马达' @back='back' :extraRightText='extraRightText'>
     <p-tabs  @change="callback">
       <p-tab-pane key="view" tab="概览">
-        <Overview :modelId='modelId'/>
+        <Overview :modelId='modelId' :registerDeviceNum.sync='registerDeviceNum' />
       </p-tab-pane>
       <p-tab-pane key="attr" tab="属性">
         <Attr search addBtn filter :modelId='modelId' />
@@ -31,12 +31,12 @@ export default {
   },
   data() {
     return {
-      
+      registerDeviceNum: 0,
     }
   },
   computed: {
     extraRightText() {
-      return '注册设备数：10'
+      return `注册设备数：${this.registerDeviceNum || 0}`
     },
     modelId() {
       return this.$route.query.id

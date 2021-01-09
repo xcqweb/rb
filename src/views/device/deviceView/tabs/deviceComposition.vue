@@ -33,7 +33,18 @@ export default {
     return {
       searchKey: '',
       loading: false,
-      columns: [
+      data: [],
+      selectList: [
+        {name:'组合名称',key: 'deviceName'},
+        {name:'创建人',key: 'creater'},
+        {name:'创建时间',key: 'createTime'},
+      ]
+    }
+  },
+  computed: {
+    columns() {
+      const that = this
+      return [
         {
           title: '组合名称',
           ellipsis: true,
@@ -54,7 +65,10 @@ export default {
         {
           dataIndex: 'name',
           title: '创建时间',
-          ellipsis: true
+          ellipsis: true,
+          customRender(date) {
+            return that.$formatDate(date)
+          }
         },
         {
           title: '操作',
@@ -62,12 +76,6 @@ export default {
           align: 'right',
           scopedSlots: { customRender: 'operation' }
         },
-      ],
-      data: [],
-      selectList: [
-        {name:'组合名称',key: 'deviceName'},
-        {name:'创建人',key: 'creater'},
-        {name:'创建时间',key: 'createTime'},
       ]
     }
   },

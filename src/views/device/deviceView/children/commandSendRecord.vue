@@ -41,10 +41,9 @@ export default {
   components: {ViewMsg},
   data() {
     return {
-      filtersList: sendType,
+      filtersList1: sendType,
       filtersList2: resultType,
-      filteredInfo1: null,
-      filteredInfo2: null,
+      filteredInfo1: {},
       selectList: [
         {name:'指令名称',key: 'modelName'},
         {name:'指令标识',key: 'creater'},
@@ -54,9 +53,8 @@ export default {
   },
   computed: {
     columns(){
-      let { filteredInfo1, filteredInfo2} = this;
+      let { filteredInfo1} = this;
       filteredInfo1 = filteredInfo1 || {};
-      filteredInfo2 = filteredInfo2|| {};
       return [
         ...commandColumns.slice(0,3),
         {
@@ -74,8 +72,8 @@ export default {
           ellipsis: true,
           dataIndex: 'description',
           filterMultiple: false,
-          filteredValue: filteredInfo1.systemName || null,
-          filters: this.filtersList,
+          filteredValue: filteredInfo1.systemName || [],
+          filters: this.$arrayItemToString(this.filtersList1),
           width: 100,
         },
         {
@@ -88,8 +86,8 @@ export default {
           ellipsis: true,
           dataIndex: 'createName',
           filterMultiple: false,
-          filteredValue: filteredInfo2.systemName || null,
-          filters: this.filtersList2,
+          filteredValue: filteredInfo2.systemName || [],
+          filters: this.$arrayItemToString(this.filtersList2),
           width: 100,
         },
         {

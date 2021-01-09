@@ -1,6 +1,6 @@
 <template>
-  <div class="ant-empty ant-empty-normal cus-no-data" :style="style">
-    <div class="ant-empty-image">
+  <div class="poros-empty poros-empty-normal cus-no-data" :style="style">
+    <div class="poros-empty-image">
       <svg width="64" height="41" viewBox="0 0 64 41" xmlns="http://www.w3.org/2000/svg">
         <g transform="translate(0 1)" fill="none" fillRule="evenodd">
           <ellipse fill="#F5F5F5" cx="32" cy="33" rx="32" ry="7"></ellipse>
@@ -11,7 +11,7 @@
         </g>
       </svg>
     </div>
-    <p class="ant-empty-description">{{emptyText}}</p>
+    <p class="poros-empty-description">{{emptyText}}</p>
   </div>
 </template>
 <script>

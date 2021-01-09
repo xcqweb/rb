@@ -17,13 +17,12 @@
 </template>
 
 <script>
-import paginationMixins from '@/mixins/pagination'
-import expandIconMixins from '@/mixins/table-expand-icon'
+import tableMixins from '@/mixins/tableMixins'
 import BtnTabs from '../children/btnTabs'
 import {logType,operatorType} from '@/utils/baseData'
 export default {
   components: {BtnTabs},
-  mixins: [paginationMixins,expandIconMixins],
+  mixins: [tableMixins],
   props: {
     isDevice: Boolean
   },
@@ -35,24 +34,16 @@ export default {
       ],
       currentTab: 'status',
       time: '',
-      loading: false,
-      filtersList: logType,
+      filtersList1: logType,
       filtersList2: operatorType,
-      filteredInfo1: null,
-      filteredInfo2: null,
     }
   },
   computed: {
     isCurrent() {
       return this.currentTab === 'status'
     },
-    isShowExpand() {
-      return this.innerColumns.length
-    },
     columns(){
-      let { filteredInfo1,filteredInfo2 } = this;
-      filteredInfo1 = filteredInfo1 || {};
-      filteredInfo2 = filteredInfo2 || {};
+      let { filteredInfo1 } = this;
       const arr = [
         {
           title: '设备',
@@ -66,8 +57,8 @@ export default {
           dataIndex: 'type',
           ellipsis: true,
           filterMultiple: false,
-          filteredValue: filteredInfo1.systemName || null,
-          filters: this.filtersList,
+          filteredValue: filteredInfo1.systemName || [],
+          filters: this.$arrayItemToString(this.filtersList1),
           width: 100
         },
         {
@@ -97,8 +88,8 @@ export default {
           dataIndex: 'systemName6',
           ellipsis: true,
           filterMultiple: false,
-          filteredValue: filteredInfo2.systemName || null,
-          filters: this.filtersList2,
+          filteredValue: filteredInfo1.systemName || [],
+          filters: this.$arrayItemToString(this.filtersList2),
           width:100
         },
         {
@@ -118,18 +109,6 @@ export default {
   methods: {
     changeTab({symbol}) {
       this.currentTab = symbol
-    },
-    reset(){
-      this.time = ''
-      this.filteredInfo1 = null
-      this.pagination.pageSize = 10
-      this.pagination.current = 1
-      this.getTableData();
-    },
-    tableChange(pagination, filters, sorter){
-      this.filteredInfo1 = filters
-      this.getTableData(); 
-      console.log(pagination, filters, sorter);
     },
     getTableData(){
       const param = {

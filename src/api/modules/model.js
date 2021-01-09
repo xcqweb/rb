@@ -38,12 +38,19 @@ export default{
   },
   // 删除模型属性
   delModelAttr: (params) => {
-    return instance.del(`${baseUrl}/ruban-device/modelAttribute/${params.id}`);
+    return instance.delete(`${baseUrl}/ruban-device/modelAttribute/${params.id}`);
   },
   // 根据id获取模型属性
   getModelAttrById: (params) => {
     return instance.get(`${baseUrl}/ruban-device/modelAttribute/${params.id}`);
   },
+  //////////////////枚举属性//////////////////
+
+// 根据id获取模型属性枚举列表
+getModelAttrEmunList: (params) => {
+  return instance.get(`${baseUrl}/ruban-device/modelAttributeTypeEnum/list`,{params});
+},
+
   ///////////////////////参数////////////////////////////
   // 新增模型参数
   addModelParams: (params) => {
@@ -59,12 +66,30 @@ export default{
   },
   // 删除模型参数
   delModelParams: (params) => {
-    return instance.del(`${baseUrl}/ruban-device/modelParam/${params.id}`);
+    return instance.delete(`${baseUrl}/ruban-device/modelParam/${params.id}`);
   },
   // 根据id获取模型参数
   getModelParamsById: (params) => {
     return instance.get(`${baseUrl}/ruban-device/modelParam/${params.id}`);
   },
+
+////////////参数告警 ///////////////////
+// 获取模型参数监控列表
+getModelParamsAlarmList: (params) => {
+  return instance.get(`${baseUrl}/ruban-device/modelParamAlarm/list`, {params});
+},
+// 新增模型参数监控列表
+addModelParamsAlarm: (params) => {
+  return instance.post(`${baseUrl}/ruban-device/modelParamAlarm`, params);
+},
+// 编辑模型参数监控列表
+editModelParamsAlarm: (params) => {
+  return instance.put(`${baseUrl}/ruban-device/modelParamAlarm`, params);
+},
+// 删除模型参数监控
+delModelParamsAlarm: (params) => {
+  return instance.delete(`${baseUrl}/ruban-device/modelParamAlarm/${params.id}`,);
+},
   ///////////////////////指令////////////////////////////
   // 新增模型指令
   addModelCommand: (params) => {
@@ -80,7 +105,7 @@ export default{
   },
   // 删除模型指令
   delModelCommand: (params) => {
-    return instance.del(`${baseUrl}/ruban-device/modelCommand/${params.id}`);
+    return instance.delete(`${baseUrl}/ruban-device/modelCommand/${params.id}`);
   },
   // 根据id获取模型指令
   getModelCommandById: (params) => {
@@ -98,4 +123,11 @@ export default{
   getModelCommandAttrList: (params) => {
     return instance.get(`${baseUrl}/ruban-command-center/commandTemplate/attr/${params.id}`);
   },
+  /////////////////指令变量/////////////
+  // 获取指令对应的变量列表
+  getModelCommandVarList: (params) => {
+    return instance.get(`${baseUrl}/ruban-device/modelCommandVar/list`, {params});
+  },
 }
+
+

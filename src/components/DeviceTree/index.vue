@@ -1,7 +1,7 @@
 
 
 <template>
-  <div>
+  <div class="device-tree">
     <p-tree
       v-if="treeData && treeData.length"
       :treeData="treeData"
@@ -14,6 +14,7 @@
       :checkable='checkable'
       :selectable='selectable'
       :multiple='multiple'
+      :replaceFields='replaceFields'
       @select='selectTree'
       @expand='expand'
       @load='load'
@@ -24,28 +25,28 @@
     </template>
     <template slot="custom" slot-scope="item">
       <span :style="{margin:'2px 4px 0 0'}" class="iconfont iconwenjianjiawenjian"></span>
-      <span class="tree-name">{{ item.name }}</span>
+      <span class="tree-name">{{ item.locationName }}</span>
       <div class="tree-operator" v-if="showOperator">
         <p-dropdown :trigger="['hover']" >
           <i class="iconfont iconellipsis" @click.prevent.stop/>
           <p-menu slot="overlay">
             <p-menu-item @click="operatorTree(1, item)">新增节点</p-menu-item>
-            <p-menu-item @click="operatorTree(2, item)" v-if="item.isRoot === '0'">重命名</p-menu-item>
-            <p-menu-item @click="operatorTree(3, item)" v-if="item.isRoot === '0'">删除节点</p-menu-item>
-            <p-menu-item @click="operatorTree(4, item)" v-if="item.isRoot === '0'">移动节点</p-menu-item>
+            <p-menu-item @click="operatorTree(2, item)" v-if="item.locationType === 0">重命名</p-menu-item>
+            <p-menu-item @click="operatorTree(3, item)" v-if="item.locationType === 0">删除节点</p-menu-item>
+            <p-menu-item @click="operatorTree(4, item)" v-if="item.locationType === 0">移动节点</p-menu-item>
           </p-menu>
         </p-dropdown>
       </div>
     </template>
   </p-tree>
-  <gt-no-data v-if="!treeData || !treeData.length"/>
+  <gt-no-data v-if="!treeData || !treeData.length" borderColor='#fff'/>
   <!-- 弹窗 -->
   <component
     :is="componentId"
     v-model="visible"
     :options="options"
     :title="title"
-    @callback="callback"
+    @callback="treeOperator"
     ref='modal'
   />
   <!-- 选择位置 -->
@@ -55,7 +56,6 @@
 <script>
 import sortTree from '@/utils/sortTree'
 import Operator from './modal/operator'
-import d from './1.json'
 export default {
   name: 'DeviceTree',
   components: {Operator},
@@ -70,7 +70,17 @@ export default {
     showIcon: Boolean,
     showLine: Boolean,
     showOperator: Boolean, //是否显示操作按钮
-    value: Array
+    value: Array,
+    replaceFields: {
+      type: Object,
+      default: function() {
+        return {
+          children:'children', 
+          title:'locationName', 
+          key:'id' 
+        }
+      }
+    },
   },
   data() {
     return {
@@ -80,32 +90,38 @@ export default {
       title: '',
       componentId: '',
       //tree
-      treeData: this.tran(d),
+      treeData: [],
       moveTargetNode: [], //要移入的节点
       loadedKeys: [],
       expandedKeys: [],
+      moveNode: []
     }
   },
+  mounted() {
+    this.initTree()
+  },
   methods: {
+    initTree() {
+      this.treeData = []
+      this.loadedKeys = []
+      this.expandedKeys = []
+      this.getLocation({}).then( ({data}) => {
+        this.treeData = this.tran(data)
+        this.expandedKeys = [data[0].id]
+      }).catch( () => {/** */})
+    },
     tran(data) {
       return data.map( item => {
         return {
-          isLeaf: item.leaf,
-          key: item.code,
+          isLeaf: !item.hasChild,
           expanded: false,
           scopedSlots: { title: 'custom' },
           ...item,
-          children: item.children.map( item => {
-            return {
-              isLeaf: item.leaf,
-              key: item.code,
-              expanded: false,
-              scopedSlots: { title: 'custom' },
-              ...item,
-            };
-          })
         };
       });
+    },
+    getLocation(params) {
+      return this.$API.queryChildLocation(params)
     },
     onLoadData(treeNode) {
       return new Promise(resolve => {
@@ -114,19 +130,10 @@ export default {
           return;
         }
         const params = {
-          code: treeNode.dataRef.code,
-          dataSources: 0,
+          parentId: treeNode.dataRef.id,
         };
-        this.$API.getOrgList(params).then( ({data}) => {
-          const reData = data.map( item => {
-            return {
-              isLeaf: item.leaf,
-              key: item.code,
-              expanded: false,
-              scopedSlots: { title: 'custom' },
-              ...item
-            };
-          });
+        this.getLocation(params).then( ({data}) => {
+          const reData = this.tran(data);
           this.$set(treeNode.dataRef, 'children', reData)
           this.treeData = [...this.treeData];
           resolve();
@@ -135,110 +142,82 @@ export default {
     },
     //树节点新增-更新-删除操作
     /*
-    type 0 新增 1 编辑 2 删除
-    addUserCount >=0 时为新增用户 === 'del' 时为移除用户
+    type 0 新增 1 编辑 2 删除 3 移动
     */
-    treeOperator({name, parentCode, parentName, code, p_isLeaf}, type, addUserCount) {
+    treeOperator({locationName, parentId, parentName, id, p_isLeaf, node}, type) {
       const that = this;
       function loop(trees) {
         for (const [index, tree] of trees.entries()) {
           //新增
-          if (parentCode === tree.key && type === 0) {
+          if (parentId === tree.id && type === 0) {
+            const addItem = {
+              parentId,
+              parentName,
+              locationName,
+              id,
+              isLeaf: true,
+              leaf: true,
+              expanded: false,
+              locationType: 0,
+              scopedSlots: { title: 'custom' },
+            }
             that.$set(tree, 'expanded', true)
             //如果父节点是叶子节点
             if (p_isLeaf) {
               that.$set(tree, 'isLeaf', false)
               if (Array.isArray(tree.children)) {
-                tree.children.push({
-                  parentCode,
-                  parentCodeName: parentName,
-                  name,
-                  key: code,
-                  code: code,
-                  isLeaf: true,
-                  leaf: true,
-                  expanded: false,
-                  relatedUserNum: 0,
-                  isRoot: '0',
-                  scopedSlots: { title: 'custom' },
-                });
+                tree.children.push(addItem);
                 break
               }else{
                 that.$set(tree, 'children', [])
-                that.$set(tree, 'children', [{
-                  parentCode,
-                  name,
-                  parentCodeName: parentName,
-                  key: code,
-                  code: code,
-                  isLeaf: true,
-                  leaf: true,
-                  expanded: false,
-                  relatedUserNum: 0,
-                  isRoot: '0',
-                  icon: '',
-                  scopedSlots: { title: 'custom' },
-                }])
+                that.$set(tree, 'children', [addItem])
               }
-              // queryChildrenNode
             }else{ //父节点不是叶子节点
               if (tree.children && tree.children.length) { //已展开
-                  tree.children.push({
-                    parentCode,
-                    parentCodeName: parentName,
-                    name,
-                    key: code,
-                    code: code,
-                    isLeaf: true,
-                    leaf: true,
-                    expanded: false,
-                    relatedUserNum: 0,
-                    isRoot: '0',
-                    scopedSlots: { title: 'custom' },
-                  });
+                  tree.children.push(addItem);
               }else{//未展开,查询子节点
-                that.queryChildrenNode(parentCode);
+                that.getLocation(parentId);
               }
             }
-            that.expandedKeys.push(parentCode);
+            that.expandedKeys.push(parentId);
             break
           }
           //编辑
-          if (code === tree.key && type === 1) {
-            //添加用户
-            if (addUserCount !== 'del' && addUserCount >= 0) {
-              that.$set(tree, 'relatedUserNum', addUserCount);
-            }else if (addUserCount === 'del'){
-              that.$set(tree, 'relatedUserNum', tree.relatedUserNum -1);
-            }else{
-              that.$set(tree, 'name', name);
-            }
+          if (id === tree.id && type === 1) {
+            that.$set(tree, 'locationName', locationName);
             break
           }
           //删除
           //无父节点
-          if (!parentCode && code === tree.key && type === 2) {
+          if (!parentId && id === tree.id && type === 2) {
             that.treeData.splice(index, 1)
           }
           //删除某个节点下的子节点
-          if (parentCode === tree.key && type === 2) {
-            const $index = tree.children.findIndex( el => el.code === code)
+          if (parentId === tree.id && type === 2) {
+            const $index = tree.children.findIndex( el => el.id === id)
             tree.children.splice($index, 1)
             if (tree.children && !tree.children.length) {
               that.$set(tree, 'expanded', false)
+              that.$set(tree, 'hasChild', false)
               that.$set(tree, 'isLeaf', true)
             }
-          }
-          //搜索时删除
-          if (that.searchKey && tree.key === code) {
-            that.treeData.splice(index, 1)
           }
           if (tree.children && tree.children.length) {
             loop(tree.children);
           }
         }
       }
-      loop(this.treeData);
+      if (type === 3) { //移动
+        this.$API.moveLocation({
+          id: this.moveNode.id,
+          newId: node.id
+        }).then( res => {
+          this.$message.success('操作成功！')
+          this.moveHandler([this.moveNode], [node])
+        })
+      }else{
+        loop(this.treeData);
+      }
     },
     selectTree(data, {node, node: {dataRef}}) {
       console.log(node, dataRef)
@@ -257,14 +236,15 @@ export default {
         1: 'addNode',
         2: 'editNode',
         3: 'removeNode',
-        4: 'moveNode'
+        4: 'moveNodeHandler'
       }[key];
       this[handler](dataRef);
     },
-    moveNode() {
+    moveNodeHandler(item) {
       this.visible = true
       this.title = '移动节点'
       this.componentId = 'ModalSelectTree'
+      this.moveNode = item
     },
     addNode(item) {
       this.visible = true
@@ -272,174 +252,125 @@ export default {
       this.componentId = 'Operator'
       this.options = {
         parentName: '',
-        parentCode: '',
+        parentId: '',
         name: '',
-        code: '',
+        id: '',
         isEdit: false,
         selectedItem: item
       }
-      this.$set(this.options, 'parentName', item.name);
-      this.$set(this.options, 'parentCode', item.code);
+      this.$set(this.options, 'parentName', item.locationName);
+      this.$set(this.options, 'parentId', item.id);
     },
     editNode(item) {
+      const paths = item.locationNamePath.split('/')
       this.visible = true
       this.title = '重命名'
       this.componentId = 'Operator'
-      this.options.parentName = item.parentCodeName
-      this.options.parentCode = item.parentCode
-      this.options.name = item.name
-      this.options.code = item.code
+      this.options.parentName = paths[path.length - 2]
+      this.options.parentId= item.parentId
+      this.options.locationName = item.locationName
+      this.options.id = item.id
       this.options.isEdit = true
       this.options.selectedItem = item
     },
+    //删除节点
+    removeNodeHandler(item) {
+      this.$API.delLocation({id: item.id}).then( res => {
+        this.treeOperator(item,2)
+        this.$message.success('删除成功！')
+      })
+    },
     removeNode(item) {
-      this.remove(item, this.removeOrgHandler)
+      this.remove(item, this.removeNodeHandler)
     },
     remove(item, handler) {
       this.$confirm({
         title: '确定要删除吗？',
-        content: `确定要删除“${item.name}”吗？`,
+        content: `确定要删除“${item.locationName}”吗？`,
         centered: true,
         onOk: () => {
           handler(item)
         }
       })
     },
-    callback() {
-
-    },
     //移动节点
     //确定移动节点回调
-    moveNodeHandler() {
-        const params = {
-            locationId: this.choseNode[0].locationId,
-            globalLocationId: this.moveTargetNode[0].locationId,
-        };
-        moveNode(params).then( (resp) => {
-            const that = this;
-            this.loading = false;
-            function loopDel(target, moveTarget, loopData) {
-                //删除
-                for (const [index, node] of loopData.entries()) {
-                    if (node.locationId === target[0].parentId) { //删除移动的节点 => 找到父节点进行删除操作
-                        for (let i = 0; i < node.children.length; i++) {
-                            if (node.children[i].locationId === target[0].locationId) {
-                                if (node.children.length === 1) {
-                                    delete node.loading;
-                                    node.hasChild = false;
-                                    that.$set(node, 'children', []);
-                                }
-                                node.children.splice(i, 1);
-                            }
-                        }
-                        break;
-                    }
-                    //递归查找
-                    if (node.children && node.children.length > 0) {
-                        loopDel(target, moveTarget, node.children);
-                    }
-                }
-            }
-            //转移节点
-            function loopAdd(target, moveTarget, loopData){
-                //移入
-                for (const [index, node] of loopData.entries()) {
-                    if (node.locationId === moveTarget[0].locationId) { //移入节点操作
-                        if (!node.loading && node.locationType !== -1 && node.children.length === 0 && !node.hasChild) {//移入为加载的节点 非根节点 无子节点
-                            that.queryNode(node).then( (res) => {
-                                node.loading = false;
-                                node.hasChild = true;
-                                node.expand = true;
-                                //判断是否有子节点 有加上展开箭头
-                                const loop = (tree) => {
-                                    for (let i = 0; tree && i < tree.length; i++) {
-                                        if (tree[i].hasChild) {
-                                            tree[i].loading = false;
-                                            tree[i].children = [];
-                                        }
-                                        //选中移动的单元或节点
-                                        if (target[0].locationId === tree[i].locationId) {
-                                            tree[i].selected = true;
-                                        }
-                                    }
-                                    return tree;
-                                };
-                                node.children.push(...loop(res.data));
-                                node.children = sortTree(node.children, that); //排序
-                            });
-                        }else{ // 有子节点
-                            if (node.children.length > 0) { //节点已展开
-                                //深拷贝一份
-                                const cloneObj = Object.assign({}, target[0]);
-                                cloneObj.parentId = moveTarget[0].locationId;
-                                cloneObj.level = moveTarget[0].level;
-                                cloneObj.selected = true;
-                                node.children.push(cloneObj);
-                                node.children = sortTree(node.children, that);
-                            }else if (node.hasChild) { //节点未展开
-                                that.queryNode(node).then( (res) => {
-                                    node.hasChild = true;
-                                    //判断是否有子节点 有加上展开箭头
-                                    const loop = (tree) => {
-                                        for (let i = 0; tree && i < tree.length; i++) {
-                                            if (tree[i].hasChild) {
-                                                tree[i].loading = false;
-                                                tree[i].children = [];
-                                            }
-                                            //选中移动的单元或节点
-                                            if (target[0].locationId === tree[i].locationId) {
-                                                tree[i].selected = true;
-                                            }
-                                        }
-                                        return tree;
-                                    };
-
-                                    node.children.push(...loop(res.data));
-                                    node.children = sortTree(node.children, that);
-                                });
-                            }
-                            node.expand = true;
-                        }
-                        break;
-                    }
-                    //递归查找
-                    if (node.children && node.children.length > 0) {
-                        loopAdd(target, moveTarget, node.children);
-                    }
-                }
-            }
-            loopDel(this.choseNode, this.moveTargetNode, this.treeData);
-            loopAdd(this.choseNode, this.moveTargetNode, this.treeData);
-            // this.moveNodeModal = false;
-            this.$Message.success('移动成功！');
-            this.loading = false;
-        }, error => {
-            this.loading = false;
-        });
+    moveHandler(target, moveTarget) {
+      const that = this;
+      function loopDel(target, moveTarget, loopData) {
+          //删除
+          for (const [index, node] of loopData.entries()) {
+              if (node.id === target[0].parentId) { //删除移动的节点 => 找到父节点进行删除操作
+                  for (let i = 0; i < node.children.length; i++) {
+                      if (node.children[i].id === target[0].id) {
+                          if (node.children.length === 1) {
+                              delete node.loading;
+                              node.isLeaf = true;
+                              that.$set(node, 'children', []);
+                          }
+                          node.children.splice(i, 1);
+                      }
+                  }
+                  break;
+              }
+              //递归查找
+              if (node.children && node.children.length > 0) {
+                  loopDel(target, moveTarget, node.children);
+              }
+          }
+      }
+      //转移节点
+      function loopAdd(target, moveTarget, loopData){
+          //移入
+          for (const [index, node] of loopData.entries()) {
+              if (node.id === moveTarget[0].id) { //移入节点操作
+                  if (!node.loading && node.locationType !== 1 && (!node.children || (node.children && node.children.length === 0)) && !node.hasChild) {//移入为加载的节点 非根节点 无子节点
+                      const cloneObj = Object.assign({}, target[0]);
+                      cloneObj.parentId = moveTarget[0].id;
+                      cloneObj.level = moveTarget[0].level;
+                      node.isLeaf = false;
+                      node.children = []
+                      node.children.push(cloneObj);
+                      node.children = sortTree(node.children, that); //排序
+                      that.expandedKeys.push(node.id)
+                  }else{ // 有子节点
+                      if (node.children && node.children.length > 0) { //节点已展开
+                          //深拷贝一份
+                          const cloneObj = Object.assign({}, target[0]);
+                          cloneObj.parentId = moveTarget[0].id;
+                          cloneObj.level = moveTarget[0].level;
+                          cloneObj.selected = true;
+                          node.children.push(cloneObj);
+                          node.children = sortTree(node.children, that);
+                      }else if (node.hasChild) { //节点未展开
+                          that.getLocation(node).then( (res) => {
+                              node.isLeaf = false;
+                              //判断是否有子节点 有加上展开箭头
+                              node.children = []
+                              node.children.push(...that.tran(res.data));
+                              node.children = sortTree(node.children, that);
+                          });
+                      }
+                      node.expanded = true;
+                  }
+                  break;
+              }
+              //递归查找
+              if (node.children && node.children.length > 0) {
+                  loopAdd(target, moveTarget, node.children);
+              }
+          }
+      }
+      loopDel(target, moveTarget, this.treeData);
+      loopAdd(target, moveTarget, this.treeData);
     },
-    //移动节点
-    move() {
-        // function loopDel(target, loopData){
-        //     for (const node of loopData) {
-        //         if (node.locationId === target.locationId) { //自身和单元节点不能移入 置灰
-        //             node.disabled = true;
-        //         }else{
-        //             node.disabled = false;
-        //         }
-        //         if (node && Object.prototype.toString.call(node.children) !== '[object Null]' && node.children.length > 0) {
-        //             loopDel(target, node.children);
-        //         }
-        //     }
-        // }
-        // loopDel(this.choseNode[0], this.targetTreeData);
-
-        // this.getInitTreeData('target');
-        // this.moveNodeModal = true;
-    }
   },
 }
 </script>
 <style lang="less" scoped>
+  .device-tree{
+    padding: 6px;
+  }
   /deep/.tree-wrap{
     position: relative;
     .poros-tree-switcher_open,.poros-tree-switcher_close {

@@ -17,28 +17,28 @@
       :wrapper-col="{span: 20}"
       label-align="left"
     >
-      <p-form-model-item prop="alarmLevel">
+      <p-form-model-item prop="alarmLevelId">
         <span slot="label" class="required-doc">报警等级</span>
-        <p-select v-model="model.alarmLevel">
-            <p-select-option v-for="item in alarmLevel" :value='item.value' :key='item.value'>{{item.text}}</p-select-option>
+        <p-select v-model="model.alarmLevelId">
+            <p-select-option v-for="item in alarmLevelList" :value='item.value' :key='item.value'>{{item.text}}</p-select-option>
           </p-select>
       </p-form-model-item>
-      <div class="flex">
-        <p-form-model-item label='报警阈值' class="judge">
-          <p-select v-model="model.limit" style="width:120px;">
+      <div class="flex_monitor">
+        <p-form-model-item class="judge">
+          <span slot="label" class="required-doc">报警阈值</span>
+          <p-select v-model="model.limit" class="w160">
             <p-select-option v-for="item in formualList" :value='item.value' :key='item.value'>{{item.text}}</p-select-option>
           </p-select>
         </p-form-model-item>
-        <p-form-model-item prop="firstVal" class="ml20">
-            <p-input-number v-show="!extraType" class="f1 mr6 ml6" v-model.trim="model.firstVal" placeholder="请输入阈值" />
-            <p-input v-show="extraType" class="f1 mr6 ml6" v-model.trim="model.firstVal" placeholder="请输入阈值" />
+        <p-form-model-item prop="firstVal">
+            <p-input class="f1 mr6 ml6 w160" v-model="model.firstVal" placeholder="请输入阈值" />
         </p-form-model-item>
         <p-form-model-item prop="secondVal" v-if="isBetween">
-            <p-input-number class="f1" v-model.trim="model.secondVal" placeholder="请输入阈值" />
+            <p-input class="f1 w160" v-model="model.secondVal" placeholder="请输入阈值" />
         </p-form-model-item>
       </div>
-      <p-form-model-item label="报警信息" prop="alarmInfo">
-        <p-input v-model.trim="model.alarmInfo" placeholder="请输入报警信息" />
+      <p-form-model-item label="报警信息" prop="remark">
+        <p-input v-model.trim="model.remark" placeholder="请输入报警信息" />
       </p-form-model-item>
     </p-form-model>
   </p-modal>
@@ -47,56 +47,30 @@
 <script>
 import modalMixins from '@/mixins/modal'
 import pattern from '@/utils/pattern'
-import {formualList,alarmLevel} from '@/utils/baseData'
+import {mapState} from 'vuex'
+import {formualList,formualMap} from '@/utils/baseData'
 export default {
   mixins: [modalMixins],
   data() {
     return {
       formualList,
-      alarmLevel,
-      model: {
-        alarmLevel: this.options.alarmLevel || '0',
-        limit: this.options.limit || '==',
-        firstVal: this.options.firstVal || '',
-        secondVal: this.options.secondVal || '',
-        alarmInfo: this.options.alarmInfo || '',
-        id: this.options.id || '',
-        paramId: this.options.paramId || '',
-      },
-      rules: {
-        alarmInfo: [
-          {
-            type: 'string',
-            max: 50,
-            message: '报警信息限制为50个字符'
-          },
-        ],
-        firstVal: [
-          {
-            required: true,
-            message: '请输入阈值'
-          },
-        ],
-        secondVal: [
-          {
-            required: this.isBetween,
-            message: '请输入阈值'
-          },
-        ],
-      }
+      model: {},
     }
   },
   computed: {
+    ...mapState({
+      alarmLevelList: state => state.dic.alarmLevelList
+    }),
     comRules() {
-    return {
-        alarmInfo: [
+      return {
+        remark: [
           {
             type: 'string',
             max: 50,
             message: '报警信息长度限制为50个字符'
           },
         ],
-        firstVal: [
+        firstVal: this.extraType ? [
           {
             required: true,
             message: '请输入阈值'
@@ -109,6 +83,20 @@ export default {
           {
             message: '输入字符仅支持中文、字母、数字（整数和小数）或下划线“_”',
             pattern: pattern.name4Reg
+          },
+        ] : [
+          {
+            required: true,
+            message: '请输入阈值'
+          },
+          {
+            type: 'string',
+            max: 9,
+            message: '输入长度限制为9个字符'
+          },
+          {
+            message: '输入字符仅支持数字（整数和小数）',
+            pattern: pattern.numReg
           },
         ],
         secondVal: !this.extraType && [
@@ -118,12 +106,12 @@ export default {
           },
           {
             type: 'string',
-            max: 25,
-            message: '输入长度限制为25个字符'
+            max: 9,
+            message: '输入长度限制为9个字符'
           },
           {
-            message: '输入字符仅支持中文、字母、数字（整数和小数）或下划线“_”',
-            pattern: pattern.name4Reg
+            message: '输入字符仅支持数字（整数和小数）',
+            pattern: pattern.numReg
           },
         ],
       }
@@ -135,49 +123,75 @@ export default {
     extraType() {
       const {limit} = this.model 
       return  limit === '==' || limit === '!='
+    },
+    moreEdit() {
+      const {type} = this.options
+      return type === 'edit'
+    },
+    formula() {
+      const {limit,paramMark,firstVal,secondVal} = this.model
+      if (limit === '<>') {
+        return `${paramMark}<${firstVal}||${paramMark}>${secondVal}`
+      }else if(limit === '><'){
+        return `${paramMark}>${firstVal}&&${paramMark}<${secondVal}`
+      }else{
+        return `${paramMark}${limit}${firstVal}`
+      }
+    },
+    formulaView() {
+      const {limit,firstVal,secondVal} = this.model
+      if (this.isBetween) {
+        return `${formualMap[limit]} ${firstVal} ~ ${secondVal}`
+      }else{
+        return `${formualMap[limit]}${firstVal}`
+      }
     }
   },
   created() {
     this.$watch('visible', (val) => {
       if (val) {
-        this.model = {alarmLevel: '0',limit: '==', ...this.options}
+        this.model = {alarmLevelId: '1',limit: '==',firstVal: '',secondVal: '', ...this.options}
+        const {firstVal,secondVal} = this.model
+        this.model.firstVal = firstVal ? (firstVal + '').trim() : ''
+        this.model.secondVal = secondVal ? (secondVal + '').trim() : ''
       }
     });
   },
   methods: {
     cancel() {
-      this.$refs.form.resetFields()
-      this.$refs.paramsValidateForm.resetFields()
       this.loading = false
       this.visible = false
+      this.$refs.form.resetFields()
     },
     confirm() {
       this.$refs.form.validate(valid => {
         if (valid) {
           this.loading = true
-          const data = Object.assign({}, this.model);
+          const {formulaView,formula} = this
+          const data = Object.assign(this.model,{formulaView,formula,enabled:0});
+          delete data.type
           let func;
-          let message = '操作成功！'
+          let message = '提交成功！'
           const {type} = this.options;
           if (type === 'add') {
-            // func = addOrg
+            func = this.$API.addModelParamsAlarm
           } else if(type === 'edit') {
-            // func = modOrg
+            func = this.$API.editModelParamsAlarm
           } else if(type === 'first-add'){//新增模型时添加
             this.$message.success(message)
-            this.$emit('callback', {type, ...this.model, id: this.uuid()})
+            this.$emit('callback', {type,enabled:0, ...this.model,formulaView,formula, id: this.uuid()})
             this.cancel()
             return
           }else if(type === 'first-edit'){//新增模型时编辑
             this.$message.success(message)
-            this.$emit('callback', {type, ...this.model})
+            this.$emit('callback', {type,enabled:0, ...this.model,formulaView,formula})
             this.cancel()
             return
           }
           func(data).then(res => {
             this.cancel()
             this.$message.success(message)
-            this.$emit('callback')
+            this.$emit('callback', {type, ...this.model})
           }).catch(() => {
             this.loading = false
           })
@@ -193,5 +207,8 @@ export default {
   .poros-col{
     width: 98px;
   }
+}
+.flex_monitor{
+  display: flex;
 }
 </style>

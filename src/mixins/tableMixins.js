@@ -16,13 +16,14 @@ export default {
     }
   },
   mounted() {
-    if (!this.add) {
+    if (!this.add) { //新增模型时不走此方法
       this.getTableData(); 
     }
   },
   methods: {
     reset(){
       this.filteredInfo1 = {}
+      this.expandedRowKeys = []
       this.pagination.pageSize = 10
       this.pagination.current = 1
       this.getTableData();

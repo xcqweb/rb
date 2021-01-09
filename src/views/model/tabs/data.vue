@@ -2,7 +2,7 @@
   <div class="data">
     <div class="c_searchArea" :class="{'fd':!addBtn}">
       <p-button @click="paramHandler" type="primary" v-if="addBtn">添加参数</p-button>
-      <Search :selectList='selectList' @search='onSearch' v-model="keyword" v-if="search" />
+      <Search :selectList='selectList' @search='onSearch' v-model="keyword" @reset="reset" v-if="search" />
     </div>
     <div class="tableCon">
       <p-table
@@ -17,7 +17,6 @@
         :indentSize="30"
         :expandedRowKeys='expandedRowKeys'
         :columns="columns"
-        :customRow='customRow'
         :data-source="tableData"
         >
         <template slot="operation" slot-scope="record">
@@ -26,7 +25,7 @@
           <span class="operateBtn" @click="delHandler(record, 'param')">删除</span>
         </template>
         <p-table
-            v-if="isShowExpand && record.innerData.length"
+            v-if="isShowExpand"
             slot="expandedRowRender"
             slot-scope="record"
             :columns="innerColumns"
@@ -38,11 +37,11 @@
             class="innerTable"
           >
           <template slot="switch" slot-scope="record1">
-            <p-switch @click.native="switchClick(record1)">启用</p-switch>
+            <p-switch v-model="record1.enabled" @click.native="switchClick(record1)">启用</p-switch>
           </template>
           <template slot="alarmOperator" slot-scope="record1">
-            <span class="operateBtn" @click="monitorHandler(record1, 'edit',record)" v-show="!record1.status">编辑</span>
-            <span class="operateBtn" @click="delHandler(record, 'monitor',record1)" v-show="!record1.status">删除</span>
+            <span class="operateBtn" @click="monitorHandler(record1, 'edit',record)" v-show="!record1.enabled">编辑</span>
+            <span class="operateBtn" @click="delHandler(record, 'monitor',record1)" v-show="!record1.enabled">删除</span>
           </template>
           </p-table>
       </p-table>
@@ -63,7 +62,13 @@
 import modelMixins from './modelMixins'
 import DataModal from '../modal/param'
 import Monitor from '../modal/monitor'
-import {paramType, paramTypeList,alarmLevelList,formualMap,useOption} from '@/utils/baseData'
+import { mapState } from 'vuex'
+import {paramType, paramTypeList,formualMap,useOption} from '@/utils/baseData'
+import {analysisFormula} from '@/utils/util'
+function formualTransfrom({limit, firstVal,secondVal}) {
+  const isBetween = limit === '<>' || limit === '><'
+  return formualMap[limit] + (isBetween ? `${firstVal} ~ ${secondVal}` : firstVal)
+}
 export default {
   mixins: [modelMixins],
   components: {DataModal,Monitor},
@@ -73,26 +78,32 @@ export default {
         {name:'参数名称',key: 'paramName'},
         {name:'参数标识',key: 'paramMark'},
       ],
-      filtersList: paramType,
-      innerColumns: [
+      filtersList: this.add ? [] : paramType,
+    };
+  },
+  computed: {
+    ...mapState({
+      alarmLevelList: state => state.dic.alarmLevelMap
+    }),
+    innerColumns() {
+      const that = this
+      return [
         {
-          dataIndex: 'alarmLevel',
+          dataIndex: 'alarmLevelId',
           title: '报警等级',
           ellipsis: true,
           customRender(data) {
-            return alarmLevelList[data]
+            console.log(this)
+            return that.alarmLevelList[data]
           }
         },
         {
           title: '报警阈值',
           ellipsis: true,
-          customRender({limit, firstVal,secondVal}) {
-            const isBetween = limit === '<>' || limit === '><'
-            return formualMap[limit] + (isBetween ? `${firstVal} ~ ${secondVal}` : firstVal)
-          }
+          dataIndex: 'formulaView',
         },
         {
-          dataIndex: 'alarmInfo',
+          dataIndex: 'remark',
           title: '报警信息',
           ellipsis: true
         },
@@ -106,10 +117,8 @@ export default {
           ellipsis: true,
           scopedSlots: { customRender: 'alarmOperator' },
         },
-      ],
-    };
-  },
-  computed: {
+      ]
+    },
     columns(){
       let { filteredInfo1 } = this;
       return this.isDevice ? [
@@ -150,7 +159,7 @@ export default {
           dataIndex: 'paramType',
           filterMultiple: false,
           filteredValue: filteredInfo1.paramType || [],
-          filters: this.filter && this.filtersList,
+          filters: this.$arrayItemToString(this.filtersList),
           width: 120,
           customRender: function(data) {
             return paramTypeList[data]
@@ -159,7 +168,7 @@ export default {
         {
           title: '计算精度',
           ellipsis: true,
-          dataIndex: 'precision',
+          dataIndex: 'paramPrecision',
           width: 100,
         },
         {
@@ -180,21 +189,32 @@ export default {
         {
           title: '操作',
           align: 'right',
-          width: 160,
+          width: 136,
           scopedSlots: { customRender: 'operation' },
         },
       ]
     } 
   },
   methods: {
-    customRow(record, index) {
-      const isExpand = !record.innerData || !record.innerData.length
-      return{
-        attrs: {class: isExpand ? 'noExpand' : ''}
+    //展开子列表
+    expandhandler(modelParamId, del) {
+      if (!modelParamId) {
+        return
       }
+      this.$API.getModelParamsAlarmList({modelParamId}).then( res => {
+        this.tableData.forEach( item => {
+          if (item.id === modelParamId) {
+            this.$set(item, 'innerData',res.data.records)
+            if (del && !res.data.records.length) { //删除是如果子项为空 收起table
+              this.expandedRowKeys = []
+            }
+          }
+        })
+      })
     },
     getTableData({searchKey = this.selectList[0].key,keyword} = {}){
       const param = {
+        modelId: this.modelId,
         searchKey,
         keyword,
         limit: this.pagination.pageSize,
@@ -205,6 +225,11 @@ export default {
       this.$API.getModelParamsList(param).then( res =>{
         if ( res.code === 0 ){
           this.tableData = res.data.records || [];
+          this.tableData.forEach( item => {
+            this.$set(item, 'innerData', [])
+          })
+          //加载已展开的子列表
+          this.expandhandler(this.expandedRowKeys[0])
           this.pagination.total = res.data.total;
         }
         this.loading = false;
@@ -216,7 +241,7 @@ export default {
     paramHandler(item, type){
       this.visible = true
       this.componentId = 'DataModal'
-      this.options = {}
+      this.options.modelId = this.$route.query.id
       if (type === 'edit') {
         this.title = '编辑参数'
         if (this.add) {
@@ -242,9 +267,13 @@ export default {
         if (this.add) {
           this.options = {...item, type: 'first-edit'}
           this.options.paramId = pItem.id
+          this.options.paramMark = pItem.paramMark
         }else{
-          this.options = {...item, type: 'edit'}
+          this.options = {...item,...analysisFormula(item.formulaView), type: 'edit'}
+          this.options.modelParamId = pItem.id
           this.options.paramId = pItem.id
+          this.options.paramMark = pItem.paramMark
+          console.log(analysisFormula(item.formulaView))
         }
       }else{
         this.title = '添加监控'
@@ -254,6 +283,8 @@ export default {
         }else{
           this.options.type = 'add'
           this.options.paramId = item.id
+          this.options.modelParamId = item.id
+          this.options.paramMark = item.paramMark
         }
       }
       
@@ -266,14 +297,14 @@ export default {
         title: '确定要删除吗？',
         icon: h => <p-icon class="exclamation" type="exclamation-circle" />,
         content: (h, params) => {
-          const str = `确定删除该参数"${row.name}"吗？`;
+          const str = type === 'param' ? `确定删除该参数"${pRow.paramName || ''}（${pRow.paramMark}）"吗？` : `确定要删除监控 "阈值${formualTransfrom(row)}" `;
           return h('div', {
           }, str);
         },
         onOk() {
           if (that.add) {
             if (type === 'param') {
-              const $index = that.tableData.findIndex(item => item.id === row.id)
+              const $index = that.tableData.findIndex(item => item.id === pRow.id)
               that.tableData.splice($index, 1)
               that.$message.success('删除成功');
               that.expandedRowKeys = that.expandedRowKeys.filter( item => item !== row.id)
@@ -281,58 +312,73 @@ export default {
               const index = that.tableData.findIndex(item => item.id === pRow.id)
               const $index = that.tableData[index].innerData.findIndex(item => item.id === row.id)
               that.tableData[index].innerData.splice($index, 1)
+              if (!that.tableData[index].innerData.length) {
+                that.expandedRowKeys = []
+              }
               that.$message.success('删除成功');
               console.log(that.tableData)
             }
           }else{
             if (type === 'param') {
-              that.$API.delModelParams({id: row.id}).then( res =>{
+              that.$API.delModelParams({id: pRow.id}).then( res =>{
                 if ( res.code === 0 ){
                   that.$message.success('删除成功');
-                  that.getTableData();
+                  if (that.tableData.length <= 1 && that.pagination.current > 1) {
+                    that.pagination.current --
+                  }
+                  that.getTableData()
                 }
               }).catch( e =>{
                 console.log(e);
               });
             }else{
-
+              that.$API.delModelParamsAlarm({id: row.id}).then( res =>{
+                if ( res.code === 0 ){
+                  that.$message.success('删除成功');
+                  that.expandhandler(that.expandedRowKeys[0], true)
+                }
+              }).catch( e =>{
+                console.log(e);
+              });
             }
           }
         },
       });
     },
     switchClick(item) {
-      console.log(item)
-      this.$set(item, 'status', !item.status)
-      return
-    },
-    tableChange(pagination, filters, sorter){
-      this.filteredInfo1 = filters
-      this.getTableData(); 
-      console.log(pagination, filters, sorter);
+      this.$set(item, 'enabled', item.enabled ? 1 : 0)
+      let message = !!item.enabled  ? '启用成功！' : '禁用成功！'
+      if (!this.add) {
+        this.$API.editModelParamsAlarm(item).then(res => {
+          this.$message.success(message)
+        }).catch(() => {
+          this.$set(item, 'enabled', !item.enabled)
+        })
+      }
     },
     callback(res) {
       const {type,modal, ...data} = res
       if (modal === 'param') { //参数
         if(type === 'first-add') {
           data.innerData = []
+          data.alarmAddParamList = []
           this.tableData.push(data)
           this.$emit('input', this.tableData)
-        }else if (type === 'first-edit'){
+        }else if (type === 'first-edit' && type === 'edit'){
           const $index = this.tableData.findIndex( item => item.id === data.id)
           const innerData = this.tableData[$index].innerData || []
-          this.$set(this.tableData, $index, {...data,innerData})
+          const alarmAddParamList = this.tableData[$index].alarmAddParamList || []
+          this.$set(this.tableData, $index, {...data,innerData,alarmAddParamList})
           this.$emit('input', this.tableData)
-        }else if(type === 'add'){
-
         }else{
-
+          this.getTableData(); 
         }
       }else{ //监控
         if(type === 'first-add') {
           this.tableData.forEach( item => {
             if (data.paramId === item.id) {
               item.innerData.push(data)
+              item.alarmAddParamList.push(data)
             }
           })
           this.$emit('input', this.tableData)
@@ -341,13 +387,14 @@ export default {
             if (data.paramId === item.id) { //monitorId
               const $index = item.innerData.findIndex( el => el.id === data.id)
               item.innerData.splice($index, 1, data)
+              item.alarmAddParamList = item.innerData
             }
           })
           this.$emit('input', this.tableData)
-        }else if(type === 'add'){
-
+        }else if (type === 'edit'){
+          this.expandhandler(this.expandedRowKeys[0])
         }else{
-
+          this.expandhandler(this.expandedRowKeys[0])
         }
       }
     }

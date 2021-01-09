@@ -44,24 +44,24 @@ export default {
   computed: {
     columns(){
       let { filteredInfo1 } = this;
+      const that = this
       return [
         {
           title: '模型名称',
-          dataIndex: 'modelName',
           scopedSlots: { customRender: 'modelName' },
         },
-        {
-          title: '上报频率',
-          dataIndex: 'rate',
-          ellipsis: true,
-        },
+        // {
+        //   title: '上报频率',
+        //   dataIndex: 'rate',
+        //   ellipsis: true,
+        // },
         {
           title: '异常判断',
           ellipsis: true,
           dataIndex: 'ruleType',
           filterMultiple: false,
           filteredValue: filteredInfo1.ruleType || null,
-          filters: this.filtersList,
+          filters: this.$arrayItemToString(this.filtersList),
           width: 100,
           customRender: function(data) {
             return judgeTypeList[data]
@@ -87,14 +87,16 @@ export default {
         {
           title: '创建时间',
           dataIndex: 'createTime',
-          width: 150,
+          width: 180,
+          customRender(date) {
+            return that.$formatDate(date)
+          }
           
         },
         {
           title: '操作',
-          dataIndex: 'operate',
           align: 'right',
-          width: 100,
+          width: 90,
           scopedSlots: { customRender: 'operation' },
         },
       ]
@@ -108,8 +110,8 @@ export default {
         searchKey: isArray ? undefined : searchKey,
         limit: this.pagination.pageSize,
         pageNo: this.pagination.current,
-        startTime: isArray ? keyword[0] : undefined,
-        endTime: isArray ? keyword[1] : undefined,
+        startTime: isArray ? this.formatDate(keyword[0]) : undefined,
+        endTime: isArray ? this.formatDate(keyword[1]) : undefined,
         ruleType: this.filteredInfo1.ruleType && this.filteredInfo1.ruleType[0]
       }
       this.loading = true;
@@ -142,7 +144,6 @@ export default {
       }); 
     },
     delClick({modelName, id}){
-      console.log(text, row);
       const that = this;
       this.$confirm({
         centered: true,
@@ -157,7 +158,10 @@ export default {
           that.$API.delModel({id}).then( res =>{
             if ( res.code === 0 ){
               that.$message.success('删除成功');
-              that.getTableData();
+              if (that.tableData.length <= 1 && that.pagination.current > 1) {
+                that.pagination.current --
+              }
+              that.getTableData()
             }
           }).catch( e =>{
             console.log(e);

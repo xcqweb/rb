@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p-select v-model="selectType" v-if="isSelect" style="min-width:90px" :class="{noBoder: isSelect}">
+    <p-select v-model="selectType" @change="reset" v-if="isSelect" style="min-width:90px" :class="{noBoder: isSelect}">
       <p-select-option v-for="(item, index) in selectList" :value='item.key' :key='index'>{{item.name}}</p-select-option>
     </p-select>
     <p-range-picker v-if="extra" style="width: 160px;margin-right: 10px;" v-model="keyword"  @change="onSearch"/>
@@ -46,9 +46,6 @@ export default {
       if (val) {
         this.keyword = val
       }
-    },
-    selectType(val, oldVal) {
-      this.keyword = ''
     },
     keyword(val) {
       this.$emit('input', this.keyword)

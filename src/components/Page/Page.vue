@@ -113,21 +113,21 @@ export default {
     .flex-column();
     height: 100%;
   }
-  .ant-page-header-back{
+  .poros-page-header-back{
     margin: 0;
     margin-right: 6px;
   }
-  .ant-page-header-heading{
+  .poros-page-header-heading{
     display: flex;
     height:100%;
     align-items: center;
   }
-  .ant-page-header-heading-title{
+  .poros-page-header-heading-title{
     line-height: 1.5;
     color: @c-text;
     flex: 1;
   }
-  .backTitle .ant-page-header-heading-title{
+  .backTitle .poros-page-header-heading-title{
     font-size: @f-medium;
   }
   .gt-page-header-middle{

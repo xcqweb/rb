@@ -18,13 +18,13 @@
       label-align="left"
     >
       <p-form-model-item label="指令标识" prop="commandMark">
-        <p-input v-model="model.commandMark" placeholder="请输入指令标识" />
+        <p-input v-model="model.commandMark" :disabled='moreEdit' placeholder="请输入指令标识" />
       </p-form-model-item>
       <p-form-model-item label="指令名称" prop="commandName">
         <p-input v-model.trim="model.commandName" placeholder="请输入指令名称" />
       </p-form-model-item>
       <p-form-model-item label="指令模板" prop="commandTemplateId">
-        <p-select v-model="model.commandTemplateId" @change="getCommandAttrList">
+        <p-select v-model="model.commandTemplateId" labelInValue @change="getCommandAttrList">
             <p-select-option v-for="item in commandTemplateList" :value='item.id' :key='item.id'>{{item.commandName}}</p-select-option>
           </p-select>
       </p-form-model-item>
@@ -48,7 +48,7 @@
                 required: true,
               },
               {
-                message: '变量标识仅支持中文、字母、数字（整数）或下划线“_”',
+                message: '变量标识仅支持中文、字母、数字或下划线“_”',
                 pattern: pattern.name2Reg
               },
               {
@@ -58,7 +58,7 @@
               },
             ]"
             >
-              <p-input v-model="item.commandVarMark" :disabled='item.isDefault' placeholder="请输入变量标识" />
+              <p-input v-model="item.commandVarMark" :disabled='item.extendType === 1' placeholder="请输入变量标识" />
             </p-form-model-item>
             <p-form-model-item
             class="mr6"
@@ -84,12 +84,12 @@
               },
             ]"
             >
-              <p-input v-model="item.remark" :disabled='item.isDefault' :placeholder="!item.isDefault && '请输入注释'" />
+              <p-input v-model="item.remark" :disabled='item.extendType === 1' :placeholder="item.extendType !== 1 && '请输入注释'" />
             </p-form-model-item>
-            <p-icon class="ml6 icon" type='delete' :style="{fontSize: '16px',cursor: 'pointer', visibility: (hideDelBtn && !item.isDefault) ? 'visible' : 'hidden'}" @click="delVar(index)" />
+            <p-icon class="ml6 icon" type='delete' :style="{fontSize: '16px',cursor: 'pointer', visibility: item.extendType !== 1 ? 'visible' : 'hidden'}" @click="delVar(index)" />
           </li>
         </ul>
-        <span class="viewDetail">
+        <span class="viewDetail" :class="{noList: !paramsValidateForm.varList.length}">
           <span @click="addVar"><p-icon type="plus"/>添加变量</span>
         </span>
         </p-form-model>
@@ -148,54 +148,74 @@ export default {
     }
   },
   computed: {
-    hideDelBtn() {
-      return this.paramsValidateForm.varList.length !== 1
-    },
+    moreEdit() {
+      const {type} = this.options
+      return type === 'edit'
+    }
   },
   created() {
     this.getCommandTemplate()
     this.$watch('visible', (val) => {
       if (val) {
         this.model = {...this.options}
-        this.paramsValidateForm.varList = this.options.innerData && this.$deepCopy(this.options.innerData) || [{}]
+        this.paramsValidateForm.varList.push(...(this.options.innerData && this.$deepCopy(this.options.innerData) || [{commandVarMark: '',commandVarValue: '',remark: ''}]))
+        const {id,commandTemplateId} = this.options
+        this.model.commandTemplateId = {key:this.model.commandTemplateId}
+        if (this.moreEdit && !this.options.innerData.length) {
+          this.$API.getModelCommandVarList({modelCommandId: id}).then( res => {
+            this.paramsValidateForm.varList.push(...res.data.records.map( item => {
+              return {
+                ...item,
+                modelCommandId: id
+              }
+            }))
+          })
+        }
       }
     });
   },
   methods: {
     getCommandTemplate() {
       this.$API.getModelCommandTemplateSelect().then( res => {
-        this.commandTemplateList = res.data
+        this.commandTemplateList.push(...res.data)
       })
     },
-    getCommandAttrList(id) {
-      this.$refs.paramsValidateForm.resetFields()
-      this.$API.getModelCommandAttrList({id}).then( res => {
-        this.paramsValidateForm.varList = res.data.map( item => {
-          return {...item, isDefault: true}
-        })
+    getCommandAttrList({key,label}) {
+      if (!key) {
+        return
+      }
+      this.model.commandTemplateName = label
+      this.$refs.paramsValidateForm && this.$refs.paramsValidateForm.resetFields()
+      this.$API.getModelCommandAttrList({id: key}).then( res => {
+        this.paramsValidateForm.varList.unshift(...res.data.map( item => {
+          return {...item, extendType: 1,modelCommandId: this.options.id}
+        }))
       })
     },
     addVar() {
-      this.paramsValidateForm.varList.push({})
+      this.paramsValidateForm.varList.push(this.moreEdit ? {modelCommandId: this.options.id} : {})
     },
     delVar(index) {
       this.paramsValidateForm.varList.splice(index, 1)
     },
     cancel() {
-      this.$refs.form.resetFields()
-      this.$refs.paramsValidateForm.resetFields()
       this.loading = false
       this.visible = false
+      this.$refs.form.resetFields()
+      this.$refs.paramsValidateForm.resetFields()
+      this.paramsValidateForm.varList = []
     },
     confirm() {
       this.$refs.form.validate(valid => {
         this.$refs.paramsValidateForm.validate( valid2 => {
           if (valid && valid2) {
             this.loading = true
-            const varList = this.$deepCopy(this.paramsValidateForm.varList)
-            const data = Object.assign({}, this.model)
+            const modelCommandVarAddParamList = this.$deepCopy(this.paramsValidateForm.varList)
+            this.model.commandTemplateId = this.model.commandTemplateId.key
+            const data = Object.assign({modelCommandVarAddParamList}, this.model)
+            delete data.type
             let func
-            let message = '操作成功！'
+            let message = '提交成功！'
             const {type} = this.options
             if (type === 'add') {
               func = this.$API.addModelCommand
@@ -203,19 +223,19 @@ export default {
               func = this.$API.editModelCommand
             }else if(type === 'first-add'){//新增模型时添加
               this.$message.success(message)
-              this.$emit('callback', {type, ...this.model,id: this.uuid(),innerData: varList})
+              this.$emit('callback', {type, ...this.model,id: this.uuid(),modelCommandVarAddParamList,innerData: modelCommandVarAddParamList})
               this.cancel()
               return
             }else if(type === 'first-edit'){//新增模型时编辑
               this.$message.success(message)
-              this.$emit('callback', {type, ...this.model, innerData: varList})
+              this.$emit('callback', {type, ...this.model,modelCommandVarAddParamList, innerData: modelCommandVarAddParamList})
               this.cancel()
               return
             }
             func(data).then(res => {
               this.cancel()
               this.$message.success(message)
-              this.$emit('callback')
+              this.$emit('callback',{type})
             }).catch(() => {
               this.loading = false
             })
@@ -227,11 +247,15 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .flex{
   align-items: inherit;
   .icon{
     line-height: 32px;
   }
+}
+.noList{
+  position: relative;
+  top: 6px;
 }
 </style>

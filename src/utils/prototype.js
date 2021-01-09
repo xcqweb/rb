@@ -38,3 +38,23 @@ Vue.prototype.$deepCopy = function(obj) {
 	for (var key in obj) cpObj[key] = this.$deepCopy(obj[key]);
 	return cpObj;
 }
+
+// Vue.prototype.$arrayItemToString = function(filters) {
+//   for(let key in filters) {
+//     if (!Array.isArray(filters[key])) {
+//       filters[key] = []
+//     }else{
+//       filters[key] = filters[key].map( item => item + '')
+//     }
+//   }
+//   return filters
+// }
+
+Vue.prototype.$arrayItemToString = function(array) {
+  return array.map( item => {
+    return {
+      value: item.value + '',
+      text: item.text,
+    }
+  })
+}

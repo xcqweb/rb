@@ -18,7 +18,7 @@
       label-align="left"
     >
       <p-form-model-item label="参数标识" prop="paramMark">
-        <p-input v-model="model.paramMark" placeholder="请输入参数标识" />
+        <p-input v-model="model.paramMark" :disabled='moreEdit' placeholder="请输入参数标识" />
       </p-form-model-item>
       <p-form-model-item label="参数名称" prop="paramName">
         <p-input v-model.trim="model.paramName" placeholder="请输入参数名称" />
@@ -28,14 +28,15 @@
             <p-select-option v-for="item in paramType" :key="item.value" :value="item.value">{{item.text}}</p-select-option>
           </p-select>
       </p-form-model-item>
-      <p-form-model-item label="精度" prop="precision">
-        <p-input-number style="width:100%" :min='0' v-model.trim="model.precision" placeholder="请输入计算精度" />
+      <p-form-model-item label="精度" prop="paramPrecision">
+        <p-input-number style="width:100%" :min='0' v-model.trim="model.paramPrecision" placeholder="请输入计算精度" />
       </p-form-model-item>
       <p-form-model-item label="单位" prop="unit">
         <p-input v-model.trim="model.unit" placeholder="请输入单位" />
       </p-form-model-item>
-      <p-form-model-item label="用途" prop="used">
-        <p-checkbox-group v-model="checkedList" :options="plainOptions" />
+      <p-form-model-item prop="checkedList">
+        <span slot="label" class="required-doc">用途</span>
+        <p-checkbox-group v-model="model.checkedList" :options="plainOptions" />
       </p-form-model-item>
     </p-form-model>
   </p-modal>
@@ -50,18 +51,9 @@ export default {
   data() {
     return {
       paramType,
-      plainOptions: useOption,
-      checkedList: useOption,
-      model: {
-        paramName: this.options.paramName || '',
-        paramMark: this.options.paramMark || '',
-        paramType: this.options.paramType || '0',
-        precision: this.options.precision || '',
-        unit: this.options.unit || '',
-        used: this.options.used || '',
-        id: this.options.id || '',
-        paramId:  this.options.paramId || '',
-      },
+      plainOptions: useOption.slice(0,2),
+      // checkedList: useOption,
+      model: {checkedList: []},
       rules: {
         paramName: [
           {
@@ -90,7 +82,7 @@ export default {
             pattern: pattern.nameReg
           },
         ],
-        precision: [
+        paramPrecision: [
           { type: 'number', max: 999999999, message: '计算精度长度限制为9个字符' },
         ],
         unit: [
@@ -100,48 +92,63 @@ export default {
             message: '单位长度限制为25个字符'
           },
         ],
+        checkedList: [
+          {
+            validator: (rule, value, callback) => {
+              if (Array.isArray(value) && !value.length) {
+                callback(new Error('请勾选用途！'))
+              }else{
+                callback()
+              }
+            },
+          },
+        ],
       }
+    }
+  },
+  computed: {
+    moreEdit() {
+      const {type} = this.options
+      return type === 'edit'
     }
   },
   created() {
     this.$watch('visible', (val) => {
       if (val) {
-        const {used} = this.options
-        this.model = {paramType: '0',...this.options}
+        this.model = {paramType: 0,used: 2,...this.options}
+        const {used} = this.model
         const obj = {
-          '0': ['存储'],
-          '1': ['显示'],
-          '2': ['存储','显示'],
+          0: ['存储'],
+          1: ['显示'],
+          2: ['存储','显示'],
         }
-        this.checkedList = obj[used || '2'] 
+        this.$set(this.model, 'checkedList', obj[used])
       }
     });
   },
   methods: {
     cancel() {
-      this.$refs.form.resetFields()
       this.visible = false
       this.loading = false
+      this.$refs.form.resetFields()
     },
     confirm() {
       this.$refs.form.validate(valid => {
         if (valid) {
-          if (!this.checkedList.length) {
-            return
-          }
           this.loading = true
-          if (this.checkedList.length > 1) {
-            this.model.used = '2'
+          if (this.model.checkedList.length > 1) {
+            this.model.used = 2
           }else{
-            if (this.checkedList[0] === '存储') {
-              this.model.used = '0'
+            if (this.model.checkedList[0] === '存储') {
+              this.model.used = 0
             }else{
-              this.model.used = '1'
+              this.model.used = 1
             }
           }
           const data = Object.assign({}, this.model)
+          delete data.type
           let func
-          let message = '操作成功！'
+          let message = '提交成功！'
           const {type} = this.options
           if (type === 'add') {
             func = this.$API.addModelParams
@@ -161,8 +168,8 @@ export default {
           this.cancel()
           func(data).then(res => {
             this.cancel()
-            this.$message.success('message')
-            this.$emit('callback')
+            this.$message.success(message)
+            this.$emit('callback',{type,modal: 'param'})
           }).catch(() => {
             this.loading = false
           })

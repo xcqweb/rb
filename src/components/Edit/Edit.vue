@@ -7,7 +7,7 @@
       <p-button class="edit_close" @click="cancel" icon="close" />
     </template>
     <template v-else>
-      {{time ? time(value, format) : value}}
+      {{time ? time(value, format) : emunList ? emunList[value] : value}}
       <slot v-if="!normal"></slot>
       <p-icon class="edit_icon" type='edit' @click="edit" />
     </template>
@@ -26,7 +26,8 @@ export default {
     format: {
       type: String,
       default: 'YYYY-MM-DD'
-    }
+    },
+    emunList: Array,
   },
   data() {
     return {
@@ -45,6 +46,9 @@ export default {
     value: {
       handler(val,oldVal) {
         this.keyword = val
+        if (this.normal) {
+          this.oldVal = this.value
+        }
       },
       immediate: true,      
     },
@@ -65,6 +69,7 @@ export default {
       }
       this.$emit('input', this.keyword)
       this.$emit('change', this.keyword)
+      this.$emit('submit', this.keyword)
       this.isEdit = false
     },
     cancel() {

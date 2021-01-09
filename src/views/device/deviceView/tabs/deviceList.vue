@@ -46,33 +46,32 @@ export default {
   data() {
     return {
       modelId: '',
-      filteredInfo1: null,
-      filteredInfo2: null,
-      filtersList: deviceNetType,
+      filteredInfo1: {},
+      filtersList1: deviceNetType,
       filtersList2: deviceStatusType,
       data: [],
       selectList: [
         {name:'设备名称',key: 'deviceName'},
         {name:'创建人',key: 'creater'},
-        {name:'创建时间',key: 'createTime'},
+        {name:'创建时间',key: 'time'},
       ]
     }
   },
   computed: {
     columns() {
-      let { filteredInfo1,filteredInfo2 } = this;
-      filteredInfo1 = filteredInfo1 || {};
-      filteredInfo2 = filteredInfo2 || {};
+      let { filteredInfo1 } = this;
+      const that = this
       return [
         {
           title: '设备名称',
+          dataIndex: 'deviceName',
           ellipsis: true,
           // customRender:(item) => {
             // return <a href='javascript:;' onClick={this.viewUserDetail(item)}>{item.uid}</a>
           // }
         },
         {
-          dataIndex: 'name',
+          dataIndex: 'deviceName',
           title: '所属类型',
           ellipsis: true
         },
@@ -82,7 +81,7 @@ export default {
           ellipsis: true,
           filterMultiple: false,
           filteredValue: filteredInfo1.systemName || null,
-          filters: this.filtersList,
+          filters: this.$arrayItemToString(this.filtersList1),
           width: 100,
           customRender:(item) => {
             const className = ['online doc','offline doc'][1]
@@ -97,8 +96,8 @@ export default {
           title: '状态',
           ellipsis: true,
           filterMultiple: false,
-          filteredValue: filteredInfo2.systemName || null,
-          filters: this.filtersList2,
+          filteredValue: filteredInfo1.systemName || null,
+          filters: this.$arrayItemToString(this.filtersList2),
           width: 100,
           customRender:(item) => {
             const className = ['normal','run', 'fault'][1]
@@ -113,7 +112,10 @@ export default {
         {
           dataIndex: 'name',
           title: '创建时间',
-          ellipsis: true
+          ellipsis: true,
+          customRender(date) {
+            return that.$formatDate(date)
+          }
         },
         {
           title: '操作',
