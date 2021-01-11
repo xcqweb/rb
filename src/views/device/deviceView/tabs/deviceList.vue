@@ -99,7 +99,7 @@ export default {
           filters: this.$arrayItemToString(this.filtersList2),
           width: 100,
           customRender:(item) => {
-            const className = ['normal','run', 'fault'][1]
+            const className = ['normal','offline'][1]
             return <span class={className}>{deviceStatusTypeList[1]}</span>
           }
         },

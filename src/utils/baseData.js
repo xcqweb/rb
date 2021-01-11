@@ -114,17 +114,16 @@ export const paramTypeList = ['浮点型','日期','32位整型','双精度浮�
 export const deviceNetType = [
   {text: '在线',value: 0},
   {text: '离线',value: 1},
-  {text: '未工作',value: 2},
+  {text: '未激活',value: 2},
 ]
-export const deviceNetTypeList = ['在线','离线','未工作']
+export const deviceNetTypeList = ['在线','离线','未激活']
 
 //设备状态Array
 export const deviceStatusType = [
   {text: '正常',value: 0},
-  {text: '故障',value: 1},
-  {text: '未激活',value: 2},
+  {text: '离线',value: 1},
 ]
-export const deviceStatusTypeList = ['正常','故障','未激活']
+export const deviceStatusTypeList = ['正常','离线']
 
 //发送状态
 export const sendType = [
