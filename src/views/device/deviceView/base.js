@@ -43,7 +43,7 @@ export const commandColumns = [
   {
     title: '指令模板',
     ellipsis: true,
-    dataIndex: 'commandTemplateName',
+    dataIndex: 'commandTemplateId',
   },
   {
     title: '描述',

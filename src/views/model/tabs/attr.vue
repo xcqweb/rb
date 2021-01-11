@@ -6,7 +6,6 @@
     </div>
     <div class="tableCon">
       <p-table
-        rowKey="id"
         @change="tableChange"
         @expand="expand"
         :loading="loading"
@@ -17,7 +16,9 @@
         :indentSize="30"
         :expandedRowKeys='expandedRowKeys'
         :columns="columns"
-        :data-source="tableData">
+        :data-source="tableData"
+        rowKey="id"
+      >
         <template slot="operation" slot-scope="record, index">
           <span class="operateBtn" @click="attrHandler(record, 'edit')">编辑</span>
           <span class="operateBtn" @click="delClick(record, index)">删除</span>
@@ -30,7 +31,7 @@
             :data-source="record.innerData"
             :pagination="false"
             :loading='record.loading'
-            :row-key="id"
+            row-key="id"
             style="margin:10px 0;"
             class="innerTable"
           >

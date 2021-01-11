@@ -19,8 +19,10 @@
       :data-source="tableData"
       :loading='loading'
       class="platform-org-table"
-      row-key="id"
+      :row-key="id"
     >
+      <span slot="deviceName" class="viewDetail">www</span>
+      <span slot="deviceModel" class="viewDetail">www</span>
       <template slot="operation" slot-scope="item">
         <a href="javascript:;" @click="view(item)">查看</a>
         <a class="ml6 mr6" href="javascript:;" @click="move(item)">移动</a>
@@ -28,11 +30,11 @@
       </template>
     </p-table>
 
-    <!-- 移动位置 -->
+    <!-- 移动设备 -->
     <component
       :is="componentId"
       v-model="visible"
-      title="移动节点"
+      title="移动设备"
       :options='options'
     />
   </div>
@@ -64,16 +66,13 @@ export default {
       return [
         {
           title: '设备名称',
-          dataIndex: 'deviceName',
           ellipsis: true,
-          // customRender:(item) => {
-            // return <a href='javascript:;' onClick={this.viewUserDetail(item)}>{item.uid}</a>
-          // }
+          scopedSlots: { customRender: 'deviceName' }
         },
         {
-          dataIndex: 'modelId',
           title: '所属类型',
-          ellipsis: true
+          ellipsis: true,
+          scopedSlots: { customRender: 'deviceModel' }
         },
         {
           dataIndex: 'name',
@@ -145,7 +144,7 @@ export default {
         pageNo: this.pagination.current,
         userName: this.searchKeyUser
       };
-      this.tableData = [{}]
+      this.tableData = [{id:12}]
       // this.loading = true;
       // queryOrgUserListByPage(params).then( res => {
       //   this.data = res.data.porosSecStaffs.records || [];
@@ -191,7 +190,6 @@ export default {
     },
     move(item) {
       this.visible = true
-      this.title = '移动节点'
       this.componentId = 'ModalSelectTree'
     },
     view(item) {

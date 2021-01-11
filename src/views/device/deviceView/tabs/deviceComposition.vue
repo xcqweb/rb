@@ -18,7 +18,6 @@
       :expandIconColumnIndex="0"
       :indentSize="30"
       :expandedRowKeys='expandedRowKeys'
-      class="platform-org-table"
       row-key="id"
     >
       <template slot="operation" slot-scope="item">
@@ -34,18 +33,29 @@
         :data-source="record.innerData"
         :pagination="false"
         :loading='record.loading'
-        :row-key="id"
+        row-key="id"
         style="margin:10px 0;"
         class="innerTable"
       >
+        <span slot="deviceName" slot-scope="item" class="viewDetail">www</span>
+        <span slot="deviceModel" slot-scope="item" class="viewDetail">www</span>
+        <a href="javascript:;" slot="operation" slot-scope="item" @click="unbind(item)">解绑</a>
       </p-table>
     </p-table>
+    <!-- 移动设备 -->
+    <component
+      :is="componentId"
+      v-model="visible"
+      title="移动设备"
+      :options='options'
+    />
   </div>
 </template>
 
 <script>
 import tableMixins from '@/mixins/tableMixins'
 import tableExpandMixins from '@/mixins/table-expand'
+import {deviceNetType,deviceStatusType,deviceNetTypeList,deviceStatusTypeList} from '@/utils/baseData'
 export default {
   mixins: [tableMixins,tableExpandMixins],
   components: {},
@@ -57,32 +67,77 @@ export default {
         {name:'创建人',key: 'creater'},
         {name:'创建时间',key: 'createTime'},
       ],
-      innerColumns: []
     }
   },
   computed: {
+    innerColumns(){
+      let { filteredInfo1 } = this;
+      const that = this
+      return [
+        {
+          title: '设备名称',
+          ellipsis: true,
+          scopedSlots: { customRender: 'deviceName' }
+        },
+        {
+          title: '所属类型',
+          ellipsis: true,
+          scopedSlots: { customRender: 'deviceModel' }
+        },
+        {
+          dataIndex: 'name',
+          title: '网络',
+          ellipsis: true,
+          width: 100,
+          customRender:(item) => {
+            const className = ['online doc','offline doc'][1]
+            return <p>
+              <span class={className}></span>
+              <span>{deviceNetTypeList[1]}</span>
+            </p>
+          }
+        },
+        {
+          dataIndex: 'name',
+          title: '状态',
+          ellipsis: true,
+          width: 100,
+          customRender:(item) => {
+            const className = ['normal','run', 'fault'][1]
+            return <span class={className}>{deviceStatusTypeList[1]}</span>
+          }
+        },
+        {
+          title: '操作',
+          width: 120,
+          align: 'right',
+          scopedSlots: { customRender: 'operation' }
+        },
+      ]
+    },
     columns() {
       const that = this
       return [
         {
           title: '组合名称',
           ellipsis: true,
-          customRender:(item) => {
+          dataIndex: 'name1',
+          // customRender:(item) => {
             // return <a href='javascript:;' onClick={this.viewUserDetail(item)}>{item.uid}</a>
-          }
+          // }
         },
         {
-          dataIndex: 'name',
+          dataIndex: 'name2',
           title: '描述',
           ellipsis: true
         },
         {
-          dataIndex: 'name',
+          dataIndex: 'name3',
           title: '创建人',
           ellipsis: true
         },
         {
-          dataIndex: 'name',
+          dataIndex: 'name4',
           title: '创建时间',
           ellipsis: true,
           customRender(date) {
@@ -111,7 +166,7 @@ export default {
         pageNo: this.pagination.current,
         userName: this.searchKeyUser
       };
-      this.tableData = [{id:1}]
+      this.tableData = [{id:1,name1: 111,innerData: [{id:12,name:24}]}]
       // this.loading = true;
       // queryOrgUserListByPage(params).then( res => {
       //   this.data = res.data.porosSecStaffs.records || [];
@@ -155,8 +210,34 @@ export default {
         }
       })
     },
+    unbind({id,attributeName}){
+      const that = this;
+      this.$confirm({
+        centered: true,
+        title: '确定要解绑吗？',
+        icon: h => <p-icon class="exclamation" type="exclamation-circle" />,
+        content: (h, params) => {
+          const str = `确定要与设备 "${attributeName}" 解绑吗？`;
+          return h('div', str);
+        },
+        onOk() {
+          // that.$API.delModelAttr({id}).then( res =>{
+          //   if ( res.code === 0 ){
+          //     that.$message.success('删除成功');
+          //     if (that.tableData.length <= 1 && that.pagination.current > 1) {
+          //       that.pagination.current --
+          //     }
+          //     that.getTableData()
+          //   }
+          // }).catch( e =>{
+          //   console.log(e);
+          // });
+        },
+      });
+    },
     move() {
-
+      this.visible = true
+      this.componentId = 'ModalSelectTree'
     },
     view(item) {
       this.$router.push({

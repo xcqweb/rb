@@ -8,7 +8,7 @@
     :width='640'
   >
     <div class="content">
-      <span class="required-doc">移动位置：</span>
+      <span class="required-doc">移动至：</span>
       <Device-tree ref="tree" class="content_border f1" v-model="chooseNode" showLine showIcon/>
     </div>
   </p-modal>
@@ -30,7 +30,9 @@ export default {
         this.chooseNode = null
         this.loading = false
       }else{
-        this.$refs.tree.initTree()
+        this.$nextTick(() => {
+          this.$refs.tree.initTree()
+        })
       }
     }
   },
