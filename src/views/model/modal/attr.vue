@@ -224,12 +224,12 @@ export default {
               func = this.$API.editModelAttr
             }else if(type === 'first-add'){//新增模型时添加
               this.$message.success(message)
-              this.$emit('callback', {type, ...this.model,id: this.uuid(),innerData: emunList,enumMap})
+              this.$emit('callback', {type, ...data,id: this.uuid(),innerData: emunList,enumMap})
               this.cancel()
               return
             }else if(type === 'first-edit'){//新增模型时编辑
               this.$message.success(message)
-              this.$emit('callback', {type, ...this.model, innerData: emunList,enumMap})
+              this.$emit('callback', {type, ...data, innerData: emunList,enumMap})
               this.cancel()
               return
             }

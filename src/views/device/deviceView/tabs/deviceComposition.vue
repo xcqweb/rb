@@ -3,15 +3,21 @@
     <div class="pb20 clearfix">
       <p-button type="primary" @click="addDevice">新增组合</p-button>
       <div class="fr flex">
-        <search v-model.trim="searchKey" @search="getData" :selectList='selectList'  @reset="reset" />
+        <search v-model.trim="keyword" @search="getData" :selectList='selectList'  @reset="reset" />
       </div>
     </div>
     <p-table
       @change="tableChange"
+      @expand="expand"
       :pagination="pagination"
       :columns="columns"
       :data-source="tableData"
       :loading='loading'
+      :expandIcon="customExpandIcon"
+      :expandIconAsCell="false"
+      :expandIconColumnIndex="0"
+      :indentSize="30"
+      :expandedRowKeys='expandedRowKeys'
       class="platform-org-table"
       row-key="id"
     >
@@ -20,25 +26,38 @@
         <a class="ml6 mr6" href="javascript:;" @click="move(item)">移动</a>
         <a href="javascript:;" @click="remove(item, removeDeviceHandler)">删除</a>
       </template>
+      <p-table
+        v-if="isShowExpand"
+        slot="expandedRowRender"
+        slot-scope="record"
+        :columns="innerColumns"
+        :data-source="record.innerData"
+        :pagination="false"
+        :loading='record.loading'
+        :row-key="id"
+        style="margin:10px 0;"
+        class="innerTable"
+      >
+      </p-table>
     </p-table>
   </div>
 </template>
 
 <script>
-import paginationMixins from '@/mixins/pagination'
+import tableMixins from '@/mixins/tableMixins'
+import tableExpandMixins from '@/mixins/table-expand'
 export default {
-  mixins: [paginationMixins],
+  mixins: [tableMixins,tableExpandMixins],
   components: {},
   data() {
     return {
-      searchKey: '',
-      loading: false,
       data: [],
       selectList: [
         {name:'组合名称',key: 'deviceName'},
         {name:'创建人',key: 'creater'},
         {name:'创建时间',key: 'createTime'},
-      ]
+      ],
+      innerColumns: []
     }
   },
   computed: {
@@ -79,19 +98,13 @@ export default {
       ]
     }
   },
-  mounted() {
-    this.getData()
-  },
   methods: {
     addDevice() {
       this.$router.push({
         path: '/device/addComponsition',
       })
     },
-    tableChange(){
-      this.getData();
-    },
-    getData() {
+    getTableData() {
       const params = {
         dataSources: 0,
         limit: this.pagination.pageSize,
@@ -149,12 +162,6 @@ export default {
       this.$router.push({
         path: '/device/viewComponsition',
       })
-    },
-    reset() {
-      this.searchKeyUser = ''
-      this.pagination.pageSize = 10
-      this.pagination.current = 1
-      this.getData()
     },
   },
 }

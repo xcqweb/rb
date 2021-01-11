@@ -97,7 +97,7 @@ export const judgeType = [
   {text: '心跳包模式',value: 0},
   {text: '数据包模式',value: 1},
 ]
-export const judgeTypeList = ['数据包模式','心跳包模式']
+export const judgeTypeList = ['心跳包模式','数据包模式']
 
 //参数类型
 export const paramType = [

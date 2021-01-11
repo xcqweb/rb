@@ -52,7 +52,6 @@ export default {
     return {
       paramType,
       plainOptions: useOption.slice(0,2),
-      // checkedList: useOption,
       model: {checkedList: []},
       rules: {
         paramName: [
@@ -156,12 +155,12 @@ export default {
             func = this.$API.editModelParams
           } else if(type === 'first-add'){//新增模型时添加
             this.$message.success(message)
-            this.$emit('callback', {type,modal: 'param', ...this.model,id: this.uuid()})
+            this.$emit('callback', {type,modal: 'param', ...data,id: this.uuid()})
             this.cancel()
             return
           }else if(type === 'first-edit'){//新增模型时编辑
             this.$message.success(message)
-            this.$emit('callback', {type,modal: 'param', ...this.model})
+            this.$emit('callback', {type,modal: 'param', ...data})
             this.cancel()
             return
           }

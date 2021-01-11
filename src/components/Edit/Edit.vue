@@ -77,6 +77,7 @@ export default {
         this.$emit('input', this.oldVal)
         this.$emit('change', this.oldVal)
       }
+      this.$emit('cancel')
       this.isEdit = false
     }
   },

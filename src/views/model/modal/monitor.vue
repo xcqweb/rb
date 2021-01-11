@@ -179,12 +179,12 @@ export default {
             func = this.$API.editModelParamsAlarm
           } else if(type === 'first-add'){//新增模型时添加
             this.$message.success(message)
-            this.$emit('callback', {type,enabled:0, ...this.model,formulaView,formula, id: this.uuid()})
+            this.$emit('callback', {type,...data, id: this.uuid()})
             this.cancel()
             return
           }else if(type === 'first-edit'){//新增模型时编辑
             this.$message.success(message)
-            this.$emit('callback', {type,enabled:0, ...this.model,formulaView,formula})
+            this.$emit('callback', {type,...data})
             this.cancel()
             return
           }

@@ -1,8 +1,8 @@
 <template>
-  <page content='马达' @back='back' :extraRightText='extraRightText'>
+  <page :content='modelName' @back='back' :extraRightText='extraRightText'>
     <p-tabs  @change="callback">
       <p-tab-pane key="view" tab="概览">
-        <Overview :modelId='modelId' :registerDeviceNum.sync='registerDeviceNum' />
+        <Overview :modelId='modelId' :registerDeviceNum.sync='registerDeviceNum' :modelName.sync='modelName' />
       </p-tab-pane>
       <p-tab-pane key="attr" tab="属性">
         <Attr search addBtn filter :modelId='modelId' />
@@ -32,6 +32,7 @@ export default {
   data() {
     return {
       registerDeviceNum: 0,
+      modelName: ''
     }
   },
   computed: {

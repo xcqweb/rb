@@ -11,7 +11,7 @@
         @change="tableChange"
         @expand="expand"
         :loading="loading"
-        :pagination="pagination"
+        :pagination="add ? false : pagination"
         :expandIcon="customExpandIcon"
         :expandIconAsCell="false"
         :expandIconColumnIndex="0"

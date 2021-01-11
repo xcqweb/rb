@@ -188,7 +188,7 @@ export default {
       this.$refs.paramsValidateForm && this.$refs.paramsValidateForm.resetFields()
       this.$API.getModelCommandAttrList({id: key}).then( res => {
         this.paramsValidateForm.varList.unshift(...res.data.map( item => {
-          return {...item, extendType: 1,modelCommandId: this.options.id}
+          return {...item, extendType: 1,/*0 自定义变量 1 模板继承变量*/modelCommandId: this.options.id}
         }))
       })
     },
@@ -223,12 +223,12 @@ export default {
               func = this.$API.editModelCommand
             }else if(type === 'first-add'){//新增模型时添加
               this.$message.success(message)
-              this.$emit('callback', {type, ...this.model,id: this.uuid(),modelCommandVarAddParamList,innerData: modelCommandVarAddParamList})
+              this.$emit('callback', {type, ...data,id: this.uuid(),innerData: modelCommandVarAddParamList})
               this.cancel()
               return
             }else if(type === 'first-edit'){//新增模型时编辑
               this.$message.success(message)
-              this.$emit('callback', {type, ...this.model,modelCommandVarAddParamList, innerData: modelCommandVarAddParamList})
+              this.$emit('callback', {type, ...data, innerData: modelCommandVarAddParamList})
               this.cancel()
               return
             }

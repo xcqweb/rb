@@ -71,7 +71,7 @@ export default {
           // }
         },
         {
-          dataIndex: 'deviceName',
+          dataIndex: 'modelId',
           title: '所属类型',
           ellipsis: true
         },
@@ -105,12 +105,12 @@ export default {
           }
         },
         {
-          dataIndex: 'name',
+          dataIndex: 'createBy',
           title: '创建人',
           ellipsis: true
         },
         {
-          dataIndex: 'name',
+          dataIndex: 'createTime',
           title: '创建时间',
           ellipsis: true,
           customRender(date) {
