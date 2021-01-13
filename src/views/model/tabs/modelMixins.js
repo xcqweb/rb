@@ -1,6 +1,7 @@
 import tableMixins from '@/mixins/tableMixins'
+import tableMixinsInner from '@/mixins/paginationInner'
 export default {
-  mixins: [tableMixins],
+  mixins: [tableMixins,tableMixinsInner],
   props: {
     search: Boolean, //搜索框
     addBtn: Boolean, //添加按钮
@@ -8,7 +9,8 @@ export default {
     list: Object, //父组件数据
     add: Boolean, //是否是在新增页面使用
     filter: Boolean, //是否显示表格头部筛选
-    modelId: String,
+    modelId: String, //模型id
+    deviceId: String, //设备id
     value: Array, //table数据
   },
   data() {
@@ -43,7 +45,7 @@ export default {
       //   this.expandedRowKeys.push(id)
       // }
       this.expandedRowKeys = expanded ? [id] : []
-      if (this.expandhandler && !this.add) { //新增模型时不走此方法
+      if (this.expandhandler && !this.add && expanded) { //新增模型时不走此方法
         this.expandhandler(id)
       }
     },

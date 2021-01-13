@@ -2,7 +2,7 @@
   <div>
     <div class="flex mb16">
       <Btn-tabs :tabs='tabs' @change="changeTab"></Btn-tabs>
-      <p-date-picker v-show="!isCurrent" v-model="time" class="ml20"></p-date-picker>
+      <p-range-picker v-show="!isCurrent" v-model="time" class="ml20"></p-range-picker>
       <p-button class="reset" @click="reset" icon="reload" />
     </div>
     <p-table
@@ -24,7 +24,8 @@ export default {
   components: {BtnTabs},
   mixins: [tableMixins],
   props: {
-    isDevice: Boolean
+    isDevice: Boolean,
+    modelId: String
   },
   data() {
     return {
@@ -33,7 +34,7 @@ export default {
         {title: '信息变更',symbol: 'info'},
       ],
       currentTab: 'status',
-      time: '',
+      time: [],
       filtersList1: logType,
       filtersList2: operatorType,
     }

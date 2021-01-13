@@ -1,6 +1,7 @@
 <template>
   <div class="data">
-    <div class="c_searchArea" :class="{'fd':!addBtn}">
+    <div class="c_searchArea" :class="{'fd':!addBtn,'fb': isDevice}">
+      <Btn-tabs :tabs='tabs' @change="changeTab" v-if="isDevice"></Btn-tabs>
       <p-button @click="paramHandler" type="primary" v-if="addBtn">添加参数</p-button>
       <Search :selectList='selectList' @search='onSearch' v-model="keyword" @reset="reset" v-if="search" />
     </div>
@@ -31,7 +32,7 @@
             :columns="innerColumns"
             :data-source="record.innerData"
             :pagination="false"
-            :loading='record.loading'
+            :loading='innerLoading'
             row-key="id"
             style="margin:10px 0;"
             class="innerTable"
@@ -62,6 +63,7 @@
 import modelMixins from './modelMixins'
 import DataModal from '../modal/param'
 import Monitor from '../modal/monitor'
+import BtnTabs from '../../device/deviceView/children/btnTabs'
 import { mapState } from 'vuex'
 import {paramType, paramTypeList,formualMap,useOption} from '@/utils/baseData'
 import {analysisFormula} from '@/utils/util'
@@ -71,9 +73,14 @@ function formualTransfrom({limit, firstVal,secondVal}) {
 }
 export default {
   mixins: [modelMixins],
-  components: {DataModal,Monitor},
+  components: {DataModal,Monitor,BtnTabs},
   data() {
     return {
+      currentTab: 'real',
+      tabs: [
+        {title: '实时数据',symbol: 'real'},
+        {title: '历史数据',symbol: 'history'},
+      ],
       selectList: [
         {name:'参数名称',key: 'paramName'},
         {name:'参数标识',key: 'paramMark'},
@@ -196,12 +203,20 @@ export default {
     } 
   },
   methods: {
+    changeTab({symbol}) {
+      this.currentTab = symbol
+    },
     //展开子列表
     expandhandler(modelParamId, del) {
       if (!modelParamId) {
         return
       }
-      this.$API.getModelParamsAlarmList({modelParamId}).then( res => {
+      const params = {
+        ...this.paramsInner,
+        modelParamId
+      }
+      this.innerLoading = true
+      this.$API.getModelParamsAlarmList(params).then( res => {
         this.tableData.forEach( item => {
           if (item.id === modelParamId) {
             this.$set(item, 'innerData',res.data.records)
@@ -210,6 +225,9 @@ export default {
             }
           }
         })
+        this.innerLoading = false
+      }).catch(() => {
+        this.innerLoading = false
       })
     },
     getTableData({searchKey = this.selectList[0].key,keyword} = {}){
@@ -219,10 +237,12 @@ export default {
         keyword,
         limit: this.pagination.pageSize,
         pageNo: this.pagination.current,
-        paramType: this.filteredInfo1.paramType && this.filteredInfo1.paramType[0]
+        paramType: this.filteredInfo1.paramType && this.filteredInfo1.paramType[0],
+        deviceId: this.isDevice && this.deviceId
       }
       this.loading = true;
-      this.$API.getModelParamsList(param).then( res =>{
+      let fun = this.isDevice ? this.$API.getDeviceParamList : this.$API.getModelParamsList
+      fun(param).then( res =>{
         if ( res.code === 0 ){
           this.tableData = res.data.records || [];
           this.tableData.forEach( item => {
@@ -241,6 +261,7 @@ export default {
     paramHandler(item, type){
       this.visible = true
       this.componentId = 'DataModal'
+      this.options = {}
       this.options.modelId = this.$route.query.id
       if (type === 'edit') {
         this.title = '编辑参数'
@@ -354,6 +375,8 @@ export default {
         }).catch(() => {
           this.$set(item, 'enabled', !item.enabled)
         })
+      }else{
+        this.$message.success(message)
       }
     },
     callback(res) {

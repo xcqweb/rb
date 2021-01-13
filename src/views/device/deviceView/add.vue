@@ -2,33 +2,26 @@
   <page :content='comTitle' @back='back'>
     <div class="flex">
       <Page-title>基本信息</Page-title>
-      <p class="ml20">sss</p>
     </div>
-    <p-form
+    <p-form-model
       class="mt20"
-      :form="form" 
-      label-align="left" 
-      :label-col="{ span: 2 }" 
-      :wrapper-col="{ span: 11 }"
+      ref="form"
+      :model="model"
+      :rules="rules"
+      :label-col="{span: 2}"
+      :wrapper-col="{span: 13}"
+      label-align="left"
     >
-      <p-form-item :label="`${this.comLabel}名称`">
-        <p-input
-          autocomplete='off'
+      <p-form-model-item label="当前节点">
+        <span class="c-text-4">{{locationNamePath}}</span>
+      </p-form-model-item>
+      <p-form-model-item :label="`${this.comLabel}名称`" prop='name'>
+        <p-input v-model="model.name" class="w-medium"/>
+      </p-form-model-item>
+      <p-form-model-item label="所属模型" v-if="isDevice" prop='modelId'>
+        <!-- <p-select 
           v-decorator="[
-            'ModelName',
-            { rules: [
-              { required: true, message: `请输入${this.comLabel}名称` },
-              {pattern:reg.name2Reg,message:`${this.comLabel}名称仅支持中文、字母、数字和下划线`},
-              {type: 'string', max: 25,message:`${this.comLabel}名称长度限制为25个字符`},
-            ] },
-          ]"
-          :placeholder="`请输入${this.comLabel}名称`"
-        />
-      </p-form-item>
-      <p-form-item label="所属模型" v-if="isDevice">
-        <p-select 
-          v-decorator="[
-          'descript',
+          'modelId',
           {rules: [
             {required:true,message: '请选择所属模型',trigger: 'change' },
           ]}
@@ -36,25 +29,30 @@
           placeholder="请选择所属模型"
         >
           <p-select-option v-for="item in modelList" :key="item.value" :value="item.value">{{item.text}}</p-select-option>
-        </p-select>
+        </p-select> -->
+        <Infinity-select
+          style="width:500px"
+          :api='$API.getModelList'
+          v-model="model.modelId"
+          :dataKey="{value: 'id', label: 'modelName'}"
+        />
 
-      </p-form-item>
-      <p-form-item label="描述" v-else>
-        <p-textarea 
+      </p-form-model-item>
+      <p-form-model-item label="描述" v-else prop='remark'>
+        <p-textarea
+          class="w-medium"
           autocomplete='off'
-          v-decorator="[
-          'descript',
-          {rules: [
-            {max: 50,message: '描述长度限制为50个字符',trigger: 'change' },
-          ]}
-          ]"
+          v-model="model.remark"
           placeholder="请输入描述内容"
         />
-      </p-form-item>
-    </p-form>
+      </p-form-model-item>
+    </p-form-model>
     <Page-title>{{comPageTitle}}</Page-title>
     <component
       :is='componentId'
+      :modelId='model.modelId.key'
+      @callback='callback'
+      ref="componentRef"
     ></component>
     <div slot="footer" class="tr">
       <p-button type="primary" @click="submit" :loading="loading">提交</p-button>
@@ -66,13 +64,21 @@
 <script>
 import AttrInfo from './children/attrInfo'
 import BindingDevice from './children/bindingDevice'
+const validateFun = (rule, value, callback) => {
+  if (!value.key) {
+    callback(new Error('请选择所属模型！'))
+  }else{
+    callback()
+  }
+}
 export default {
   components: {AttrInfo,BindingDevice},
   data() {
     return{
-      form: this.$form.createForm(this),
       loading: false,
-      modelList: []
+      modelList: [],
+      bindDada: [],
+      model: {modelId: {}},
     }
   },
   computed: {
@@ -94,13 +100,56 @@ export default {
     },
     isDevice() {
       return this.comType === 'device'
+    },
+    locationId() {
+      return this.$route.query.locationId
+    },
+    locationNamePath() {
+      return this.$route.query.locationNamePath
+    },
+    rules() {
+      return {
+        name: [
+          {required: true, message: `请输入${this.comLabel}名称` },
+          {pattern: this.reg.name2Reg,message:`${this.comLabel}名称仅支持中文、字母、数字和下划线`},
+          {type: 'string', max: 25,message:`${this.comLabel}名称长度限制为25个字符`},
+        ],
+        modelId: [
+          {required: true,validator:validateFun},
+        ],
+        remark: [
+          {max: 50,message: '描述长度限制为50个字符',trigger: 'change' },
+        ]
+      }
     }
   },
   methods: {
     submit() {
-      this.form.validateFields((err,values) => {
-        if(!err) {
-          console.log(err,values)
+      this.$refs.form.validate((valid) => {
+        if(valid) {
+          let fun = this.isDevice ? this.$API.addDevice : this.$API.addComposition
+          const {name,modelId,remark} = this.model
+          console.log(this.$refs.componentRef.comList)
+          let params = this.isDevice ? {
+            deviceName: name,
+            modelId: modelId.key,
+            remark,
+            locationId: this.locationId,
+            deviceAttributeAddParamList: this.$refs.componentRef.comList
+          } : {
+            locationId: this.locationId,
+            name,
+            remark,
+            deviceIdList: this.$refs.componentRef.checkedList
+          }
+          this.loading = true
+          fun(params).then( res => {
+            this.loading = false
+            this.$message.success('操作成功！')
+            this.$router.push('/device/deviceView')
+          }).catch( () => {
+            this.loading = false
+          })
         }
       })
     },

@@ -12,7 +12,8 @@ export default {
       //
       keyword: '',
       loading: false,
-      filteredInfo1: {}
+      filteredInfo1: {},
+      innerLoading: false,
     }
   },
   mounted() {

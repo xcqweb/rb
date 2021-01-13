@@ -19,15 +19,16 @@ export default {
     classLabel: {
       type: String,
       default: 'poros-col-2'
-    }
-  }
+    },
+    rules: Array
+  },
 }
 </script>
 
 <style lang="less" scoped>
   .label{
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     line-height: 32px;
   }
 </style>

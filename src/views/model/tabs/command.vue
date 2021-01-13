@@ -33,7 +33,7 @@
             :columns="innerColumns"
             :data-source="record.innerData"
             :pagination="false"
-            :loading='record.loading'
+            :loading='innerLoading'
             row-key="id"
             style="margin:10px 0;"
             class="innerTable"
@@ -105,12 +105,20 @@ export default {
       if (!modelCommandId) {
         return
       }
-      this.$API.getModelCommandVarList({modelCommandId}).then( res => {
+      const params = {
+        ...this.paramsInner,
+        modelCommandId
+      }
+      this.innerLoading = true
+      this.$API.getModelCommandVarList(params).then( res => {
         this.tableData.forEach( item => {
           if (item.id === modelCommandId) {
             this.$set(item, 'innerData',res.data.records)
           }
         })
+        this.innerLoading = false
+      }).catch(() => {
+        this.innerLoading = false
       })
     },
     getTableData({searchKey = this.selectList[0].key,keyword} = {}){
@@ -174,6 +182,7 @@ export default {
             if (that.add) {
               that.tableData.splice(index, 1)
               that.expandedRowKeys = that.expandedRowKeys.filter( item => item !== row.id)
+              that.$message.success('删除成功');
             }else{
               that.$API.delModelCommand({id: row.id}).then( res =>{
                 if ( res.code === 0 ){

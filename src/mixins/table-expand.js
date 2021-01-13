@@ -31,7 +31,7 @@ export default {
       //   this.expandedRowKeys.push(id)
       // }
       this.expandedRowKeys = expanded ? [id] : []
-      if (this.expandhandler && !this.add) { //新增模型时不走此方法
+      if (this.expandhandler && !this.add && expanded) { //新增模型时不走此方法
         this.expandhandler(id)
       }
     },

@@ -26,11 +26,12 @@ Vue.directive("focus", {
   }
 });
 Vue.directive("clickOutSide", {
-  bind: function(el, { value }) {
+  bind: function(el, {value,modifiers}) {
+    const key = Object.keys(modifiers)[0]
     let clickOutside = value;
     el.handler = function(e) {
       if (el && !el.contains(e.target)) {
-        clickOutside(e);
+        clickOutside(key);
       }
     };
     document.addEventListener("click", el.handler, true);

@@ -36,7 +36,7 @@ export default {
   },
 }
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .cus-no-data{
   margin:0;
   padding:32px 0;

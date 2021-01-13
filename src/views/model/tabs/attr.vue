@@ -30,7 +30,7 @@
             :columns="innerColumns"
             :data-source="record.innerData"
             :pagination="false"
-            :loading='record.loading'
+            :loading='innerLoading'
             row-key="id"
             style="margin:10px 0;"
             class="innerTable"
@@ -146,12 +146,20 @@ export default {
       if (!modelAttributeId) {
         return
       }
-      this.$API.getModelAttrEmunList({modelAttributeId}).then( res => {
+      const params = {
+        ...this.paramsInner,
+        modelAttributeId
+      }
+      this.innerLoading = true
+      this.$API.getModelAttrEmunList(params).then( res => {
         this.tableData.forEach( item => {
           if (item.id === modelAttributeId) {
             this.$set(item, 'innerData',res.data.records)
           }
         })
+        this.innerLoading = false
+      }).catch( () => {
+        this.innerLoading = false
       })
     },
     getTableData({searchKey = this.selectList[0].key,keyword} = {}){
@@ -203,20 +211,21 @@ export default {
         }
       }
     },
-    delClick({id,attributeName}, index){
+    delClick({id,attributeName,attributeMark}, index){
       const that = this;
       this.$confirm({
         centered: true,
         title: '确定要删除吗？',
         icon: h => <p-icon class="exclamation" type="exclamation-circle" />,
         content: (h, params) => {
-          const str = `确定删除该角色"${attributeName}"吗？`;
+          const str = `确定删除属性"${attributeName ? `${attributeName}(${attributeMark})` : `${attributeMark}`}"吗？`;
           return h('div', str);
         },
         onOk() {
           if (that.add) {
             that.tableData.splice(index, 1)
             that.expandedRowKeys = that.expandedRowKeys.filter( item => item !== id)
+            that.$message.success('删除成功');
           }else{
           that.$API.delModelAttr({id}).then( res =>{
             if ( res.code === 0 ){

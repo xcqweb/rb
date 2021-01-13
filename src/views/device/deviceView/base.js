@@ -2,30 +2,26 @@
 export const commomColumns = [
   {
     title: '设备名称',
-    dataIndex: 'name',
+    dataIndex: 'deviceName',
   },
   {
     title: '所属模型',
-    dataIndex: 'systemName',
+    dataIndex: 'modelName',
     ellipsis: true,
   },
   {
     title: '网络',
     ellipsis: true,
-    dataIndex: 'description',
+    dataIndex: 'netStatus',
     width: 100,
-    customRender:(item) => {
-      // return <a href='javascript:;' onClick={this.viewUserDetail(item)}>{item.uid}</a>
-    }
+    scopedSlots: {customRender: 'netStatus'}
   },
   {
     title: '状态',
     ellipsis: true,
-    dataIndex: 'createName',
-    width: 136,
-    customRender:(item) => {
-      // return <a href='javascript:;' onClick={this.viewUserDetail(item)}>{item.uid}</a>
-    }
+    dataIndex: 'status',
+    width: 100,
+    scopedSlots: {customRender: 'status'}
   },
 ]
 
@@ -43,7 +39,7 @@ export const commandColumns = [
   {
     title: '指令模板',
     ellipsis: true,
-    dataIndex: 'commandTemplateId',
+    dataIndex: 'commandTemplateName',
   },
   {
     title: '描述',

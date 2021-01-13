@@ -1,19 +1,23 @@
 <template>
   <div>
     <div class="flex mb16">
-      <Btn-tabs :tabs='tabs' @change="changeTab" extra='0'></Btn-tabs>
-      <p-date-picker v-show="!isCurrent" v-model="time" class="ml20"></p-date-picker>
+      <Btn-tabs :tabs='tabs' @change="changeTab" extra='10'></Btn-tabs>
+      <Label label='记录时间' class="ml20 f1" v-show="!isCurrent">
+        <p-range-picker v-model="time"></p-range-picker>
+      </Label>
       <p-button class="reset" @click="reset" icon="reload" />
     </div>
     <p-table
         rowKey="id"
         @change="tableChange"
+        @expand="expand"
         :loading="loading"
         :pagination="pagination"
         :expandIcon="customExpandIcon"
         :expandIconAsCell="false"
         :expandIconColumnIndex="0"
         :indentSize="30"
+        :expandedRowKeys='expandedRowKeys'
         :columns="columns"
         :data-source="tableData">
         <p-table
@@ -36,11 +40,15 @@
 
 <script>
 import tableMixins from '@/mixins/tableMixins'
+import tableExpandMixins from '@/mixins/table-expand'
 import BtnTabs from '../children/btnTabs'
 import {alarmSource,alarmLevel} from '@/utils/baseData'
 export default {
   components: {BtnTabs},
-  mixins: [tableMixins],
+  mixins: [tableMixins,tableExpandMixins],
+  props: {
+    modelId: String
+  },
   data() {
     return {
       tabs: [
@@ -48,7 +56,7 @@ export default {
         {title: '历史报警',symbol: 'history'},
       ],
       currentTab: 'current',
-      time: '',
+      time: [],
       filtersList1: alarmLevel,
       filtersList2: alarmSource,
       innerColumns: [
@@ -98,7 +106,7 @@ export default {
           dataIndex: 'systemName',
           ellipsis: true,
           filterMultiple: false,
-          filteredValue: filteredInfo2.systemName || [],
+          filteredValue: filteredInfo1.systemName || [],
           filters: this.$arrayItemToString(this.filtersList2),
           width:100
         },

@@ -8,7 +8,13 @@
         </div>
         <div class="platform-org-left" ref="drag" :style="{width: `${comWidth}px`}">
           <div class="tree-content">
-            <Device-tree showLine showIcon showOperator />
+            <Device-tree
+              v-model="chooseNode"
+              showLine
+              showIcon
+              showOperator
+              checkRoot
+            />
           </div>
         </div>
       </div>
@@ -16,10 +22,10 @@
       <div class="platform-org-right pl20">
         <p-tabs>
           <p-tab-pane key="view" tab="设备列表">
-            <Device-list />
+            <Device-list :chooseNode='chooseNode' />
           </p-tab-pane>
           <p-tab-pane key="attr" tab="设备组合">
-            <Device-composition />
+            <Device-composition :chooseNode='chooseNode' />
           </p-tab-pane>
         </p-tabs>
       </div>
@@ -36,6 +42,7 @@ export default {
     return {
       comWidth: 200,
       watchInstance: null,
+      chooseNode: {}
     }
   },
   deactivated() {

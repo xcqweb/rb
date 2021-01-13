@@ -2,19 +2,25 @@
   <page :content='comTitle' @back='back'>
     <p-tabs v-model="activeKey">
       <p-tab-pane key="view" tab="概览">
-        <Overview :isDevice='isDevice' :type='comType' :label='comLabel' />
+        <Overview
+          v-model="deviceList"
+          :isDevice='isDevice'
+          :type='comType'
+          :modelId.sync='modelId'
+          :label='comLabel'
+        />
       </p-tab-pane>
       <p-tab-pane key="data" tab="数据">
-        <Data search isDevice v-if="isDevice" />
-        <Collapse-list v-else>
+        <Data search isDevice :deviceId='comDeviceId' v-if="isDevice" />
+        <Collapse-list v-else :deviceList='deviceList'>
           <tempalte slot-scope='{item}'>
             <Data search :list='item' />
           </tempalte>
       </Collapse-list>
       </p-tab-pane>
       <p-tab-pane key="command" tab="指令">
-        <Command search isDevice v-if="isDevice" />
-        <Collapse-list v-else>
+        <Command search isDevice :deviceId='comDeviceId' :modelId='modelId' v-if="isDevice" />
+        <Collapse-list v-else :deviceList='deviceList'>
           <tempalte slot-scope='{item}'>
             <Command search :list='item' />
           </tempalte>
@@ -22,10 +28,10 @@
         <Send-record />
       </p-tab-pane>
       <p-tab-pane key="alarm" tab="报警" v-if="isDevice">
-        <Alarm />
+        <Alarm :deviceId='comDeviceId' />
       </p-tab-pane>
       <p-tab-pane key="log" tab="日志">
-        <Log :isDevice='isDevice' />
+        <Log :isDevice='isDevice' :deviceId='comDeviceId'/>
       </p-tab-pane>
     </p-tabs>
   </page>
@@ -50,7 +56,9 @@ export default {
   },
   data() {
     return{
-      activeKey: 'view'
+      activeKey: 'view',
+      modelId: '',
+      deviceList: []
     }
   },
   watch: {
@@ -71,6 +79,9 @@ export default {
     },
     isDevice() {
       return this.comType === 'device'
+    },
+    comDeviceId() {
+      return this.$route.query.id
     }
   },
   methods: {

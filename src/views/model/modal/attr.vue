@@ -18,13 +18,13 @@
       label-align="left"
     >
       <p-form-model-item label="属性标识" prop="attributeMark">
-        <p-input v-model="model.attributeMark" placeholder="请输入属性标识" :disabled='isEdit' />
+        <p-input v-model="model.attributeMark" placeholder="请输入属性标识" :disabled='moreEdit' />
       </p-form-model-item>
       <p-form-model-item label="属性名称" prop="attributeName">
         <p-input v-model.trim="model.attributeName" placeholder="请输入属性名称" />
       </p-form-model-item>
       <p-form-model-item label="属性类型" prop="attributeType">
-        <p-select v-model="model.attributeType" :disabled='isEdit'>
+        <p-select v-model="model.attributeType" :disabled='moreEdit'>
             <p-select-option v-for="item in attrType" :key="item.value" :value="item.value">{{item.text}}</p-select-option>
           </p-select>
       </p-form-model-item>
@@ -177,6 +177,10 @@ export default {
     },
     delEmun(index) {
       this.paramsValidateForm.emunList.splice(index,1)
+      if (!this.paramsValidateForm.emunList.length) {
+        this.paramsValidateForm.emunList = [{enumKey: '',enumValue: ''}]
+      }
+      this.$refs.paramsValidateForm.validate()
     },
     cancel() {
       this.loading = false
@@ -208,6 +212,9 @@ export default {
               return
             }
             this.loading = true
+            if (!this.model.attributeName) {
+              this.model.attributeName = this.model.attributeMark
+            }
             const emunList = this.$deepCopy(this.paramsValidateForm.emunList)
             const enumMap = {}
             for(let item of emunList) {
@@ -258,5 +265,10 @@ export default {
 .noList{
   position: relative;
   top: 6px;
+}
+.poros-form{
+  /deep/.poros-form-explain{
+    width: 160px;
+  }
 }
 </style>

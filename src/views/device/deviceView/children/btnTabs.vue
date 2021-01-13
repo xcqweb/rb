@@ -5,7 +5,7 @@
       v-for="(item, index) in tabs"
       :key='index'
       @click="clickHandler(index,item)"
-    >{{isNullOrEmpty(extra) ? item.title : `${item.title}(${extra})`}}</li>
+    >{{isNullOrEmpty(extra) ? item.title : `${item.title}(${comExtra})`}}</li>
   </ul>
 </template>
 
@@ -20,6 +20,12 @@ export default {
     return {
       currentIndex: 0,
       isNullOrEmpty,
+    }
+  },
+  computed: {
+    comExtra() {
+      const num = !isNaN(this.extra) && Number(this.extra) || 0
+      return num > 99 ? '+99' : num
     }
   },
   methods: {

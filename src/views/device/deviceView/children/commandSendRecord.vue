@@ -43,18 +43,16 @@ export default {
     return {
       filtersList1: sendType,
       filtersList2: resultType,
-      filteredInfo1: {},
       selectList: [
         {name:'指令名称',key: 'modelName'},
         {name:'指令标识',key: 'creater'},
-        {name:'发送时间',key: 'createTime'},
+        {name:'发送时间',key: 'time'},
       ]
     };
   },
   computed: {
     columns(){
       let { filteredInfo1} = this;
-      filteredInfo1 = filteredInfo1 || {};
       return [
         ...commandColumns.slice(0,3),
         {
@@ -86,7 +84,7 @@ export default {
           ellipsis: true,
           dataIndex: 'createName',
           filterMultiple: false,
-          filteredValue: filteredInfo2.systemName || [],
+          filteredValue: filteredInfo1.systemName || [],
           filters: this.$arrayItemToString(this.filtersList2),
           width: 100,
         },

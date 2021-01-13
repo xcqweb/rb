@@ -2,6 +2,14 @@
 
 export const formualList = [
   {
+    value: '==',
+    text: '等于',
+  },
+  {
+    value: '!=',
+    text: '不等于',
+  },
+  {
     value: '><',
     text: '介于',
   },
@@ -14,35 +22,27 @@ export const formualList = [
     text: '大于',
   },
   {
-    value: '>=',
-    text: '大于等于',
-  },
-  {
     value: '<',
     text: '小于',
   },
   {
     value: '<=',
-    text: '小于等于',
+    text: '不大于',
   },
   {
-    value: '==',
-    text: '等于',
-  },
-  {
-    value: '!=',
-    text: '不等于',
+    value: '>=',
+    text: '不小于',
   },
 ];
 export const formualMap = {
+  '==': '等于',
+  '!=': '不等于',
   '><': '介于',
   '<>': '不介于',
   '>': '大于',
-  '>=': '大于等于',
   '<': '小于',
-  '<=': '小于等于',
-  '==': '等于',
-  '!=': '不等于',
+  '<=': '不大于',
+  '>=': '不小于',
 };
 
 //报警来源
@@ -101,14 +101,14 @@ export const judgeTypeList = ['心跳包模式','数据包模式']
 
 //参数类型
 export const paramType = [
-  {text: '浮点型',value: 0},
-  {text: '日期',value: 1},
-  {text: '32位整型',value: 2},
-  {text: '双精度浮点型',value: 3},
-  {text: '布尔型',value: 4},
-  {text: '字符',value: 5},
+  {text: '字符',value: 0},
+  {text: '浮点型',value: 1},
+  {text: '日期',value: 2},
+  {text: '32位整型',value: 3},
+  {text: '双精度浮点型',value: 4},
+  {text: '布尔型',value: 5},
 ]
-export const paramTypeList = ['浮点型','日期','32位整型','双精度浮点型','布尔型','字符']
+export const paramTypeList = ['字符','浮点型','日期','32位整型','双精度浮点型','布尔型']
 
 //设备网络
 export const deviceNetType = [
@@ -149,3 +149,7 @@ export const rateType = [
 export const rateTypeList = ['秒','分钟','小时','天']
 
 export const useOption = ['存储', '显示', '显示、存储']
+
+export const netStatusClass =  ['online','offline', 'noActive']
+export const statusClass =  ['normal','offline_text']
+

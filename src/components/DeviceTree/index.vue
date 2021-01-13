@@ -7,6 +7,7 @@
       :treeData="treeData"
       :load-data="onLoadData"
       :expandedKeys.sync='expandedKeys'
+      :defaultSelectedKeys='defaultSelectedKeys'
       :loadedKeys='loadedKeys'
       :show-icon='showIcon'
       :show-line='showLine'
@@ -71,6 +72,7 @@ export default {
     showLine: Boolean,
     showOperator: Boolean, //是否显示操作按钮
     value: Array,
+    checkRoot: Boolean, //默认选中根节点
     replaceFields: {
       type: Object,
       default: function() {
@@ -107,7 +109,12 @@ export default {
       this.expandedKeys = []
       this.getLocation({}).then( ({data}) => {
         this.treeData = this.tran(data)
-        this.expandedKeys = [data[0].id]
+        if (this.checkRoot) {
+          const {id, locationName,locationNamePath} = data[0]
+          this.$emit('input', {id, locationName,locationNamePath,init: true})
+          this.$emit('change', {id, locationName,locationNamePath,init: true})
+          this.defaultSelectedKeys = this.expandedKeys = [data[0].id]
+        }
       }).catch( () => {/** */})
     },
     tran(data) {
@@ -219,10 +226,11 @@ export default {
         loop(this.treeData);
       }
     },
-    selectTree(data, {node, node: {dataRef}}) {
-      console.log(node, dataRef)
-      this.$emit('input', dataRef)
-      this.$emit('change', dataRef)
+    selectTree(data, node) {
+      const {dataRef} = node.node
+      const {id, locationName,locationNamePath} = dataRef
+      this.$emit('input', node.selected ? {id, locationName,locationNamePath} : {})
+      this.$emit('change', node.selected ? {id, locationName,locationNamePath} : {})
       this.choseNode = !node.selected ? dataRef : {}
     },
     expand(expandedKeys,{expanded, node}) {
@@ -266,7 +274,7 @@ export default {
       this.visible = true
       this.title = '重命名'
       this.componentId = 'Operator'
-      this.options.parentName = paths[path.length - 2]
+      this.options.parentName = paths[paths.length - 2]
       this.options.parentId= item.parentId
       this.options.locationName = item.locationName
       this.options.id = item.id

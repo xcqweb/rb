@@ -3,7 +3,7 @@
     <template v-if="isEdit">
       <p-input class="edit_input" allow-clear v-model="keyword" placeholder="请输入" v-if="!normal" :style="{width:comWidth}" />
       <slot else></slot>
-      <p-button class="ml6" type='primary' @click="submit" icon="check" />
+      <p-button class="ml6" type='primary' @click="submit" :disabled='error' icon="check" />
       <p-button class="edit_close" @click="cancel" icon="close" />
     </template>
     <template v-else>
@@ -28,6 +28,7 @@ export default {
       default: 'YYYY-MM-DD'
     },
     emunList: Array,
+    error: Boolean, //是否输入报错 报错禁止提交
   },
   data() {
     return {

@@ -26,15 +26,15 @@
       <div class="flex_monitor">
         <p-form-model-item class="judge">
           <span slot="label" class="required-doc">报警阈值</span>
-          <p-select v-model="model.limit" class="w160">
+          <p-select v-model="model.limit" @change='changeLimit' class="w160">
             <p-select-option v-for="item in formualList" :value='item.value' :key='item.value'>{{item.text}}</p-select-option>
           </p-select>
         </p-form-model-item>
         <p-form-model-item prop="firstVal">
-            <p-input class="f1 mr6 ml6 w160" v-model="model.firstVal" placeholder="请输入阈值" />
+            <p-input class="f1 mr6 ml6 w160" @blur="blurFun('firstVal')" v-model="model.firstVal" placeholder="请输入阈值" />
         </p-form-model-item>
         <p-form-model-item prop="secondVal" v-if="isBetween">
-            <p-input class="f1 w160" v-model="model.secondVal" placeholder="请输入阈值" />
+            <p-input class="f1 w160" @blur="blurFun('secondVal')" v-model="model.secondVal" placeholder="请输入阈值" />
         </p-form-model-item>
       </div>
       <p-form-model-item label="报警信息" prop="remark">
@@ -81,8 +81,8 @@ export default {
             message: '输入长度限制为25个字符'
           },
           {
-            message: '输入字符仅支持中文、字母、数字（整数和小数）或下划线“_”',
-            pattern: pattern.name4Reg
+            message: '输入字符仅支持字母、数字（整数和小数）或下划线“_”',
+            pattern: pattern.name5Reg
           },
         ] : [
           {
@@ -112,6 +112,17 @@ export default {
           {
             message: '输入字符仅支持数字（整数和小数）',
             pattern: pattern.numReg
+          },
+          {
+            validator: (rule, value, callback) => {
+              console.log(this.model, value)
+              const {firstVal,secondVal} = this.model
+              if (+firstVal >= +secondVal) {
+                callback(new Error('左边阈值须小于右边阈值！'))
+              }else{
+                callback()
+              }
+            },
           },
         ],
       }
@@ -158,6 +169,15 @@ export default {
     });
   },
   methods: {
+    blurFun(key) {
+      if (!isNaN(this.model[key])) {
+        this.model[key] = Number(this.model[key]) + ''
+      }
+    },
+    changeLimit() {
+      this.model.firstVal = ''
+      this.model.secondVal = ''
+    },
     cancel() {
       this.loading = false
       this.visible = false
@@ -210,5 +230,11 @@ export default {
 }
 .flex_monitor{
   display: flex;
+}
+.poros-form{
+  /deep/.poros-form-explain{
+    width: 160px;
+    padding-left: 6px;
+  }
 }
 </style>

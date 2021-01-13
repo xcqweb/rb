@@ -28,6 +28,9 @@
 .fd{
   justify-content: flex-end;
 }
+.fb{
+  justify-content: space-between;
+}
 // 左浮动
 .fl {
   float: left;
@@ -177,6 +180,10 @@
 .c-text{
   color: @c-text;
 }
+.c-text-4{
+  color: @c-text-light-4
+}
+
 .c-warning {
   color: @c-warning;
 }
@@ -194,7 +201,15 @@
 }
 
 // ————————————————————————————————
-
+.expand-icon{
+  color: initial;
+  & ::before{
+    font-size: 12px;
+  }
+  &:hover{
+    color: initial;
+  }
+}
 .custom-expand-icon {
   margin-right: 8px;
 
@@ -241,12 +256,19 @@
 //在线
 .online{
   background-color: #09A120;
+  .doc();
 }
 //离线
 .offline{
   background-color: #CDCED5;
+  .doc();
 }
 
+//未激活
+.noActive{
+  border: 1px solid #CDCED5;
+  .doc();
+}
 //正常
 .normal{
   color: #09A120;
@@ -258,4 +280,8 @@
 //故障
 .fault{
   color: #09A120;
+}
+//离线
+.offline_text{
+  color: #CDCED5;
 }

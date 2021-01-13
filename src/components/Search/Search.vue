@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p-select v-model="selectType" @change="reset" v-if="isSelect" style="min-width:90px" :class="{noBoder: isSelect}">
+    <p-select v-model="selectType" @change="changeSelect" v-if="isSelect" style="min-width:90px" :class="{noBoder: isSelect}">
       <p-select-option v-for="(item, index) in selectList" :value='item.key' :key='index'>{{item.name}}</p-select-option>
     </p-select>
     <p-range-picker v-if="extra" style="width: 160px;margin-right: 10px;" v-model="keyword"  @change="onSearch"/>
@@ -55,10 +55,17 @@ export default {
     this.selectType = this.selectList[0] && this.selectList[0].key
   },
   methods: {
+    changeSelect() {
+      if (!this.keyword) {
+        return
+      }
+      this.reset()
+    },
     reset() {
       this.$emit('reset')
       this.keyword = ''
       this.$emit('input', '')
+      this.selectType = this.selectList[0] && this.selectList[0].key
     },
     onSearch() {
       this.$emit('search', {keyword: this.keyword, searchKey: this.selectType})

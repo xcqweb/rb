@@ -1,9 +1,9 @@
 <template>
   <div>
     <div class="pb20 clearfix">
-      <p-button type="primary" @click="addDevice">新增组合</p-button>
+      <p-button type="primary" @click="addDevice" :disabled='disabledBtnAdd'>新增组合</p-button>
       <div class="fr flex">
-        <search v-model.trim="keyword" @search="getData" :selectList='selectList'  @reset="reset" />
+        <search v-model.trim="keyword" @search="getTableData" :selectList='selectList' @reset="reset" />
       </div>
     </div>
     <p-table
@@ -20,6 +20,7 @@
       :expandedRowKeys='expandedRowKeys'
       row-key="id"
     >
+      <span slot="composeName" slot-scope="item" class="viewDetail" @click="view(item)">{{item.name}}</span>
       <template slot="operation" slot-scope="item">
         <a href="javascript:;" @click="view(item)">查看</a>
         <a class="ml6 mr6" href="javascript:;" @click="move(item)">移动</a>
@@ -32,13 +33,13 @@
         :columns="innerColumns"
         :data-source="record.innerData"
         :pagination="false"
-        :loading='record.loading'
+        :loading='innerLoading'
         row-key="id"
         style="margin:10px 0;"
         class="innerTable"
       >
-        <span slot="deviceName" slot-scope="item" class="viewDetail">www</span>
-        <span slot="deviceModel" slot-scope="item" class="viewDetail">www</span>
+        <span slot="deviceName" slot-scope="item" class="viewDetail" @click="viewDevice(item)">{{item.deviceName}}</span>
+        <span slot="deviceModel" slot-scope="item" class="viewDetail" @click="viewModel(item)">{{item.modelName}}</span>
         <a href="javascript:;" slot="operation" slot-scope="item" @click="unbind(item)">解绑</a>
       </p-table>
     </p-table>
@@ -59,17 +60,22 @@ import {deviceNetType,deviceStatusType,deviceNetTypeList,deviceStatusTypeList} f
 export default {
   mixins: [tableMixins,tableExpandMixins],
   components: {},
+  props: {
+    chooseNode: Object
+  },
   data() {
     return {
-      data: [],
       selectList: [
-        {name:'组合名称',key: 'deviceName'},
-        {name:'创建人',key: 'creater'},
-        {name:'创建时间',key: 'createTime'},
+        {name:'组合名称',key: 'name'},
+        {name:'创建人',key: 'createBy'},
+        {name:'创建时间',key: 'time'},
       ],
     }
   },
   computed: {
+    disabledBtnAdd() {
+      return !this.chooseNode.id
+    },
     innerColumns(){
       let { filteredInfo1 } = this;
       const that = this
@@ -90,7 +96,7 @@ export default {
           ellipsis: true,
           width: 100,
           customRender:(item) => {
-            const className = ['online doc','offline doc'][1]
+            const className = ['online','offline', 'noActive'][1]
             return <p>
               <span class={className}></span>
               <span>{deviceNetTypeList[1]}</span>
@@ -103,7 +109,7 @@ export default {
           ellipsis: true,
           width: 100,
           customRender:(item) => {
-            const className = ['normal','run', 'fault'][1]
+            const className = ['normal','offline_text'][1]
             return <span class={className}>{deviceStatusTypeList[1]}</span>
           }
         },
@@ -121,23 +127,20 @@ export default {
         {
           title: '组合名称',
           ellipsis: true,
-          dataIndex: 'name1',
-          // customRender:(item) => {
-            // return <a href='javascript:;' onClick={this.viewUserDetail(item)}>{item.uid}</a>
-          // }
+          scopedSlots: { customRender: 'composeName' }
         },
         {
-          dataIndex: 'name2',
+          dataIndex: 'remark',
           title: '描述',
           ellipsis: true
         },
         {
-          dataIndex: 'name3',
+          dataIndex: 'createBy',
           title: '创建人',
           ellipsis: true
         },
         {
-          dataIndex: 'name4',
+          dataIndex: 'createTime',
           title: '创建时间',
           ellipsis: true,
           customRender(date) {
@@ -157,81 +160,89 @@ export default {
     addDevice() {
       this.$router.push({
         path: '/device/addComponsition',
+        query: {
+          locationId: this.chooseNode.id,
+          locationNamePath: this.chooseNode.locationNamePath
+        }
       })
     },
-    getTableData() {
+    expandhandler(id) {
+      if (!id) {
+        return
+      }
+      this.innerLoading = true
+      this.$API.getCompositionDeviceInfo({id}).then( res => {
+        this.tableData.forEach( item => {
+          if (item.id === id) {
+            this.$set(item, 'innerData',res.data)
+          }
+        })
+        this.innerLoading = false
+      }).catch( () => {
+        this.innerLoading = false
+      })
+    },
+    getTableData({searchKey = this.selectList[0].key, keyword} = {}) {
+      const isArray = Array.isArray(keyword)
       const params = {
-        dataSources: 0,
+        keyword: isArray ? undefined : keyword,
+        searchKey: isArray ? undefined : searchKey,
         limit: this.pagination.pageSize,
         pageNo: this.pagination.current,
-        userName: this.searchKeyUser
-      };
-      this.tableData = [{id:1,name1: 111,innerData: [{id:12,name:24}]}]
-      // this.loading = true;
-      // queryOrgUserListByPage(params).then( res => {
-      //   this.data = res.data.porosSecStaffs.records || [];
-      //   this.pagination.total = res.data.porosSecStaffs.total || 0;
-      //   this.loading = false 
-      //   if (!this.data.length && this.pagination.total > 0) {
-      //     this.pagination.current = Math.ceil(this.pagination.total / this.pagination.pageSize);
-      //     this.getData()
-      //   }
-      // }).catch( () => {
-      //   this.loading = false 
-      // });
+        startCreateTime: isArray ? this.formatDate(keyword[0]) : undefined,
+        endCreateTime: isArray ? this.formatDate(keyword[1]) : undefined,
+        locationId: this.chooseNode.id,
+      }
+      this.loading = true;
+      this.$API.getCompositionDeviceList(params).then( res => {
+        this.tableData = res.data.records || [];
+        this.pagination.total = res.data.total || 0;
+        this.loading = false 
+      }).catch( () => {
+        this.loading = false 
+      });
     },
     //删除设备
-    removeDeviceHandler(data) {
-      const {code} = this.selectedTreeNode;
-      const {uid, dataSources} = data;
-      const params = {
-        dataSources,
-        code,
-        uids: uid,
-      };
-      removeOrgRelativeUser(params).then(() => {
-        this.$message.success('移除成功')
-        this.treeOperator(this.selectedTreeNode, 1, 'del')
-        if (this.data.length <= 1 && this.pagination.current > 1) {
+    removeDeviceHandler({id}) {
+      this.$API.delCompositionById({id}).then(() => {
+        this.$message.success('删除成功！')
+        if (this.tableData.length <= 1 && this.pagination.current > 1) {
           this.pagination.current --
         }
-        this.getData()
+        this.getTableData()
       }).catch(() => {
         //
       })
     },
     remove(item, handler) {
       this.$confirm({
-        title: '提示',
-        content: `确定要删除“${item.name}”吗？`,
+        title: '提示确定要删除吗？',
+        content: `确定要删除组合“${item.name}”吗？`,
         centered: true,
         onOk: () => {
           handler(item)
         }
       })
     },
-    unbind({id,attributeName}){
+    unbind({refId,deviceName}){
       const that = this;
       this.$confirm({
         centered: true,
         title: '确定要解绑吗？',
         icon: h => <p-icon class="exclamation" type="exclamation-circle" />,
         content: (h, params) => {
-          const str = `确定要与设备 "${attributeName}" 解绑吗？`;
+          const str = `确定要与设备 "${deviceName}" 解绑吗？`;
           return h('div', str);
         },
         onOk() {
-          // that.$API.delModelAttr({id}).then( res =>{
-          //   if ( res.code === 0 ){
-          //     that.$message.success('删除成功');
-          //     if (that.tableData.length <= 1 && that.pagination.current > 1) {
-          //       that.pagination.current --
-          //     }
-          //     that.getTableData()
-          //   }
-          // }).catch( e =>{
-          //   console.log(e);
-          // });
+          that.$API.compositionUnBindDevice({id: refId}).then( res =>{
+            if ( res.code === 0 ){
+              that.$message.success('操作成功！');
+              that.expandhandler(that.expandedRowKeys[0])
+            }
+          }).catch( e =>{
+            console.log(e);
+          });
         },
       });
     },
@@ -242,8 +253,27 @@ export default {
     view(item) {
       this.$router.push({
         path: '/device/viewComponsition',
+        query: {
+          id: item.id
+        }
       })
     },
+    viewDevice(item) {
+      this.$router.push({
+        path: '/device/viewDevice',
+        query: {
+          id: item.id
+        }
+      })
+    },
+    viewModel(item) {
+      this.$router.push({
+        path: '/model/viewModel',
+        query: {
+          id: item.modelId
+        }
+      })
+    }
   },
 }
 </script>

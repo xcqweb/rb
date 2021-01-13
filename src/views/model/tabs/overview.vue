@@ -2,8 +2,11 @@
   <div>
     <page-title>基本信息</page-title>
     <div class="content">
-      <Label label='模型名称'>
-        <Edit v-model="model.modelName" @submit="save" @cancel='cancel'></Edit>
+      <Label label='模型名称' v-clickOutSide.modelName="hide">
+        <Edit ref="modelName" normal v-model="model.modelName" :error="isError ==='modelName'" @submit="save" @cancel='cancel'>
+          <p-input class="edit_input" @change="validate('modelName')" allow-clear v-model="model.modelName" placeholder="请输入" />
+        </Edit>
+        <p class="poros-form-explain" v-show="isError ==='modelName'">{{errorInfo}}</p>
       </Label>
       <Label label='模型标识'>
         {{model.mark}}
@@ -16,19 +19,23 @@
           </p-select>
         </Edit>
       </Label> -->
-      <Label label='异常判断'>
-        <Edit normal v-model="model.ruleType" :emunList='judgeTypeList' @submit="save" @cancel='cancel'>
+      <Label label='异常判断' v-clickOutSide.ruleNum="hide">
+        <Edit ref='ruleNum' normal v-model="model.ruleType" :error="isError ==='ruleNum'" :emunList='judgeTypeList' @submit="save" @cancel='cancel'>
           <p-select class='mr6' v-model="model.ruleType" style="width:120px">
             <p-select-option v-for="item in judgeType" :key="item.value" :value="item.value">{{item.text}}</p-select-option>
           </p-select>
-          <p-input-number v-model="model.ruleNum" :max='999999999' :min='1' class="f1" />
+          <p-input-number @change="validate('ruleNum')" v-model="model.ruleNum" :max='999999999' :min='1' class="f1" />
           <p-select class="mr6 ml6" v-model="model.ruleUnit" style="width:80px;">
             <p-select-option v-for="item in rateType" :key="item.value" :value="item.value">{{item.text}}</p-select-option>
           </p-select>
         </Edit>
+        <p class="poros-form-explain" v-show="isError ==='ruleNum'">{{errorInfo}}</p>
       </Label>
-      <Label label='描述'>
-        <Edit v-model="model.remark" @submit="save" @cancel='cancel'></Edit>
+      <Label label='描述' v-clickOutSide.remark="hide">
+        <Edit ref='remark' normal @change="validate('remark')" :error="isError ==='remark'" v-model="model.remark" @submit="save" @cancel='cancel'>
+          <p-input class="edit_input" @change="validate('remark')" allow-clear v-model="model.remark" placeholder="请输入描述内容" />
+        </Edit>
+        <p class="poros-form-explain" v-show="isError ==='remark'">{{errorInfo}}</p>
       </Label>
       <Label label='创建人'>{{model.createBy}}</Label>
       <Label label='创建时间'>{{$formatDate(model.createTime)}}</Label>
@@ -37,21 +44,23 @@
 </template>
 
 <script>
-import PageTitle from '../../../components/PageTitle/PageTitle.vue'
 import {rateType,judgeType,judgeTypeList} from '@/utils/baseData'
+import Schema from 'async-validator';
 let dataCopy = {}
 export default {
-  components: { PageTitle },
   props: {
     modelId: String,
-    registerDeviceNum: Number
+    registerDeviceNum: Number,
+    modelName: String
   },
   data() {
     return{
       rateType,
       judgeType,
       judgeTypeList,
-      model: {}
+      model: {},
+      isError: '',
+      errorInfo: ''
     }
   },
   mounted() {
@@ -69,6 +78,9 @@ export default {
       })
     },
     save() {
+      if (this.isError) {
+        return
+      }
       const params = {id: this.modelId, ...this.model}
       this.$API.editModel(params).then(res => {
         this.$message.success('提交成功！')
@@ -79,6 +91,47 @@ export default {
     },
     cancel() {
       this.model = this.$deepCopy(dataCopy)
+    },
+    hide(key) {
+      this.isError = ''
+      this.$refs[key] && this.$refs[key].cancel()
+    },
+    //校验
+    validate(key) {
+        const rurleMap = {
+          modelName: {
+            modelName: [
+              {required: true, message: '请输入模型名称' },
+              {pattern:this.reg.name2Reg,message:'模型名称仅支持中文、字母、数字和下划线“_”'},
+              {type: 'string', max: 25,message:'模型名称长度限制为25个字符'},
+            ]
+          },
+          ruleNum: {
+            ruleNum: [
+              { required: true, message: '请输入判断机制' },
+              { type: 'string', max: 9, message: '判断机制长度限制为9个字符' },
+              { type: 'string', pattern: this.reg.numReg, message: '仅支持输入数字（整数）' },
+            ]
+          },
+          remark: {
+            remark: [
+              {max: 50,message: '描述长度限制为50个字符'},
+            ]
+          }
+        }
+        const descriptor = rurleMap[key]
+            
+        const validator = new Schema(descriptor);
+        validator.validate(this.model, (errors, fields) => {
+        if (errors) {
+          console.log(errors)
+          this.isError = key
+          this.errorInfo = errors[0].message
+          return handleErrors(errors, fields);
+        }else{
+          this.isError = ''
+        }
+      });
     }
   }
 }
@@ -92,6 +145,11 @@ export default {
     /deep/.label{
       width: 100%;
       line-height: 36px;
+    }
+    /deep/.poros-form-explain{
+      color: #f5222d;
+      margin-top: 6px;
+      transition: all 0.3s;
     }
   }
 </style>

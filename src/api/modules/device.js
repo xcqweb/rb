@@ -45,31 +45,36 @@ export default{
   delDeviceById: (params) => {
     return instance.delete(`${baseUrl}/ruban-device/deviceInfo/${params.id}`);
   },
+  // 根据id获取设备协议信息
+  getDeviceProtocolById: (params) => {
+    return instance.get(`${baseUrl}/ruban-device/deviceInfo/protocol/${params.id}`);
+  },
+
   // 根据id获取设备信息
   getDeviceDetailById: (params) => {
-    return instance.put(`${baseUrl}/ruban-device/deviceInfo/${params.id}`);
+    return instance.get(`${baseUrl}/ruban-device/deviceInfo/${params.id}`);
   },
 
   /////////////////////////设备属性信息////////////////////// 
   // 新增设备属性信息
-  addDevice: (params) => {
+  addDeviceAttr: (params) => {
     return instance.post(`${baseUrl}/ruban-device/deviceAttribute`, params);
   },
   // 修改设备属性信息
-  editDevice: (params) => {
+  editDeviceAttr: (params) => {
     return instance.put(`${baseUrl}/ruban-device/deviceAttribute`, params);
   },
   // 设备属性信息列表
-  getDeviceList: (params) => {
+  getDeviceAttrList: (params) => {
     return instance.get(`${baseUrl}/ruban-device/deviceAttribute/list`, {params});
   },
   // 根据id删除设备属性信息
-  delDeviceById: (params) => {
+  delDeviceAttrById: (params) => {
     return instance.delete(`${baseUrl}/ruban-device/deviceAttribute/${params.id}`);
   },
   // 根据id获取设备属性信息
-  getDeviceDetailById: (params) => {
-    return instance.put(`${baseUrl}/ruban-device/deviceAttribute/${params.id}`);
+  getDeviceAttrDetailById: (params) => {
+    return instance.get(`${baseUrl}/ruban-device/deviceAttribute/${params.id}`);
   },
 
   /////////////////////////设备数据参数//////////////////////
@@ -135,12 +140,12 @@ export default{
   },
   // 根据id获取组合详情
   getCompositionDetailById: (params) => {
-    return instance.put(`${baseUrl}/ruban-device/deviceCombination/${params.id}`);
+    return instance.get(`${baseUrl}/ruban-device/deviceCombination/${params.id}`);
   },
 
   // 根据id获取组合的设备信息
   getCompositionDeviceInfo: (params) => {
-    return instance.put(`${baseUrl}/ruban-device/deviceCombination/deviceDetail/${params.id}`);
+    return instance.get(`${baseUrl}/ruban-device/deviceCombination/deviceDetail/${params.id}`);
   },
 
   // 分页获取组合设备基本信息列表
@@ -149,15 +154,15 @@ export default{
   },
 
   // 组合绑定设备
-  getDeviceCompositionBindDevice: (params) => {
+  compositionBindDevice: (params) => {
     return instance.put(`${baseUrl}/ruban-device/deviceCombination/bindDevice`, params);
   },
   // 组合解除绑定设备
-  getDeviceCompositionBindDevice: (params) => {
+  compositionUnBindDevice: (params) => {
     return instance.put(`${baseUrl}/ruban-device/deviceCombination/untieDevice/${params.id}`);
   },
   // 组合移动设备
-  getDeviceCompositionBindDevice: (params) => {
+  compositionMoveDevice: (params) => {
     return instance.put(`${baseUrl}/ruban-device/deviceCombination/move`, params);
   },
 }

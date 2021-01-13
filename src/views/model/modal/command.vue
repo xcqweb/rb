@@ -48,8 +48,8 @@
                 required: true,
               },
               {
-                message: '变量标识仅支持中文、字母、数字或下划线“_”',
-                pattern: pattern.name2Reg
+                message: '变量标识仅支持字母、数字或下划线“_”',
+                pattern: pattern.nameReg
               },
               {
                 type: 'string',
@@ -79,8 +79,8 @@
             :rules="[
               {
                 type: 'string',
-                max: 25,
-                message: '注释长度限制为25个字符'
+                max: 50,
+                message: '注释长度限制为50个字符'
               },
             ]"
             >
@@ -144,6 +144,12 @@ export default {
             pattern: pattern.nameReg
           },
         ],
+        remark: [
+          {
+            max: 50,
+            message: '描述长度限制为50个字符'
+          },
+        ]
       }
     }
   },
@@ -177,7 +183,12 @@ export default {
   methods: {
     getCommandTemplate() {
       this.$API.getModelCommandTemplateSelect().then( res => {
-        this.commandTemplateList.push(...res.data)
+        const reData = res.data
+        const key = reData[0] && reData[0].id
+        const label = reData[0] && reData[0].commandName
+        this.model.commandTemplateId = {key}
+        this.getCommandAttrList({key,label})
+        this.commandTemplateList.push(...reData)
       })
     },
     getCommandAttrList({key,label}) {
@@ -187,6 +198,7 @@ export default {
       this.model.commandTemplateName = label
       this.$refs.paramsValidateForm && this.$refs.paramsValidateForm.resetFields()
       this.$API.getModelCommandAttrList({id: key}).then( res => {
+        this.paramsValidateForm.varList = [this.moreEdit ? {modelCommandId: this.options.id} : {}]
         this.paramsValidateForm.varList.unshift(...res.data.map( item => {
           return {...item, extendType: 1,/*0 自定义变量 1 模板继承变量*/modelCommandId: this.options.id}
         }))
@@ -197,6 +209,10 @@ export default {
     },
     delVar(index) {
       this.paramsValidateForm.varList.splice(index, 1)
+      if (!this.paramsValidateForm.varList.length) {
+        this.paramsValidateForm.varList = [this.moreEdit ? {modelCommandId: this.options.id} : {}]
+      }
+      this.$refs.paramsValidateForm.validate()
     },
     cancel() {
       this.loading = false

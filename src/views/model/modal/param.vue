@@ -114,7 +114,8 @@ export default {
   created() {
     this.$watch('visible', (val) => {
       if (val) {
-        this.model = {paramType: 0,used: 2,...this.options}
+        console.log(this.options)
+        this.model = {paramType: 2,used: 2,...this.options}
         const {used} = this.model
         const obj = {
           0: ['存储'],
@@ -143,6 +144,9 @@ export default {
             }else{
               this.model.used = 1
             }
+          }
+          if (!this.model.paramName) {
+            this.model.paramName = this.model.paramMark
           }
           const data = Object.assign({}, this.model)
           delete data.type

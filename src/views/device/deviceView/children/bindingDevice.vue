@@ -8,9 +8,14 @@
         rowKey="id"
         @change="tableChange"
         :loading="loading"
-        :pagination="pagination"
+        :pagination="false"
         :columns="columns"
         :data-source="tableData">
+        <p slot="netStatus" slot-scope="status">
+          <span :class="netStatusClass[status]"></span>
+          <span>{{deviceNetTypeList[status]}}</span>
+        </p>
+        <span slot="status" slot-scope="status" :class="statusClass[status]">{{deviceStatusTypeList[status]}}</span>
         <template slot="operation" slot-scope="text, record">
           <span class="operateBtn" @click="unBind(record)">解绑</span>
         </template>
@@ -22,6 +27,8 @@
       v-model="visible"
       :options="options"
       @callback="callback"
+      overview
+      :selectedDevceIds='selectedDevceIds'
       ref='modal'
     />
   </div>
@@ -31,13 +38,33 @@
 import tableMixins from '@/mixins/tableMixins'
 import BindDeviceModal from '../modal/bindDevice'
 import {commomColumns} from '../base'
+import {
+  deviceNetTypeList,
+  deviceStatusTypeList,
+  netStatusClass,
+  statusClass
+  } from '@/utils/baseData'
 export default {
   mixins: [tableMixins],
   components: {BindDeviceModal},
+  props: {
+    deviceId: String,
+    overview: Boolean,
+    value: Array
+  },
   data() {
-    return {};
+    return {
+      checkedList: [],
+      deviceNetTypeList,
+      deviceStatusTypeList,
+      netStatusClass,
+      statusClass
+    };
   },
   computed: {
+    selectedDevceIds() {
+      return this.tableData.map( item => item.deviceId)
+    },
     columns(){
       return [
         ...commomColumns,
@@ -45,7 +72,7 @@ export default {
           title: '操作',
           dataIndex: 'operate',
           align: 'right',
-          width: 100,
+          width: 80,
           scopedSlots: { customRender: 'operation' },
         },
       ]
@@ -53,23 +80,17 @@ export default {
   },
   methods: {
     getTableData(){
-      const param = {
-        keyword: this.keyword,
-        limit: this.pagination.pageSize,
-        pageNo: this.pagination.current,
-      }
-      // this.loading = true;
-      // rolePermissionApi.getPermissionRoleList(param).then( res =>{
-      //   if ( res.code === 0 ){
-      //     this.tableData = res.data.records || [];
-      //     this.pagination.total = res.data.total;
-      //   }
-      //   this.loading = false;
-      // }).catch( e =>{
-      //   this.loading = false;
-      //   console.log(e);
-      // });
-      this.tableData = [{id:1}]
+      this.loading = true;
+      this.$API.getCompositionDeviceInfo({id: this.deviceId}).then( res => {
+        if ( res.code === 0 ){
+          this.tableData = res.data || [];
+          this.$emit('input', this.tableData)
+        }
+        this.loading = false;
+      }).catch( e =>{
+        this.loading = false;
+        console.log(e);
+      });
     },
     bind() {
       this.visible = true
@@ -82,27 +103,39 @@ export default {
         title: '确定要解绑吗？',
         icon: h => <p-icon class="exclamation" type="exclamation-circle" />,
         content: (h, params) => {
-          const str = `确定要解绑设备"${row.name}"吗？`;
+          const str = `确定要解绑设备"${row.deviceName}"吗？`;
           return h('div', {
           }, str);
         },
         onOk() {
-          // rolePermissionApi.delPermissionRole(row.id).then( res =>{
-          //   if ( res.code === 0 ){
-          //     that.$message.success('删除成功');
-          //     that.getTableData();
-          //   }
-          // }).catch( e =>{
-          //   console.log(e);
-          // });
+          that.$API.compositionUnBindDevice({id: row.refId}).then( res =>{
+            if ( res.code === 0 ){
+              that.$message.success('操作成功！');
+              that.getTableData();
+            }
+          }).catch( e =>{
+            console.log(e);
+          });
         },
         onCancel() {
           console.log('Cancel');
         },
       });
     },
-    callback() {
-
+    callback(dataList,checkedList) {
+      if (this.overview) {
+        const params = {
+          deviceCombinationId: this.deviceId,
+          deviceIdList: checkedList,
+        }
+        this.$API.compositionBindDevice(params).then( res => {
+          this.$message.success('操作成功！');
+          this.getTableData();
+        })
+      }else{
+        this.tableData.push(...dataList)
+        this.checkedList = checkedList
+      }
     },
     tableChange(){
       this.getTableData(); 

@@ -11,6 +11,8 @@ import DeviceTree from './DeviceTree'
 import Label from './Label'
 import ModalSelectTree from './ModalSelectTree'
 import CollapseList from './CollapseList'
+import CycleList from './CycleList'
+import InfinitySelect from './InfinitySelect'
 [
   Page,
   PageTitle,
@@ -22,5 +24,7 @@ import CollapseList from './CollapseList'
   DeviceTree,
   Label,
   ModalSelectTree,
-  CollapseList
+  CollapseList,
+  CycleList,
+  InfinitySelect
 ].forEach(el => Vue.use(el));
