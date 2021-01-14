@@ -24,7 +24,7 @@
         <p-input v-model.trim="model.attributeName" placeholder="请输入属性名称" />
       </p-form-model-item>
       <p-form-model-item label="属性类型" prop="attributeType">
-        <p-select v-model="model.attributeType" :disabled='moreEdit'>
+        <p-select v-model="model.attributeType" :disabled='moreEdit' @change="changeAttr">
             <p-select-option v-for="item in attrType" :key="item.value" :value="item.value">{{item.text}}</p-select-option>
           </p-select>
       </p-form-model-item>
@@ -178,6 +178,9 @@ export default {
     });
   },
   methods: {
+    changeAttr() {
+      delete this.model.unit
+    },
     addEmun() {
       this.paramsValidateForm.emunList.push({enumKey: '',enumValue: ''})
     },
@@ -226,7 +229,7 @@ export default {
             for(let item of emunList) {
               enumMap[item.enumKey] = item.enumValue
             }
-            const data = Object.assign(this.isEmun ? {enumMap} : {}, this.model)
+            const data = Object.assign(this.isEmun ? {enumMap,innerData: emunList} : {}, this.model)
             delete data.type
             let func
             let message = '提交成功！'
@@ -237,12 +240,12 @@ export default {
               func = this.$API.editModelAttr
             }else if(type === 'first-add'){//新增模型时添加
               this.$message.success(message)
-              this.$emit('callback', {type, ...data,id: this.uuid(),innerData: emunList,enumMap})
+              this.$emit('callback', {type, ...data,id: this.uuid()})
               this.cancel()
               return
             }else if(type === 'first-edit'){//新增模型时编辑
               this.$message.success(message)
-              this.$emit('callback', {type, ...data, innerData: emunList,enumMap})
+              this.$emit('callback', {type, ...data})
               this.cancel()
               return
             }

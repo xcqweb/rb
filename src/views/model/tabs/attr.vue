@@ -244,6 +244,9 @@ export default {
     callback(res) {
       const {type, ...data} = res
       if(type === 'first-add') {
+        if (data.attributeType === 3) {
+          this.expandedRowKeys = [data.id]
+        }
         this.tableData.push(data)
         this.$emit('input', this.tableData)
       }else if (type === 'first-edit'){

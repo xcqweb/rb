@@ -165,6 +165,11 @@ export default {
         return
       }
       this.getTableData()
+    },
+    activeKey(val) {
+      if (this.activeKey === 'deviceCompose') {
+        this.getTableData()
+      }
     }
   },
   methods: {

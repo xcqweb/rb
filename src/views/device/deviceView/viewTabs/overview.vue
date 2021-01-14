@@ -122,7 +122,6 @@ export default {
       //设备详情
       let fun = this.isDevice ? this.$API.getDeviceDetailById : this.$API.getCompositionDetailById
       fun({id: this.comDeviceId}).then( res => {
-        console.log(res.data)
         const reData = res.data
         this.model = reData
         dataCopy = this.$deepCopy(this.model)

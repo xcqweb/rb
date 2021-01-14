@@ -59,7 +59,6 @@ export default {
         return
       }
       this.$API.getDeviceProtocolById({id: this.deviceId}).then( res => {
-        console.log(res.data)
         const reData = res.data
         const keys = Object.keys(reData)
         this.protocolList = keys.filter(item => Object.keys(reData[item]).length).map( key => {

@@ -148,7 +148,7 @@ export default {
           if (!this.model.paramName) {
             this.model.paramName = this.model.paramMark
           }
-          const data = Object.assign({}, this.model)
+          const data = Object.assign({createOption: 0}, this.model)
           delete data.type
           let func
           let message = '提交成功！'

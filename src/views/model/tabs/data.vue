@@ -398,6 +398,7 @@ export default {
         }
       }else{ //监控
         if(type === 'first-add') {
+          this.expandedRowKeys = [data.paramId]
           this.tableData.forEach( item => {
             if (data.paramId === item.id) {
               item.innerData.push(data)

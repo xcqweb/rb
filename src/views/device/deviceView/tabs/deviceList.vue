@@ -155,6 +155,11 @@ export default {
         return
       }
       this.getTableData()
+    },
+    activeKey(val) {
+      if (this.activeKey === 'deviceList') {
+        this.getTableData()
+      }
     }
   },
   methods: {

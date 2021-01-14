@@ -214,7 +214,6 @@ export function validateRepeat(config) {
         repeatIndex.push(index);
       }
     }
-    console.log(repeatIndex)
     const snListDom = Array.from(config.ref.querySelectorAll(`${config.target ? config.target : 'input' }`));
     for (let [index, item] of snListDom.entries()) {
       item.style.border = '1px solid #dcdee2';
