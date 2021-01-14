@@ -7,6 +7,7 @@
           :isDevice='isDevice'
           :type='comType'
           :modelId.sync='modelId'
+          :deviceName.sync='deviceName'
           :label='comLabel'
         />
       </p-tab-pane>
@@ -14,15 +15,15 @@
         <Data search isDevice :deviceId='comDeviceId' v-if="isDevice" />
         <Collapse-list v-else :deviceList='deviceList'>
           <tempalte slot-scope='{item}'>
-            <Data search :list='item' />
+            <Data search componsition isDevice :deviceId='item.deviceId' />
           </tempalte>
       </Collapse-list>
       </p-tab-pane>
       <p-tab-pane key="command" tab="指令">
-        <Command search isDevice :deviceId='comDeviceId' :modelId='modelId' v-if="isDevice" />
+        <Command search isDevice :deviceId='comDeviceId' :deviceName='deviceName' :modelId='modelId' v-if="isDevice" />
         <Collapse-list v-else :deviceList='deviceList'>
           <tempalte slot-scope='{item}'>
-            <Command search :list='item' />
+            <Command search componsition isDevice :modelId='item.modelId' :deviceName='item.deviceName' />
           </tempalte>
         </Collapse-list>
         <Send-record />
@@ -58,6 +59,7 @@ export default {
     return{
       activeKey: 'view',
       modelId: '',
+      deviceName: '',
       deviceList: []
     }
   },

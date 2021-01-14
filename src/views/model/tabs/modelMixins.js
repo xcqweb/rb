@@ -5,7 +5,8 @@ export default {
   props: {
     search: Boolean, //搜索框
     addBtn: Boolean, //添加按钮
-    isDevice: Boolean, //是否是设备下使用 否则为模型下
+    isDevice: Boolean, //是否是设备(组合和设备)下使用 否则为模型下
+    componsition: Boolean, //组合中使用
     list: Object, //父组件数据
     add: Boolean, //是否是在新增页面使用
     filter: Boolean, //是否显示表格头部筛选

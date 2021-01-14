@@ -49,6 +49,7 @@
       v-model="visible"
       title="移动设备"
       :options='options'
+      @callback='callback'
     />
   </div>
 </template>
@@ -61,10 +62,12 @@ export default {
   mixins: [tableMixins,tableExpandMixins],
   components: {},
   props: {
-    chooseNode: Object
+    chooseNode: Object,
+    activeKey: String
   },
   data() {
     return {
+      moveDeviceId: '', //移动的设备id
       selectList: [
         {name:'组合名称',key: 'name'},
         {name:'创建人',key: 'createBy'},
@@ -154,6 +157,14 @@ export default {
           scopedSlots: { customRender: 'operation' }
         },
       ]
+    }
+  },
+  watch: {
+    'chooseNode.id'() {
+      if (this.chooseNode.init || this.activeKey === 'deviceList') {
+        return
+      }
+      this.getTableData()
     }
   },
   methods: {
@@ -246,9 +257,22 @@ export default {
         },
       });
     },
-    move() {
+    move(item) {
       this.visible = true
       this.componentId = 'ModalSelectTree'
+      this.moveDeviceId = item.id
+    },
+    //移动设备
+    callback(data) {
+      const params = {
+        id: this.moveDeviceId,
+        locationId: data.locationId,
+        oldLocationId: this.chooseNode.id,
+      }
+      this.$API.compositionMoveDevice(params).then( res => {
+        this.$message.success('操作成功！')
+        this.getTableData()
+      })
     },
     view(item) {
       this.$router.push({

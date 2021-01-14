@@ -238,10 +238,10 @@ export default {
         limit: this.pagination.pageSize,
         pageNo: this.pagination.current,
         paramType: this.filteredInfo1.paramType && this.filteredInfo1.paramType[0],
-        deviceId: this.isDevice && this.deviceId
+        deviceId: this.isDevice ? this.deviceId : undefined
       }
       this.loading = true;
-      let fun = this.isDevice ? this.$API.getDeviceParamList : this.$API.getModelParamsList
+      let fun = this.isDevice ? (this.componsition ? this.$API.getDeviceParamList : this.$API.getDeviceParamList) : this.$API.getModelParamsList
       fun(param).then( res =>{
         if ( res.code === 0 ){
           this.tableData = res.data.records || [];

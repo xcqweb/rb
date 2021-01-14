@@ -59,6 +59,9 @@ import {commandColumns} from '../../device/deviceView/base'
 export default {
   mixins: [modelMixins],
   components: {CommandModal},
+  props: {
+    deviceName: String
+  },
   data() {
     return {
       selectList: [
@@ -103,6 +106,7 @@ export default {
   methods: {
     expandhandler(modelCommandId) {
       if (!modelCommandId) {
+        console.error('指令id不存在！')
         return
       }
       const params = {
@@ -122,6 +126,10 @@ export default {
       })
     },
     getTableData({searchKey = this.selectList[0].key,keyword} = {}){
+      if (!this.modelId) {
+        console.error('模型id不存在！')
+        return
+      }
       const param = {
         modelId: this.modelId,
         searchKey,
@@ -174,7 +182,7 @@ export default {
         title: type === 'command' ? '确定要发送指令吗' : '确定要删除吗？',
         icon: h => <p-icon class="exclamation" type="exclamation-circle" />,
         content: (h, params) => {
-          const str = type === 'command' ? `确定要向设备 "${row.name}" 发送指令 停机 吗？` : `确定删除指令"${row.commandName}"吗？`;
+          const str = type === 'command' ? `确定要向设备 "${that.deviceName}" 发送指令 停机 吗？` : `确定删除指令"${row.commandName}"吗？`;
           return h('div', str);
         },
         onOk() {

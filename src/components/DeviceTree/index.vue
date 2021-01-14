@@ -113,8 +113,9 @@ export default {
           const {id, locationName,locationNamePath} = data[0]
           this.$emit('input', {id, locationName,locationNamePath,init: true})
           this.$emit('change', {id, locationName,locationNamePath,init: true})
-          this.defaultSelectedKeys = this.expandedKeys = [data[0].id]
+          this.defaultSelectedKeys = [data[0].id]
         }
+        this.expandedKeys = [data[0].id]
       }).catch( () => {/** */})
     },
     tran(data) {

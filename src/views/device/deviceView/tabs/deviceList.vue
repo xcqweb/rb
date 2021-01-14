@@ -41,6 +41,7 @@
       v-model="visible"
       title="移动设备"
       :options='options'
+      @callback='callback'
     />
   </div>
   
@@ -59,10 +60,12 @@ import {
 export default {
   mixins: [tableMixins],
   props: {
-    chooseNode: Object
+    chooseNode: Object,
+    activeKey: String
   },
   data() {
     return {
+      moveDeviceData: {},
       searchName: '',
       pageLoad: false,
       ///////
@@ -148,7 +151,7 @@ export default {
   },
   watch: {
     'chooseNode.id'() {
-      if (this.chooseNode.init) {
+      if (this.chooseNode.init || this.activeKey === 'deviceCompose') {
         return
       }
       this.getTableData()
@@ -219,6 +222,21 @@ export default {
     move(item) {
       this.visible = true
       this.componentId = 'ModalSelectTree'
+      this.moveDeviceData = {
+        id: item.id,
+        modelId: item.modelId
+      }
+    },
+    //移动设备
+    callback(data) {
+      const params = {
+        ...this.moveDeviceData,
+        locationId: data.id,
+      }
+      this.$API.editDevice(params).then(res => {
+        this.$message.success('操作成功！')
+        this.getTableData()
+      })
     },
     view(path, id, type) {
       this.$router.push({

@@ -5,7 +5,11 @@
       <Label :label="`${label}名称`">
         <Edit v-model="model[namekey]" @submit="save" @cancel='cancel'></Edit>
       </Label>
-      <Label v-if="!isDevice" label='描述'>{{model.remark}}</Label>
+      <Label v-if="!isDevice" label='描述'>
+        <Edit v-model="model.remark" normal @submit="save" @cancel='cancel'>
+          <p-input v-model="model.remark"></p-input>
+        </Edit>
+      </Label>
       <Label v-if="isDevice" label='设备标识'>{{model.deviceMark}}</Label>
       <Label v-if="isDevice" label='所属模型'>{{model.modelName}}</Label>
       <Label label='所属节点'>{{model.locationName}}</Label>
@@ -17,13 +21,13 @@
       <Label v-if="isDevice" label='状态'>
         <span :class="statusClass[model.status]">{{deviceStatusTypeList[model.status]}}</span>
       </Label>
-      <Label label='创建人'>{{model.updateBy}}</Label>
-      <Label label='创建时间'>{{$formatDate(model.updateTime)}}</Label>
+      <Label label='创建人'>{{model.createBy}}</Label>
+      <Label label='创建时间'>{{$formatDate(model.createTime)}}</Label>
     </div>
     <page-title class="mt20">{{isDevice ? '连接配置' : '绑定设备'}}</page-title>
     <!-- 设备 -->
     <template v-if="isDevice">
-      <Link-config class="mt10" :deviceId='comDeviceId' v-model="model.switchSatatus" @change='save' />
+      <Link-config class="mt10" :deviceId='comDeviceId' v-model="model.authEnabled" @change='save' />
       <page-title class="mt20">属性信息</page-title>
       <Attr-info overview :deviceId='comDeviceId' />
     </template>
@@ -57,9 +61,10 @@ export default {
   props: {
     type: String,
     label: String,
-    isDevice: Boolean,
+    isDevice: Boolean, //在设备中使用否则在组合中
     modelId: String,
     value: Array, //设备列表
+    deviceName: String
   },
   data() {
     return{
@@ -90,15 +95,21 @@ export default {
     this.init()
   },
   methods: {
-    //编辑保存
+    //编辑保存设备信息
     save() {
-      const params = {
-        deviceId: this.comDeviceId,
+      const params = this.isDevice ? {
+        id: this.comDeviceId,
+        modelId: this.model.modelId,
         deviceName: this.model.deviceName,
         authEnabled: this.model.authEnabled ? 1 : 0
+      } : {
+        id: this.comDeviceId,
+        name: this.model.name,
+        remark: this.model.remark,
       }
-      this.$API.editDevice().then(res => {
-        
+      let fun = this.isDevice ? this.$API.editDevice : this.$API.editComposition
+      fun(params).then(res => {
+        this.$message.success('操作成功！')
       })
     },
     cancel() {
@@ -108,12 +119,15 @@ export default {
       if (!this.comDeviceId) {
         return
       }
+      //设备详情
       let fun = this.isDevice ? this.$API.getDeviceDetailById : this.$API.getCompositionDetailById
       fun({id: this.comDeviceId}).then( res => {
         console.log(res.data)
-        this.model = res.data
+        const reData = res.data
+        this.model = reData
         dataCopy = this.$deepCopy(this.model)
-        this.$emit('update:modelId', res.data.modelId)
+        this.$emit('update:modelId', reData.modelId)
+        this.$emit('update:deviceName', reData.deviceName || reData.name)
       })
     }
   }

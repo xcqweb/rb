@@ -4,7 +4,7 @@
       <Label label='设备认证'><p-switch v-model="confirm" @change="changeSwitch" /></Label>
       <Label label='设备密钥' v-show="confirm">wwwww</Label>
     </div>
-    <p-collapse class="mt10" v-show="protocolList.length">
+    <p-collapse class="mt10" v-show="protocolList.length" :defaultActiveKey='[0]'>
       <p-collapse-panel v-for="(item,index) in protocolList" :key="index" :header="item.title">
         <div class="flex">
           <Label width='80' label='服务地址'>{{item.address}}</Label>

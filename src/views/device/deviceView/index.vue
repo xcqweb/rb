@@ -20,12 +20,12 @@
       </div>
       <!--右侧菜单-->
       <div class="platform-org-right pl20">
-        <p-tabs>
-          <p-tab-pane key="view" tab="设备列表">
-            <Device-list :chooseNode='chooseNode' />
+        <p-tabs v-model="activeKey">
+          <p-tab-pane key="deviceList" tab="设备列表">
+            <Device-list :chooseNode='chooseNode' :activeKey='activeKey' />
           </p-tab-pane>
-          <p-tab-pane key="attr" tab="设备组合">
-            <Device-composition :chooseNode='chooseNode' />
+          <p-tab-pane key="deviceCompose" tab="设备组合">
+            <Device-composition :chooseNode='chooseNode' :activeKey='activeKey' />
           </p-tab-pane>
         </p-tabs>
       </div>
@@ -42,7 +42,8 @@ export default {
     return {
       comWidth: 200,
       watchInstance: null,
-      chooseNode: {}
+      chooseNode: {},
+      activeKey: 'deviceList'
     }
   },
   deactivated() {

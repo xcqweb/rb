@@ -1,5 +1,5 @@
 import instance from '@/api/request';
-const baseUrl = '/api'
+const baseUrl = '/ch'
 
 export default{
   /////////////////////////设备位置//////////////////////

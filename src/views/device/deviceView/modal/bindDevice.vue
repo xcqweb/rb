@@ -14,13 +14,14 @@
       style="width:160px"
       :api='$API.getModelList'
       v-model="belongModel"
+      showAll
       :dataKey="{value: 'id', label: 'modelName'}"
     />
   </Label>
   <p-table
     class="mt10"
     rowKey="id"
-    :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+    :row-selection="comSelection"
     @change="tableChange"
     :loading="loadingTable"
     :pagination="pagination"
@@ -54,7 +55,7 @@ export default {
   data() {
     return {
       loadingTable: false,
-      belongModel: {},
+      belongModel: {label: '全部', key: 'all'},
       selectedRowKeys: [],
       deviceNetTypeList,
       deviceStatusTypeList,
@@ -63,6 +64,17 @@ export default {
     }
   },
   computed: {
+    comSelection() {
+      return { 
+        selectedRowKeys: this.selectedRowKeys,
+        onChange: this.onSelectChange,
+        getCheckboxProps: record => ({
+          props: {
+            disabled: this.selectedDevceIds.includes(record.id), // Column configuration not to be checked
+          },
+        }),
+        }
+    },
     columns(){
       return commomColumns
     },
@@ -85,6 +97,7 @@ export default {
       this.selectedRowKeys = []
     },
     confirm() {
+      this.selectedRowKeys = this.selectedRowKeys.filter( id => !this.selectedDevceIds.includes(id))
       if (!this.selectedRowKeys.length) {
         this.$message.error('请选择设备！')
         return
@@ -101,7 +114,7 @@ export default {
         keyword: this.keyword,
         limit: this.pagination.pageSize,
         pageNo: this.pagination.current,
-        modelId: this.belongModel.key
+        modelId: this.belongModel.key === 'all' ? '' : this.belongModel.key
       }
       this.loadingTable = true;
       this.$API.getDeviceList(param).then( res =>{

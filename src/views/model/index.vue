@@ -110,8 +110,8 @@ export default {
         searchKey: isArray ? undefined : searchKey,
         limit: this.pagination.pageSize,
         pageNo: this.pagination.current,
-        startTime: isArray ? this.formatDate(keyword[0]) : undefined,
-        endTime: isArray ? this.formatDate(keyword[1]) : undefined,
+        startTime: isArray ? this.$UTC(keyword[0]) : undefined,
+        endTime: isArray ? this.$UTC(keyword[1]) : undefined,
         ruleType: this.filteredInfo1.ruleType && this.filteredInfo1.ruleType[0]
       }
       this.loading = true;

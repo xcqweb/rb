@@ -44,7 +44,7 @@ export default {
       }
       this.loading = true
       console.log(this.chooseNode)
-      this.$emit('callback', {node: this.chooseNode}, 3)
+      this.$emit('callback', this.chooseNode, 3)
       this.$emit('input', false)
     }
   },
