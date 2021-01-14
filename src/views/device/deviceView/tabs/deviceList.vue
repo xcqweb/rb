@@ -65,7 +65,7 @@ export default {
   },
   data() {
     return {
-      moveDeviceData: {},
+      moveDeviceData: {}, //移动设备的信息
       searchName: '',
       pageLoad: false,
       ///////
@@ -183,7 +183,8 @@ export default {
         endTime: isArray ? this.formatDate(keyword[1]) : undefined,
         modelId: this.selectModelId.key === 'all' ? undefined : this.selectModelId.key,
         locationId: this.chooseNode.id,
-        // ruleType: this.filteredInfo1.ruleType && this.filteredInfo1.ruleType[0]
+        // netStatus: this.filteredInfo1.netStatus && this.filteredInfo1.netStatus[0]
+        // status: this.filteredInfo1.status && this.filteredInfo1.status[0]
       }
       this.loading = true;
       this.$API.getDeviceList(param).then( res =>{

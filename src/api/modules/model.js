@@ -1,5 +1,5 @@
 import instance from '@/api/request';
-const baseUrl = '/ch'
+const baseUrl = '/api'
 
 export default{
   ///////////////模型////////////////
