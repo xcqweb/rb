@@ -1,6 +1,5 @@
 @tabs-horizontal-padding: 20px 0 12px;
 @tabs-bar-margin: 0;
-
 .poros-tabs-tab {
   &-prev,
   &-next {
@@ -9,10 +8,29 @@
     }
   }
 }
-
-.poros-tabs-ink-bar{
-  bottom: 5px;
+.poros-tabs-nav-wrap{
+  margin-bottom: 5px;
+  overflow: initial;
+  .poros-tabs-nav-scroll{
+    height: 28px;
+    overflow: initial;
+  }
+  .poros-tabs-nav {
+    height: 38px;
+    .poros-tabs-tab{
+      padding: 12px 0;
+      margin-right: 20px;
+      position: relative;
+      bottom: 12px;
+    }
+  }
+  .poros-tabs-ink-bar{
+    bottom: 5px;
+  }
 }
+
+
+
 .poros-tabs-nav .poros-tabs-tab-active{
   color: @c-primary;
 }

@@ -3,7 +3,10 @@
   font-size: @f-default;
   color: @c-text;
   line-height: @f-default-line-height;
-  .poros-table-thead > tr > th, .poros-table-tbody > tr > td{
+  .poros-table-thead > tr > th{
+    color: @c-text-light-2;
+  }
+  .poros-table-tbody > tr > td{
     color: @c-text;
   }
   .poros-table-thead > tr > th{
@@ -23,9 +26,6 @@
   }
   .operateBtn{
     cursor: pointer;
-    /* &:hover{
-      color: @c-primary;
-    } */
   }
   .operateBtn + .operateBtn{
     margin-left: 10px;

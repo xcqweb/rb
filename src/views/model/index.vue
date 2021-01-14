@@ -1,5 +1,5 @@
 <template>
-  <page class="model" title="模型列表">
+  <page class="model">
     <div class="c_searchArea">
       <p-button @click="addModel" type="primary">新增模型</p-button>
       <div class="c_right">

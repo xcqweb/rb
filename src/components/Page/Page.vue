@@ -1,7 +1,7 @@
 <template>
   <div class="gt-page-wrap">
     <div class="gt-page">
-      <div v-if="title" class="gt-page-header">
+      <div v-if="content" class="gt-page-header">
         <p-page-header
           :title="title"
           :class="{backTitle: $listeners.back}"
@@ -102,13 +102,17 @@ export default {
   display: flex;
   flex-direction: column;
 }
+.gt-page-wrap{
+  background: #F7F7F8;
+}
 .gt-page {
-  margin: 10px;
   .flex-column();
   flex: 1;
   background-color: @c-white;
-  border: 1px solid @c-bg-1;
   overflow: hidden;
+  margin: 10px;
+  border: 1px solid #E5E6E9;
+  border-radius: 2px;
   &-wrap {
     .flex-column();
     height: 100%;
@@ -160,7 +164,7 @@ export default {
     flex: 1;
     overflow-x: hidden;
     overflow-y: auto;
-    padding: 20px;
+    padding: 16px 20px;
   }
 
   &-footer {

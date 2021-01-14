@@ -1,5 +1,5 @@
 <template>
-  <page @back='back' content='新增模型'>
+  <page @back='back' content='新增模型' backText="返回列表">
     <page-title>基本信息</page-title>
     <p-form
       class="mt20 ml20"
@@ -30,7 +30,7 @@
       </p-form-item>
       <p-form-item label="判断机制">
         <div class="flex">
-          <span>连续</span>
+          <span class="c-ligth-4">连续</span>
           <p-input
             style="width:160px"
             class="mr6 ml6"
@@ -46,7 +46,7 @@
           <p-select v-model="ruleUnit" style="width:160px">
             <p-select-option v-for="item in rateType" :key="item.value" :value="item.value">{{item.text}}</p-select-option>
           </p-select>
-          <p class="ml6">未上报数据</p>
+          <p class="ml6 c-ligth-4">未上报数据</p>
         </div>
       </p-form-item>
       <p-form-item label="描述">

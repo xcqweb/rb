@@ -25,7 +25,7 @@
       <span class="floder_add_des iconfont"></span>
     </template>
     <template slot="custom" slot-scope="item">
-      <span :style="{margin:'2px 4px 0 0'}" class="iconfont iconwenjianjiawenjian"></span>
+      <!-- <span :style="{margin:'2px 4px 0 0'}" class="iconfont iconwenjianjiawenjian"></span> -->
       <span class="tree-name">{{ item.locationName }}</span>
       <div class="tree-operator" v-if="showOperator">
         <p-dropdown :trigger="['hover']" >
@@ -378,7 +378,7 @@ export default {
 </script>
 <style lang="less" scoped>
   .device-tree{
-    padding: 6px;
+    padding: 8px 6px;
   }
   /deep/.tree-wrap{
     position: relative;
@@ -389,31 +389,76 @@ export default {
       }
     }
     & li{
+      ul{
+        padding: 0 0 0 24px;
+      }
+      // .poros-tree-switcher{
+      //   display: inline-block;
+      //   width: 16px;
+      //   height: 16px;
+      // }
       padding: 0;
+      // 叶子节点图标
+      .poros-tree-switcher-line-icon{
+        &>svg{
+          display: none;
+        }
+        &::after{
+          font-family: "iconfont" !important;
+          font-size: 16px;
+          font-style: normal;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          content: '\e7b6';
+          font-size: 16px;
+          color: #000;
+          font-weight: 100;
+        }
+      }
       .poros-tree-node-content-wrapper{
         width: calc(100% - 10px);
         height: 28px;
         padding-left: 2px !important;
+        position: relative;
+        left: -2px;
         &:hover .tree-operator{
           visibility: visible;
         }
+        // &:hover{
+        //   background-color: #F2F3F4;
+        //   .poros-tree-title{
+        //     color: #1740DC;
+        //   }
+        // }
         &:hover{
-          background-color: #F2F3F4;
-          .poros-tree-title{
-            color: #1740DC;
+          background-color:transparent;
+          .tree-name{
+            color: #fff;
+            background-color: #1740DC;
           }
         }
       }
       .poros-tree-node-selected{
+        // &:hover{
+          // background-color: #1740DC;
+          // .poros-tree-title{
+          //   color: #fff;
+          // }
+        // }
         &:hover{
-          background-color: #1740DC;
-          .poros-tree-title{
+          .tree-name{
             color: #fff;
+            background-color: #1740DC;
           }
         }
-        background-color: #1740DC;
+        .tree-name{
+            color: #fff;
+            background-color: #1740DC;
+          }
+        // background-color: #1740DC;
+        background-color: transparent;
         .poros-tree-title{
-          color: #fff;
+          // color: #fff;
           .tree-operator{
             visibility: visible;
           }
@@ -429,6 +474,8 @@ export default {
           text-overflow: ellipsis;
           white-space: nowrap;
           margin-top: 2px;
+          padding: 0 2px;
+          border-radius: 2px;
         }
         .tree-num{
           margin-left: 3px;
