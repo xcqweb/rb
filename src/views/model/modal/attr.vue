@@ -28,6 +28,9 @@
             <p-select-option v-for="item in attrType" :key="item.value" :value="item.value">{{item.text}}</p-select-option>
           </p-select>
       </p-form-model-item>
+      <p-form-model-item label="单位" prop="unit" v-show="isUnit">
+        <p-input v-model.trim="model.unit" placeholder="请输入单位名称" />
+      </p-form-model-item>
       <p-form-model-item v-show="isEmun">
         <span slot="label" class="required-doc">枚举范围</span>
         <p-form-model
@@ -148,6 +151,9 @@ export default {
     },
     isEmun() {
       return this.model.attributeType === 3
+    },
+    isUnit() {
+      return this.model.attributeType === 2
     },
     isEdit() {
       const {type} = this.options

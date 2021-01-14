@@ -2,7 +2,7 @@
   <div>
     <page-title>基本信息</page-title>
     <div class="content">
-      <Label label='模型名称' v-clickOutSide.modelName="hide">
+      <Label label='模型名称' v-clickOutSide="() => hide('modelName')">
         <Edit ref="modelName" normal v-model="model.modelName" :error="isError ==='modelName'" @submit="save" @cancel='cancel'>
           <p-input class="edit_input" @change="validate('modelName')" allow-clear v-model="model.modelName" placeholder="请输入" />
         </Edit>
@@ -11,27 +11,19 @@
       <Label label='模型标识'>
         {{model.mark}}
       </Label>
-      <!-- <Label label='上报频率'>
-        <Edit normal v-model="model.rate" @change="save">
-          <p-input-number v-model="model.rate" :max='999999999' :min='1' class="f1" />
-          <p-select class="mr6 ml6" v-model="model.rateUnit" style="width:80px;">
-            <p-select-option v-for="item in rateType" :key="item.value" :value="item.value">{{item.text}}</p-select-option>
-          </p-select>
-        </Edit>
-      </Label> -->
-      <Label label='异常判断' v-clickOutSide.ruleNum="hide">
+      <Label label='异常判断'>
         <Edit ref='ruleNum' normal v-model="model.ruleType" :error="isError ==='ruleNum'" :emunList='judgeTypeList' @submit="save" @cancel='cancel'>
           <p-select class='mr6' v-model="model.ruleType" style="width:120px">
             <p-select-option v-for="item in judgeType" :key="item.value" :value="item.value">{{item.text}}</p-select-option>
           </p-select>
-          <p-input-number @change="validate('ruleNum')" v-model="model.ruleNum" :max='999999999' :min='1' class="f1" />
+          <p-input @change="validate('ruleNum')" v-model="model.ruleNum" class="f1" @blur="hide('ruleNum')" />
           <p-select class="mr6 ml6" v-model="model.ruleUnit" style="width:80px;">
             <p-select-option v-for="item in rateType" :key="item.value" :value="item.value">{{item.text}}</p-select-option>
           </p-select>
         </Edit>
         <p class="poros-form-explain" v-show="isError ==='ruleNum'">{{errorInfo}}</p>
       </Label>
-      <Label label='描述' v-clickOutSide.remark="hide">
+      <Label label='描述' v-clickOutSide="() => hide('remark')">
         <Edit ref='remark' normal @change="validate('remark')" :error="isError ==='remark'" v-model="model.remark" @submit="save" @cancel='cancel'>
           <p-input class="edit_input" @change="validate('remark')" allow-clear v-model="model.remark" placeholder="请输入描述内容" />
         </Edit>
@@ -102,7 +94,7 @@ export default {
           modelName: {
             modelName: [
               {required: true, message: '请输入模型名称' },
-              {pattern:this.reg.name2Reg,message:'模型名称仅支持中文、字母、数字和下划线“_”'},
+              {pattern: this.reg.name2Reg,message:'模型名称仅支持中文、字母、数字和下划线“_”'},
               {type: 'string', max: 25,message:'模型名称长度限制为25个字符'},
             ]
           },
@@ -110,7 +102,7 @@ export default {
             ruleNum: [
               { required: true, message: '请输入判断机制' },
               { type: 'string', max: 9, message: '判断机制长度限制为9个字符' },
-              { type: 'string', pattern: this.reg.numReg, message: '仅支持输入数字（整数）' },
+              { type: 'string', pattern: this.reg.num2Reg, message: '仅支持输入数字（整数）' },
             ]
           },
           remark: {

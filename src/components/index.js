@@ -13,6 +13,7 @@ import ModalSelectTree from './ModalSelectTree'
 import CollapseList from './CollapseList'
 import CycleList from './CycleList'
 import InfinitySelect from './InfinitySelect'
+import Copy from './Copy'
 [
   Page,
   PageTitle,
@@ -26,5 +27,6 @@ import InfinitySelect from './InfinitySelect'
   ModalSelectTree,
   CollapseList,
   CycleList,
-  InfinitySelect
+  InfinitySelect,
+  Copy
 ].forEach(el => Vue.use(el));

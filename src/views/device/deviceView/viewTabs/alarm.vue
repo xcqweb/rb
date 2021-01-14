@@ -153,10 +153,6 @@ export default {
       //   this.loading = false;
       //   console.log(e);
       // });
-      this.tableData = [
-        {id:1,name: 't1',innerData:[{}]},
-        {id:2,name: 't1'},
-        ]
     },
   }
 }

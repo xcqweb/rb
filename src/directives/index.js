@@ -1,7 +1,7 @@
 import Vue from "vue";
 import ElementResize from 'element-resize-detector'
 const eleResize = ElementResize()
-import { isFunction, isPlainObject } from '../utils/util.js'
+import { isFunction, isPlainObject, throttle } from '../utils/util.js'
 
 function deal(el, isVisible) {
   if (isVisible.value) {
@@ -26,12 +26,11 @@ Vue.directive("focus", {
   }
 });
 Vue.directive("clickOutSide", {
-  bind: function(el, {value,modifiers}) {
-    const key = Object.keys(modifiers)[0]
+  bind: function(el, {value}) {
     let clickOutside = value;
     el.handler = function(e) {
       if (el && !el.contains(e.target)) {
-        clickOutside(key);
+        clickOutside();
       }
     };
     document.addEventListener("click", el.handler, true);
@@ -151,11 +150,12 @@ Vue.directive('copy',{
       const result = document.execCommand('Copy')
       if (result) {
         console.log('复制成功') // 可根据项目UI仔细设计
+        Vue.prototype.$message.success('复制成功！')
       }
       document.body.removeChild(textarea)
     }
     // 绑定点击事件，就是所谓的一键 copy 啦
-    el.addEventListener('click', el.handler)
+    el.addEventListener('click', throttle(el.handler, 5000))
   },
   // 当传进来的值更新的时候触发
   componentUpdated(el, { value }) {

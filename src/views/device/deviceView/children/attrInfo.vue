@@ -6,32 +6,32 @@
         <p-input v-model="item.attributeText" v-if="item.attributeType === 0"/>
         <p-date-picker class="w100" v-model="item.attributeText" v-if="item.attributeType === 1"/>
         <p-select class="w100" v-model="item.attributeText" v-if="item.attributeType === 3" @focus='focusFun(item)'>
-          <p-select-option v-for="list in item.listData" :value='list.enumKey' :key='list.enumKey'>{{list.enumValue}}</p-select-option>
+          <p-select-option v-for="list in item.listData" :value='list.enumValue' :key='list.enumValue'>{{list.enumValue}}</p-select-option>
         </p-select>
         <div class="flex w100" v-if="item.attributeType === 2">
           <p-input-number v-model="item.attributeText" class="f1 mr6"/>
-          <span>年</span>
+          <span>{{item.unit || '-'}}</span>
         </div>
       </Label>
     </template>
     <!-- 设备概览中使用（带编辑） -->
     <template v-else>
-      <Label v-for="(item,index) in list" :label='item.attributeName' :key="item.id" class="mt10">
-        <Edit v-model="item.attributeText" normal v-if="item.attributeType === 0" @submit="save(index)">
+      <Label v-for="(item,index) in list" :label='item.attributeName' :key="item.id" class="mt10" v-clickOutSide="() => hide(item.id)">
+        <Edit :ref="item.id" v-model="item.attributeText" normal v-if="item.attributeType === 0" @submit="save(index)">
           <p-input v-model="item.attributeText"/>
         </Edit>
-        <Edit v-model="item.attributeText" normal :time="$formatDate" v-if="item.attributeType === 1" @submit="save(index)">
+        <Edit :ref="item.id" v-model="item.attributeText" normal :time="$formatDate" v-if="item.attributeType === 1" @submit="save(index)">
           <p-date-picker class="w100" v-model="item.attributeText"/>
         </Edit>
-        <Edit v-model="item.attributeText" normal v-if="item.attributeType === 3" @submit="save(index)">
+        <Edit :ref="item.id" v-model="item.attributeText" normal v-if="item.attributeType === 3" @submit="save(index)">
           <p-select class="w100" v-model="item.attributeText" @focus='focusFun(item)'>
-            <p-select-option v-for="list in item.listData" :value='list.enumKey' :key='list.enumKey'>{{list.enumValue}}</p-select-option>
+            <p-select-option v-for="list in item.listData" :value='list.enumValue' :key='list.enumValue'>{{list.enumValue}}</p-select-option>
           </p-select>
         </Edit>
-        <Edit v-model="item.attributeText" normal v-if="item.attributeType === 2" @submit="save(index)">
+        <Edit :ref="item.id" v-model="item.attributeText" normal v-if="item.attributeType === 2" @submit="save(index)">
           <div class="flex w100">
             <p-input-number v-model="item.attributeText" class="f1 mr6"/>
-            <span>年</span>
+            <span>{{item.unit || '-'}}</span>
           </div>
         </Edit>
       </Label>
@@ -118,7 +118,10 @@ export default {
           }
         })
       })
-    }
+    },
+    hide(key) {
+      this.$refs[key] && this.$refs[key][0] && this.$refs[key][0].cancel()
+    },
   }
 }
 </script>

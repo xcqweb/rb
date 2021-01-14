@@ -115,7 +115,7 @@ export default {
     this.$watch('visible', (val) => {
       if (val) {
         console.log(this.options)
-        this.model = {paramType: 2,used: 2,...this.options}
+        this.model = {paramType: 3,used: 2,...this.options}
         const {used} = this.model
         const obj = {
           0: ['存储'],

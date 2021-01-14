@@ -33,15 +33,13 @@
           <span>连续</span>
           <p-input
             style="width:160px"
-            :min='1'
-            :precision='0'
             class="mr6 ml6"
             autocomplete='off'
             v-decorator="['ruleNum',
              {rules: [
               { required: true, message: '请输入判断机制' },
               { type: 'string', max: 9, message: '判断机制长度限制为9个字符' },
-              { type: 'string', pattern: reg.numReg, message: '仅支持输入数字（整数）' },
+              { type: 'string', pattern: reg.num2Reg, message: '仅支持输入数字（大于0整数）' },
             ]}]"
             placeholder="请输入判断机制"
           />
@@ -112,7 +110,7 @@ export default {
   },
   mounted() {
     window.addEventListener('beforeunload', this.refreshHandler, false);
-    this.form.setFieldsValue({ruleType: 1,ruleNum: 5})
+    this.form.setFieldsValue({ruleType: 1,ruleNum: '5'})
   },
   beforeDestroy() {
     window.removeEventListener('beforeunload', this.refreshHandler, false);

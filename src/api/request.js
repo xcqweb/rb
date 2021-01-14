@@ -27,6 +27,16 @@ const err = (error) => {
 }
 
 instance.interceptors.request.use(config => {
+  //get请求统一加上时间戳 解决ie缓存问题
+  if (config.method === 'get') {
+      if (config.params) {
+          if (!config.params.t) {
+              config.params.t = +new Date();
+          }
+      }else{
+          config.params  = { t: +new Date() };
+      }
+  }
   const token = getToken()
   if (token) {
     config.headers['Authorization'] = token // 让每个请求携带自定义 token 请根据实际情况自行修改

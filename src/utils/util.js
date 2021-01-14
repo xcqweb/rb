@@ -257,12 +257,16 @@ export function analysisFormula(formula) {
   return re
 }
 
-export const throttle = function(func, delay) {            
-  　　var prev = Date.now();            
+export const throttle = function(func, delay, immediate = true) {            
+  　　var prev = Date.now();          
   　　return function() {                
   　　　　var context = this;                
   　　　　var args = arguments;                
-  　　　　var now = Date.now();                
+  　　　　var now = Date.now();
+         if (immediate) {
+          immediate = false
+          func.apply(context, args); 
+         }                
   　　　　if (now - prev >= delay) {                    
   　　　　　　func.apply(context, args);                    
   　　　　　　prev = Date.now();                
