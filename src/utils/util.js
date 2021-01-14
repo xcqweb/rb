@@ -258,18 +258,35 @@ export function analysisFormula(formula) {
 }
 
 export const throttle = function(func, delay, immediate = true) {            
-  　　var prev = Date.now();          
-  　　return function() {                
-  　　　　var context = this;                
-  　　　　var args = arguments;                
-  　　　　var now = Date.now();
-         if (immediate) {
-          immediate = false
-          func.apply(context, args); 
-         }                
-  　　　　if (now - prev >= delay) {                    
-  　　　　　　func.apply(context, args);                    
-  　　　　　　prev = Date.now();                
-  　　　　}            
-  　　}        
+　　var prev = Date.now();          
+　　return function() {                
+　　　　var context = this;                
+　　　　var args = arguments;                
+　　　　var now = Date.now();
+        if (immediate) {
+        immediate = false
+        func.apply(context, args); 
+        }                
+　　　　if (now - prev >= delay) {                    
+　　　　　　func.apply(context, args);                    
+　　　　　　prev = Date.now();                
+　　　　}            
+　　}        
+}
+
+export const debounce = function(fn, delay,immediate = true) {
+  let timer
+  return function () {
+    let context = this
+    let args = arguments
+    clearTimeout(timer)
+    if (immediate) {
+      immediate = false
+      fn.apply(context, args)
+      return
+    }
+    timer = setTimeout(function () {
+      fn.apply(context, args)
+    }, delay)
   }
+}

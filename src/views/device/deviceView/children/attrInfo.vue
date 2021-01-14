@@ -16,9 +16,9 @@
     </template>
     <!-- 设备概览中使用（带编辑） -->
     <template v-else>
-      <Label v-for="(item,index) in list" :label='item.attributeName' :key="item.id" class="mt10" v-clickOutSide="() => hide(item.id)">
+      <Label v-for="(item,index) in list" :label='item.attributeName' :key="item.id" class="mt10">
         <Edit :ref="item.id" v-model="item.attributeText" normal v-if="item.attributeType === 0" @submit="save(index)">
-          <p-input v-model="item.attributeText"/>
+          <p-input v-model="item.attributeText" @blur="hide(item.id)"/>
         </Edit>
         <Edit :ref="item.id" v-model="item.attributeText" normal :time="$formatDate" v-if="item.attributeType === 1" @submit="save(index)">
           <p-date-picker class="w100" v-model="item.attributeText"/>
@@ -30,7 +30,7 @@
         </Edit>
         <Edit :ref="item.id" v-model="item.attributeText" normal v-if="item.attributeType === 2" @submit="save(index)">
           <div class="flex w100">
-            <p-input-number v-model="item.attributeText" class="f1 mr6"/>
+            <p-input-number class="f1 mr6" v-model="item.attributeText" @blur="hide(item.id)"/>
             <span>{{item.unit || '-'}}</span>
           </div>
         </Edit>

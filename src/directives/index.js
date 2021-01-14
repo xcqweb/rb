@@ -170,9 +170,15 @@ Vue.directive('copy',{
 Vue.directive('debounce',{
   inserted: function (el, binding) {
     let timer
+    let immediate = true
     el.addEventListener('click', () => {
       if (timer) {
         clearTimeout(timer)
+      }
+      if (immediate) {
+        immediate = false
+        binding.value()
+        return
       }
       timer = setTimeout(() => {
         binding.value()

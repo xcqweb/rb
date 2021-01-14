@@ -71,7 +71,7 @@ export default {
       selectList: [
         {name:'组合名称',key: 'name'},
         {name:'创建人',key: 'createBy'},
-        {name:'创建时间',key: 'time'},
+        {name:'创建时间',key: 'createTime'},
       ],
     }
   },
@@ -197,11 +197,11 @@ export default {
       const isArray = Array.isArray(keyword)
       const params = {
         keyword: isArray ? undefined : keyword,
-        searchKey: isArray ? undefined : searchKey,
+        searchKey,
         limit: this.pagination.pageSize,
         pageNo: this.pagination.current,
-        startCreateTime: isArray ? this.formatDate(keyword[0]) : undefined,
-        endCreateTime: isArray ? this.formatDate(keyword[1]) : undefined,
+        startCreateTime: isArray ? this.$UTC(keyword[0]) : undefined,
+        endCreateTime: isArray ? this.$UTC(keyword[1]) : undefined,
         locationId: this.chooseNode.id,
       }
       this.loading = true;

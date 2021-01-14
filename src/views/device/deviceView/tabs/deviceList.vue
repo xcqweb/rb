@@ -76,7 +76,7 @@ export default {
       selectList: [
         {name:'设备名称',key: 'deviceName'},
         {name:'创建人',key: 'createBy'},
-        {name:'创建时间',key: 'time'},
+        {name:'创建时间',key: 'createTime'},
       ]
     }
   },
@@ -119,7 +119,7 @@ export default {
           title: '状态',
           ellipsis: true,
           filterMultiple: false,
-          filteredValue: filteredInfo1.netStatus || null,
+          filteredValue: filteredInfo1.status || null,
           filters: this.$arrayItemToString(this.filtersList2),
           width: 90,
           customRender:(status) => {
@@ -176,15 +176,15 @@ export default {
       const isArray = Array.isArray(keyword)
       const param = {
         keyword: isArray ? undefined : keyword,
-        searchKey: isArray ? undefined : searchKey,
+        searchKey,
         limit: this.pagination.pageSize,
         pageNo: this.pagination.current,
-        startTime: isArray ? this.formatDate(keyword[0]) : undefined,
-        endTime: isArray ? this.formatDate(keyword[1]) : undefined,
+        startTime: isArray ? this.$UTC(keyword[0]) : undefined,
+        endTime: isArray ? this.$UTC(keyword[1]) : undefined,
         modelId: this.selectModelId.key === 'all' ? undefined : this.selectModelId.key,
         locationId: this.chooseNode.id,
-        // netStatus: this.filteredInfo1.netStatus && this.filteredInfo1.netStatus[0]
-        // status: this.filteredInfo1.status && this.filteredInfo1.status[0]
+        netStatus: this.filteredInfo1.netStatus && this.filteredInfo1.netStatus[0],
+        status: this.filteredInfo1.status && this.filteredInfo1.status[0]
       }
       this.loading = true;
       this.$API.getDeviceList(param).then( res =>{

@@ -35,9 +35,5 @@ export default {
         this.expandhandler(id)
       }
     },
-    tableChange(pagination, filters, sorter){
-      this.filteredInfo1 = filters
-      this.getTableData(); 
-    },
   },
 }

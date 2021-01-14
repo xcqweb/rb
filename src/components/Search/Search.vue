@@ -5,11 +5,12 @@
     </p-select>
     <p-range-picker v-if="extra" style="width: 160px;margin-right: 10px;" v-model="keyword"  @change="onSearch"/>
     <p-input-search v-if="!extra"  allow-clear v-model="keyword" :placeholder="`请输入${comLabel}`" style="width: 160px;margin-right: 10px;" @search="onSearch" />
-    <p-button class="reset" @click="reset" icon="reload" />
+    <p-button class="reset" v-debounce="reset" icon="reload" />
   </div>
 </template>
 
 <script>
+import {debounce} from '@/utils/util'
 export default {
   name: 'Search',
   props: {
@@ -32,7 +33,7 @@ export default {
       return this.selectList.length
     },
     extra() {
-      return this.selectType === 'time'
+      return this.selectType === 'createTime'
     },
     comLabel() {
       const temp = this.selectList.find(item => this.selectType === item.key)
@@ -67,9 +68,9 @@ export default {
       this.$emit('input', '')
       this.selectType = this.selectList[0] && this.selectList[0].key
     },
-    onSearch() {
+    onSearch: debounce(function () {
       this.$emit('search', {keyword: this.keyword, searchKey: this.selectType})
-    }
+    }, 600)
   },
 }
 </script>

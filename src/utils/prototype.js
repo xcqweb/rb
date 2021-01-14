@@ -10,9 +10,21 @@ Vue.prototype.$moment = moment;
 Vue.prototype.$formatDate = (timestamp, fmt = 'YYYY-MM-DD HH:mm:ss') => {
   return timestamp ? moment(timestamp).format(fmt): '';
 };
-//转成utc
-Vue.prototype.$UTC = (timestamp) => {
-  return timestamp ? moment(timestamp).format(): '';
+//转成utc 2021-01-14T07:07:14.000Z
+Vue.prototype.$UTC = (timestamp,separator='-') => {
+  const timeEl = timestamp ? new Date(timestamp) : '';
+  if (!timeEl) {
+    return timeEl
+  }
+  const year = timeEl.getUTCFullYear();
+  const month = timeEl.getUTCMonth() + 1;
+  const day = timeEl.getUTCDate();
+  const hours = timeEl.getUTCHours();
+  const minute = timeEl.getUTCMinutes();
+  const second = timeEl.getUTCSeconds();
+  const cmSecond = timeEl.getUTCMilliseconds();
+  const addNum = num => num > 9 ? num : '0' + num; 
+  return `${year}${separator}${addNum(month)}${separator}${addNum(day)}T${addNum(hours)}:${addNum(minute)}:${addNum(second)}.${cmSecond}Z`
 };
 // 图片预览
 Vue.prototype.$imgUrl = function(url) {

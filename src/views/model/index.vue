@@ -37,7 +37,7 @@ export default {
       selectList: [
         {name:'模型名称',key: 'modelName'},
         {name:'创建人',key: 'createBy'},
-        {name:'创建时间',key: 'time',},
+        {name:'创建时间',key: 'createTime'},
       ]
     };
   },
@@ -107,7 +107,7 @@ export default {
       const isArray = Array.isArray(keyword)
       const param = {
         keyword: isArray ? undefined : keyword,
-        searchKey: isArray ? undefined : searchKey,
+        searchKey,
         limit: this.pagination.pageSize,
         pageNo: this.pagination.current,
         startTime: isArray ? this.$UTC(keyword[0]) : undefined,
