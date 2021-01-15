@@ -158,7 +158,7 @@
                   if (this.showAll) {
                     reData = [{value: 'all',label: '全部'},...reData]
                   }
-                  if (!reData.length) {
+                  if (reData.length === 1 && reData[0].value === 'all') {
                     resolve(false)
                     if(this.nextItem === 1) {
                       this.noData = true
@@ -166,7 +166,7 @@
                     return
                   }
                   const len = reData.length
-                  if (len && len < 7 && this.keyword) {
+                  if (len && len < 7) {
                     for (let i = 0; i < 7 - len; i++) {
                       reData.push({disabled: true})
                     }

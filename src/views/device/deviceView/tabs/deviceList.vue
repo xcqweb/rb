@@ -2,17 +2,15 @@
   <div>
     <div class="pb20 clearfix">
       <p-button type="primary" @click="addDevice" class="fl" :disabled='disabledBtnAdd'>新增设备</p-button>
-      <Label width='80' class="fl ml20" label='所属模型'>
-        <!-- <p-select ref="select" v-model="selectModelId" class="w-small">
-        </p-select> -->
-      <Infinity-select
-      class="w160"
-      :api='$API.getModelList'
-      v-model="selectModelId"
-      :dataKey="{value: 'id', label: 'modelName'}"
-      showAll
-      @change="changeSelect"
-      />
+      <Label width='80' class="fl ml20">
+        <Infinity-select
+        class="w160"
+        :api='$API.getModelList'
+        v-model="selectModelId"
+        :dataKey="{value: 'id', label: 'modelName'}"
+        showAll
+        @change="changeSelect"
+        />
       </Label>
       <div class="fr flex">
         <Search v-model.trim="keyword" @search="getTableData" :selectList='selectList' @reset="reset" />
@@ -69,7 +67,7 @@ export default {
       searchName: '',
       pageLoad: false,
       ///////
-      selectModelId: {label: '全部', key: 'all'},
+      selectModelId: {label: '全部模型', key: 'all'},
       filtersList1: deviceNetType,
       filtersList2: deviceStatusType,
       data: [],

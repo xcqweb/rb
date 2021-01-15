@@ -64,7 +64,7 @@
       </p-form-item>
     </p-form>
     <page-title>模型定义</page-title>
-    <p-tabs>
+    <p-tabs class="mt20">
       <p-tab-pane key="attr" tab="属性">
         <Attr v-model="model.modelAttributeAddParamList" addBtn add />
       </p-tab-pane>

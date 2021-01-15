@@ -29,9 +29,9 @@
       <span class="tree-name">{{ item.locationName }}</span>
       <div class="tree-operator" v-if="showOperator">
         <p-dropdown :trigger="['hover']" >
-          <i class="iconfont iconellipsis" @click.prevent.stop/>
+          <i class="iconfont iconellipsis" style="padding:0 12px" @click.prevent.stop/>
           <p-menu slot="overlay">
-            <p-menu-item @click="operatorTree(1, item)">新增节点</p-menu-item>
+            <p-menu-item @click="operatorTree(1, item)" v-if='item.level < MAXLEVEL'>新增节点</p-menu-item>
             <p-menu-item @click="operatorTree(2, item)" v-if="item.locationType === 0">重命名</p-menu-item>
             <p-menu-item @click="operatorTree(3, item)" v-if="item.locationType === 0">删除节点</p-menu-item>
             <p-menu-item @click="operatorTree(4, item)" v-if="item.locationType === 0">移动节点</p-menu-item>
@@ -57,6 +57,7 @@
 <script>
 import sortTree from '@/utils/sortTree'
 import Operator from './modal/operator'
+const MAXLEVEL = 7; //树最大级数
 export default {
   name: 'DeviceTree',
   components: {Operator},
@@ -86,6 +87,7 @@ export default {
   },
   data() {
     return {
+      MAXLEVEL,
       //modal
       visible: false,
       options: {},
@@ -485,6 +487,7 @@ export default {
           right: 6px;
           transform: translateY(2px);
           visibility: hidden;
+          padding-right: 0;
         }
       }
     }

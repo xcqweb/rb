@@ -5,9 +5,8 @@
   showSearch
   labelInValue
   @search='search'
-  @focus='focusFun'
-  @blur='blurFun'
-  :open='open'
+  @dropdownVisibleChange='dropdownVisibleChange'
+  v-clickOutSide='hide'
 >
   <Cycle-list
     slot="dropdownRender"
@@ -17,6 +16,7 @@
     :dataKey='dataKey'
     :showAll='showAll'
     @select="select"
+    v-clickOutSide='hide'
   />
 </p-select>
   
@@ -56,12 +56,11 @@ export default {
     },
   },
   methods: {
-    focusFun(state) {
-      this.open = true
-      this.$refs.select.focus()
+    dropdownVisibleChange(status) {
+      this.$refs.select.open = status
     },
-    blurFun() {
-      this.open = false
+    hide() {
+      this.$refs.select.open = false
     },
     search(keyword) {
       console.log(keyword)
