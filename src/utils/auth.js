@@ -53,7 +53,6 @@ export const logout = (url='/login') => {
   removeToken()
   clearCacheLocation()
   router.replace(url).then(()=>{
-    resetRouter()
     clearSessLocal(true,true)
     localStorage.setItem('loginOut', +new Date())
   })
