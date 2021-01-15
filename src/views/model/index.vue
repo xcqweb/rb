@@ -50,11 +50,6 @@ export default {
           title: '模型名称',
           scopedSlots: { customRender: 'modelName' },
         },
-        // {
-        //   title: '上报频率',
-        //   dataIndex: 'rate',
-        //   ellipsis: true,
-        // },
         {
           title: '异常判断',
           ellipsis: true,
@@ -62,7 +57,7 @@ export default {
           filterMultiple: false,
           filteredValue: filteredInfo1.ruleType || null,
           filters: this.$arrayItemToString(this.filtersList),
-          width: 100,
+          width: 120,
           customRender: function(data) {
             return judgeTypeList[data]
           }

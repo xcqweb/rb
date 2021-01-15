@@ -13,15 +13,12 @@
         :pagination="pagination"
         :columns="columns"
         :data-source="tableData">
-        <template slot="name" slot-scope="text, record">
-          <span class="viewDetail" :title="record.name">{{record.name}}</span>
+        <template slot="name" slot-scope="record">
+          <span class="viewDetail" :title="record">{{record}}</span>
         </template>
-        <template slot="createTime" slot-scope="text, record">
-          <span>{{$formatDate(record.createTime)}}</span>
-        </template>
-        <template slot="operation" slot-scope="text, record">
-          <span  class="operateBtn" @click="viewClick(record)">查看报文</span>
-        </template>
+        <span slot="sendTime" slot-scope="sendTime">{{$formatDate(sendTime)}}</span>
+        <span slot="receiveTime" slot-scope="receiveTime">{{$formatDate(receiveTime)}}</span>
+        <span class="operateBtn" slot="operation" slot-scope="record" @click="viewClick(record)">查看报文</span>
       </p-table>
     </div>
     <component
@@ -62,31 +59,33 @@ export default {
         },
         {
           title: '发送时间',
-          dataIndex: 'systemName',
+          dataIndex: 'sendTime',
           ellipsis: true,
+          scopedSlots: { customRender: 'sendTime' },
         },
         {
           title: '发送状态',
           ellipsis: true,
-          dataIndex: 'description',
+          dataIndex: 'status',
           filterMultiple: false,
-          filteredValue: filteredInfo1.systemName || [],
+          filteredValue: filteredInfo1.status || [],
           filters: this.$arrayItemToString(this.filtersList1),
-          width: 100,
+          width: 120,
         },
         {
           title: '执行时间',
           ellipsis: true,
-          dataIndex: 'createName',
+          dataIndex: 'receiveTime',
+          scopedSlots: { customRender: 'receiveTime' },
         },
         {
           title: '执行结果',
           ellipsis: true,
-          dataIndex: 'createName',
+          dataIndex: 'resultCode',
           filterMultiple: false,
-          filteredValue: filteredInfo1.systemName || [],
+          filteredValue: filteredInfo1.resultCode || [],
           filters: this.$arrayItemToString(this.filtersList2),
-          width: 100,
+          width: 120,
         },
         {
           title: '操作',
@@ -106,18 +105,17 @@ export default {
         pageNo: this.pagination.current,
         systemId: this.systemId,
       }
-      // this.loading = true;
-      // rolePermissionApi.getPermissionRoleList(param).then( res =>{
-      //   if ( res.code === 0 ){
-      //     this.tableData = res.data.records || [];
-      //     this.pagination.total = res.data.total;
-      //   }
-      //   this.loading = false;
-      // }).catch( e =>{
-      //   this.loading = false;
-      //   console.log(e);
-      // });
-      this.tableData = [{id:1}]
+      this.loading = true;
+      this.$API.getCommandSendRecordList(param).then( res =>{
+        if ( res.code === 0 ){
+          this.tableData = res.data.records || [];
+          this.pagination.total = res.data.total;
+        }
+        this.loading = false;
+      }).catch( e =>{
+        this.loading = false;
+        console.log(e);
+      });
     },
     viewClick(record){
       this.componentId = 'ViewMsg'

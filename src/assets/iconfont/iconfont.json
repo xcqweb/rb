@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "15815368",
+      "name": "ellipsis",
+      "font_class": "ellipsis",
+      "unicode": "e6f0",
+      "unicode_decimal": 59120
+    },
+    {
+      "icon_id": "18998286",
+      "name": "Gi-IOT_logo",
+      "font_class": "Gi-IOT_logo",
+      "unicode": "e64f",
+      "unicode_decimal": 58959
+    },
+    {
       "icon_id": "19119915",
       "name": "编辑 修改 写 填写 更改 签名",
       "font_class": "bianjixiugaixietianxiegenggaiqianming",

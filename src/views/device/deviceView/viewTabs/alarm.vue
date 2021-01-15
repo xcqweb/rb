@@ -99,7 +99,7 @@ export default {
           filterMultiple: false,
           filteredValue: filteredInfo1.systemName || [],
           filters: this.$arrayItemToString(this.filtersList1),
-          width:100
+          width:120
         },
         {
           title: '报警来源',
@@ -108,7 +108,7 @@ export default {
           filterMultiple: false,
           filteredValue: filteredInfo1.systemName || [],
           filters: this.$arrayItemToString(this.filtersList2),
-          width:100
+          width:120
         },
         {
           title: '报警信息',

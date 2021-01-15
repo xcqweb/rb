@@ -10,9 +10,7 @@ import './utils/http'
 import SvgIcon from '@/components/svg-icon'
 import '@/components'
 import '@/assets/less/index.less'
-import "@/assets/iconfont/old/iconfont.css";
-import "@/assets/iconfont/new/iconfont.css";
-import "@/assets/font/iconfont.css";
+import "@/assets/iconfont/iconfont.css";
 import '@/utils/prototype'
 import '@/directives'
 import reg from '@/utils/pattern'

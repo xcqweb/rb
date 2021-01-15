@@ -103,7 +103,7 @@ export default {
           filterMultiple: false,
           filteredValue: filteredInfo1.netStatus || null,
           filters: this.$arrayItemToString(this.filtersList1),
-          width: 90,
+          width: 120,
           customRender:(status) => {
             const className = netStatusClass[status]
             return <p>
@@ -119,7 +119,7 @@ export default {
           filterMultiple: false,
           filteredValue: filteredInfo1.status || null,
           filters: this.$arrayItemToString(this.filtersList2),
-          width: 90,
+          width: 120,
           customRender:(status) => {
             const className = statusClass[status]
             return <span class={className}>{deviceStatusTypeList[status]}</span>
@@ -256,5 +256,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  
+/deep/.poros-table-column-has-filters{
+  .anticon-filter{
+    right: 60px!important;
+  }
+}
 </style>

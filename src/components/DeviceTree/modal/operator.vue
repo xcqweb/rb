@@ -21,7 +21,7 @@
         <p-input :value="model.parentName" disabled />
       </p-form-model-item>
       <p-form-model-item label="节点名称" prop="locationName">
-        <p-input v-model.trim="model.locationName" placeholder="请输入节点名称" />
+        <p-input v-model="model.locationName" placeholder="请输入节点名称" />
       </p-form-model-item>
     </p-form-model>
   </p-modal>
@@ -37,6 +37,7 @@ export default {
     return {
       emunList: [{range: '',rangeName: ''}],
       model: {
+        id: this.options.id || '',
         parentId: this.options.parentId || '',
         parentName: this.options.parentName || '',
         locationName: this.options.locationName || '',
@@ -65,6 +66,7 @@ export default {
     this.$watch('visible', (val) => {
       if (val) {
         this.model = {
+          id: this.options.id || '',
           parentId: this.options.parentId || '',
           parentName: this.options.parentName || '',
           locationName: this.options.locationName || '',
@@ -84,7 +86,6 @@ export default {
           this.loading = true
           const data = Object.assign({}, this.model)
           delete data.parentName
-          data.parentId = this.options.parentId
           let func
           let message = '提交成功！'
           if (!this.options.isEdit) {
@@ -95,7 +96,8 @@ export default {
           func(data).then(res => {
             this.cancel()
             this.$message.success(message)
-            this.$emit('callback', {...data, id: res.data.id, p_isLeaf: this.options.selectedItem.isLeaf}, this.options.isEdit ? 1 : 0)
+            const idObj = this.options.isEdit ? {} : {id: res.data.id}
+            this.$emit('callback', {...data, ...idObj, p_isLeaf: this.options.selectedItem.isLeaf}, this.options.isEdit ? 1 : 0)
           }).catch(() => {
             this.loading = false
           })

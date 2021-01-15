@@ -100,7 +100,7 @@ export default {
           filterMultiple: false,
           filteredValue: filteredInfo1.attributeType || null,
           filters: this.$arrayItemToString(this.filtersList1),
-          width: 160,
+          width: 120,
           customRender: function({attributeType, unit}) {
             return attributeType === 2 ? `${attrTypeList[attributeType]}/单位：${unit || '-'}` : attrTypeList[attributeType]
           }

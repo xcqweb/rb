@@ -5,6 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= htmlWebpackPlugin.options.baseUrl %>/favicon.ico">
+    <style>
+      @font-face {font-family: "ruban";
+        src: url('/language/SourceHanSansCN-Normal.otf');
+      }
+      @font-face {font-family: "ruban-bold";
+        src: url('/language/SourceHanSansCN-Medium.otf');
+      }
+    </style>
     <title><%= htmlWebpackPlugin.options.title %></title>
     <% if (!htmlWebpackPlugin.options.isDev) { %>
     <script src="/auth/env-config.js"></script>

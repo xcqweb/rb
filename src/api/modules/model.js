@@ -122,10 +122,15 @@ delModelParamsAlarm: (params) => {
   getModelCommandAttrList: (params) => {
     return instance.get(`${baseUrl}/ruban-command-center/commandTemplate/attr/${params.id}`);
   },
+
   /////////////////指令变量/////////////
   // 获取指令对应的变量列表
   getModelCommandVarList: (params) => {
     return instance.get(`${baseUrl}/ruban-device/modelCommandVar/list`, {params});
+  },
+  // 获取指令发送记录列表
+  getCommandSendRecordList: (params) => {
+    return instance.get(`${baseUrl}/ruban-command-center/commandRecord/list`, {params});
   },
 }
 
