@@ -1,5 +1,5 @@
 import instance from '@/api/request';
-const baseUrl = process.env.NODE_ENV === 'development' ? '/api' : '/api'
+const baseUrl = '/api'
 export default{
   ///////////////模型////////////////
   // 新增模型

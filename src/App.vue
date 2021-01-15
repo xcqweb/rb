@@ -1,8 +1,8 @@
 <template>
   <p-config-provider :locale="zhCN">
     <template #renderEmpty>
-        <Gt-no-data emptyText='未找到与关键字相符的结果' borderColor='transparent'></Gt-no-data>
-      </template>
+      <Gt-no-data emptyText='未找到与关键字相符的结果' borderColor='transparent'></Gt-no-data>
+    </template>
     <div id="app" :class="{ 'iframe-open': isIframeOpen }">
       <router-view />
     </div>
