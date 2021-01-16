@@ -52,6 +52,7 @@ export default {
       }
     },
     tableChange(pagination, filters, sorter){
+      console.log(filters)
       this.filteredInfo1 = filters
       this.getTableData(); 
     },

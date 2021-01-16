@@ -13,12 +13,14 @@
 
 <script>
   import BScroll from 'better-scroll'
+  import {isNullOrEmpty} from '@/utils/util'
   export default {
     name: 'CycleList',
     props: {
       api: Function,
       keyword: String,
       selectId: String,
+      selectName: String,
       pageNo: {
         type: Number,
         default: 20
@@ -58,8 +60,9 @@
       },
       selectId: {
         handler(val) {
-          if (val) {
-            this.targetId = val
+          this.targetId = val
+          if (!val) {
+            this.transformActive()
           }
         },
         immediate: true
@@ -93,7 +96,7 @@
         }
       },
       transformActive() {
-        const uls = [...this.$refs.chat_ul.children]
+        const uls = this.$refs.chat_ul ? [...this.$refs.chat_ul.children] : []
         uls.forEach( item => {
           item.classList.remove('active')
           if (item.dataset.id === this.targetId) {
@@ -134,7 +137,7 @@
               return this.$refs.tombstone.cloneNode(true)
             },
             fetch: (count) => {
-              if (this.loadAll) {
+              if (this.loadAll || isNullOrEmpty(this.total) || (this.total > 0 && this.total < this.nextItem * this.pageNo)) {
                 return
               }
               const params = {
@@ -145,7 +148,7 @@
               }
               return new Promise((resolve, reject) => {
                 this.api(params).then( res => {
-                  let reData = res.data.records.map( item => {
+                  let reData = (res.data.records || res.data).map( item => {
                     if (this.dataKey) {
                       return {
                         value: item[this.dataKey.value],
@@ -156,7 +159,7 @@
                     }
                   })
                   if (this.showAll) {
-                    reData = [{value: 'all',label: '全部'},...reData]
+                    reData = [{value: 'all',label: this.selectName || '全部'},...reData]
                   }
                   if (reData.length === 1 && reData[0].value === 'all') {
                     resolve(false)
@@ -175,7 +178,7 @@
                   this.total = res.data.total
                   if (res.data.total < (this.nextItem - 1) * this.pageNo) {
                     this.loadAll = true
-                    resolve(false)
+                    resolve(false) //结束加载
                   }else{
                     this.nextItem++
                     resolve(reData)

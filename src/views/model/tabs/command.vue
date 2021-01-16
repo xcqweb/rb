@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="command">
     <Page-title v-if="isDevice">指令列表</Page-title>
     <div class="c_searchArea" :class="{fd:!addBtn}">
       <p-button @click="commandHandler" type="primary" v-if="addBtn">新增指令</p-button>
@@ -19,6 +19,15 @@
         :expandedRowKeys='expandedRowKeys'
         :columns="columns"
         :data-source="tableData">
+        <Infinity-select
+          :slot="filter ? 'filterDropdown' : ''"
+          slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters }"
+          style="width:160px"
+          :api='$API.getModelCommandTemplateSelect'
+          v-model="belongModel"
+          @change="changeCommandModel(setSelectedKeys, selectedKeys, confirm, clearFilters)"
+          :dataKey="{value: 'id', label: 'commandName'}"
+        />
         <template slot="operation" slot-scope="record, index">
           <span class="operateBtn" @click="delClick(record,'command',index)" v-if="isDevice">发送</span>
           <template v-else>
@@ -55,7 +64,7 @@
 <script>
 import modelMixins from './modelMixins'
 import CommandModal from '../modal/command'
-import {commandColumns} from '../../device/deviceView/base'
+import {commandColumns} from '@/views/base'
 export default {
   mixins: [modelMixins],
   components: {CommandModal},
@@ -64,42 +73,25 @@ export default {
   },
   data() {
     return {
+      belongModel: {},
       selectList: [
         {name:'指令名称',key: 'commandName'},
         {name:'指令标识',key: 'commandMark'},
       ],
       filtersList: [],
       innerColumns: [
-        {
-          dataIndex: 'commandVarMark',
-          title: '变量标识',
-          ellipsis: true
-        },
-        {
-          dataIndex: 'commandVarValue',
-          title: '默认值',
-          ellipsis: true,
-        },
-        {
-          dataIndex: 'remark',
-          title: '注释',
-          ellipsis: true,
-        },
+        {dataIndex: 'commandVarMark',title: '变量标识',ellipsis: true},
+        {dataIndex: 'commandVarValue',title: '默认值',ellipsis: true},
+        {dataIndex: 'remark',title: '注释',ellipsis: true},
       ],
     };
   },
   computed: {
     columns(){
       let { filteredInfo1 } = this;
-      filteredInfo1 = filteredInfo1 || {};
       return [
         ...commandColumns,
-        {
-          title: '操作',
-          align: 'right',
-          width: 120,
-          scopedSlots: { customRender: 'operation' },
-        },
+        {title: '操作',align: 'right',width: 120,scopedSlots: { customRender: 'operation' }},
       ]
     } 
   },
@@ -109,10 +101,7 @@ export default {
         console.error('指令id不存在！')
         return
       }
-      const params = {
-        ...this.paramsInner,
-        modelCommandId
-      }
+      const params = {...this.paramsInner,modelCommandId}
       this.innerLoading = true
       this.$API.getModelCommandVarList(params).then( res => {
         this.tableData.forEach( item => {
@@ -136,6 +125,7 @@ export default {
         keyword,
         limit: this.pagination.pageSize,
         pageNo: this.pagination.current,
+        commandTemplateId: this.filteredInfo1.commandTemplateName,
       }
       this.loading = true;
       this.$API.getModelCommandList(param).then( res =>{
@@ -222,19 +212,26 @@ export default {
       }else{
         this.getTableData();
       }
+    },
+    changeCommandModel(setSelectedKeys, selectedKeys, confirm, clearFilters) {
+      console.log(selectedKeys)
+      if (!selectedKeys) {
+        clearFilters()
+        // this.belongModel = {}
+      }
+      setSelectedKeys(this.belongModel && this.belongModel.key)
+      confirm()
     }
   }
 };
 </script>
 
-<style lang="less">
-.model{
-  .routePageTitle{
-    font-size: @f-big;
-    line-height: 1;
-    padding: 13px 20px;
-    line-height:22px;
-    border-bottom: 1px solid @c-bg-1;
+<style lang="less" scoped>
+.command{
+  /deep/.poros-table-column-has-filters{
+    .anticon-filter{
+      right: 156px !important;
+    }
   }
 }
 </style>

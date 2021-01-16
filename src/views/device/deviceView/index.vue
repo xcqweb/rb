@@ -8,13 +8,7 @@
         </div>
         <div class="platform-org-left" ref="drag" :style="{width: `${comWidth}px`}">
           <div class="tree-content">
-            <Device-tree
-              v-model="chooseNode"
-              showLine
-              showIcon
-              showOperator
-              checkRoot
-            />
+            <Device-tree v-model="chooseNode" showLine showIcon showOperator checkRoot />
           </div>
         </div>
       </div>
@@ -37,6 +31,7 @@
 import DeviceList from './tabs/deviceList'
 import DeviceComposition from './tabs/deviceComposition'
 export default {
+  name: 'deviceList',
   components: {DeviceList,DeviceComposition},
   data() {
     return {
@@ -64,9 +59,7 @@ export default {
       return function() {
         that.$router.push({
           path: '/tenant/userManage/basicInfo',
-          query: {
-            uid: item.uid
-          }
+          query: {uid: item.uid}
         })
       }
     },

@@ -21,6 +21,7 @@ export default {
     }
     &_font{
       font-size: 18px;
+      font-family: ruban-bold;
       transform: translateY(-86px);
       letter-spacing: 1px;
       color: #29304B;

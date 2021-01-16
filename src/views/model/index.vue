@@ -30,6 +30,7 @@
 import tableMixins from '@/mixins/tableMixins'
 import {judgeType, judgeTypeList} from '@/utils/baseData'
 export default {
+  name: 'modelList',
   mixins: [tableMixins],
   data() {
     return {
@@ -44,12 +45,8 @@ export default {
   computed: {
     columns(){
       let { filteredInfo1 } = this;
-      const that = this
       return [
-        {
-          title: '模型名称',
-          scopedSlots: { customRender: 'modelName' },
-        },
+        {title: '模型名称',scopedSlots: { customRender: 'modelName' },},
         {
           title: '异常判断',
           ellipsis: true,
@@ -58,42 +55,18 @@ export default {
           filteredValue: filteredInfo1.ruleType || null,
           filters: this.$arrayItemToString(this.filtersList),
           width: 120,
-          customRender: function(data) {
-            return judgeTypeList[data]
-          }
+          customRender: data => judgeTypeList[data]
         },
-        {
-          title: '注册设备数',
-          ellipsis: true,
-          dataIndex: 'registerDeviceNum',
-          width: 100,
-        },
-        {
-          title: '描述',
-          ellipsis: true,
-          dataIndex: 'remark',
-        },
-        {
-          title: '创建人',
-          ellipsis: true,
-          dataIndex: 'createBy',
-          width: 136,
-        },
+        {title: '注册设备数',ellipsis: true,dataIndex: 'registerDeviceNum',width: 100},
+        {title: '描述',ellipsis: true,dataIndex: 'remark'},
+        {title: '创建人',ellipsis: true,dataIndex: 'createBy',width: 136},
         {
           title: '创建时间',
           dataIndex: 'createTime',
           width: 180,
-          customRender(date) {
-            return that.$formatDate(date)
-          }
-          
+          customRender: date => this.$formatDate(date)
         },
-        {
-          title: '操作',
-          align: 'right',
-          width: 90,
-          scopedSlots: { customRender: 'operation' },
-        },
+        {title: '操作',align: 'right',width: 90,scopedSlots: { customRender: 'operation' }},
       ]
     } 
   },
@@ -163,10 +136,6 @@ export default {
           });
         },
       });
-    },
-    tableChange(pagination, filters, sorter){
-      this.filteredInfo1 = filters
-      this.getTableData(); 
     },
   }
 };

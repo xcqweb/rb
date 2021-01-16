@@ -19,24 +19,12 @@
         <p-input v-model="model.name" class="w-medium"/>
       </p-form-model-item>
       <p-form-model-item label="所属模型" v-if="isDevice" prop='modelId'>
-        <!-- <p-select 
-          v-decorator="[
-          'modelId',
-          {rules: [
-            {required:true,message: '请选择所属模型',trigger: 'change' },
-          ]}
-          ]"
-          placeholder="请选择所属模型"
-        >
-          <p-select-option v-for="item in modelList" :key="item.value" :value="item.value">{{item.text}}</p-select-option>
-        </p-select> -->
         <Infinity-select
           style="width:500px"
           :api='$API.getModelList'
           v-model="model.modelId"
           :dataKey="{value: 'id', label: 'modelName'}"
         />
-
       </p-form-model-item>
       <p-form-model-item label="描述" v-else prop='remark'>
         <p-textarea
@@ -72,6 +60,7 @@ const validateFun = (rule, value, callback) => {
   }
 }
 export default {
+  name: 'addDevice',
   components: {AttrInfo,BindingDevice},
   data() {
     return{
@@ -162,7 +151,3 @@ export default {
   },
 }
 </script>
-
-<style lang="less" scoped>
-  
-</style>

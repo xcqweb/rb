@@ -3,6 +3,7 @@ export const commomColumns = [
   {
     title: '设备名称',
     dataIndex: 'deviceName',
+    ellipsis: true,
   },
   {
     title: '所属模型',
@@ -40,6 +41,10 @@ export const commandColumns = [
     title: '指令模板',
     ellipsis: true,
     dataIndex: 'commandTemplateName',
+    width: 240,
+    scopedSlots: {
+      filterDropdown: 'filterDropdown', //自定义filter
+    }
   },
   {
     title: '描述',

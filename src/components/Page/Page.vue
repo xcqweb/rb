@@ -37,7 +37,7 @@
 
 <script>
 export default {
-  name: 'page',
+  name: 'Page',
   props: {
     title: {
       type: String,
@@ -138,6 +138,7 @@ export default {
     color: @c-text;
     font-size: @f-big;
     width: calc(100% - 250px);
+    font-family: 'ruban-bold';
   }
   .gt-page-header-extra-right{
     color: @c-text;

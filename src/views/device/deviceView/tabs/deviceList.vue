@@ -86,16 +86,8 @@ export default {
       let { filteredInfo1 } = this;
       const that = this
       return [
-        {
-          title: '设备名称',
-          ellipsis: true,
-          scopedSlots: { customRender: 'deviceName' }
-        },
-        {
-          title: '所属类型',
-          ellipsis: true,
-          scopedSlots: { customRender: 'modelName' }
-        },
+        {title: '设备名称',ellipsis: true,scopedSlots: { customRender: 'deviceName' }},
+        {title: '所属模型',ellipsis: true,scopedSlots: { customRender: 'modelName' }},
         {
           dataIndex: 'netStatus',
           title: '网络',
@@ -104,7 +96,7 @@ export default {
           filteredValue: filteredInfo1.netStatus || null,
           filters: this.$arrayItemToString(this.filtersList1),
           width: 120,
-          customRender:(status) => {
+          customRender: status => {
             const className = netStatusClass[status]
             return <p>
               <span class={className}></span>
@@ -120,44 +112,23 @@ export default {
           filteredValue: filteredInfo1.status || null,
           filters: this.$arrayItemToString(this.filtersList2),
           width: 120,
-          customRender:(status) => {
+          customRender: status => {
             const className = statusClass[status]
             return <span class={className}>{deviceStatusTypeList[status]}</span>
           }
         },
-        {
-          dataIndex: 'createBy',
-          title: '创建人',
-          ellipsis: true
-        },
-        {
-          dataIndex: 'createTime',
-          title: '创建时间',
-          ellipsis: true,
-          customRender(date) {
-            return that.$formatDate(date)
-          }
-        },
-        {
-          title: '操作',
-          width: 120,
-          align: 'right',
-          scopedSlots: { customRender: 'operation' }
-        },
+        {dataIndex: 'createBy',title: '创建人',ellipsis: true},
+        {dataIndex: 'createTime',title: '创建时间',ellipsis: true,customRender: date => that.$formatDate(date)},
+        {title: '操作',width: 120,align: 'right',scopedSlots: { customRender: 'operation' }},
       ]
     }
   },
   watch: {
     'chooseNode.id'() {
-      if (this.chooseNode.init || this.activeKey === 'deviceCompose') {
-        return
-      }
-      this.getTableData()
+      !(this.chooseNode.init || this.activeKey === 'deviceCompose') && this.getTableData()
     },
     activeKey(val) {
-      if (this.activeKey === 'deviceList') {
-        this.getTableData()
-      }
+      this.activeKey === 'deviceList' && this.getTableData()
     }
   },
   methods: {
@@ -258,7 +229,7 @@ export default {
 <style lang="less" scoped>
 /deep/.poros-table-column-has-filters{
   .anticon-filter{
-    right: 60px!important;
+    right: 60px !important;
   }
 }
 </style>

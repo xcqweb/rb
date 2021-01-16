@@ -114,42 +114,16 @@ export default {
       model: {},
       rules: {
         commandName: [
-          {
-            required: true,
-            message: '请输入指令名称'
-          },
-          {
-            type: 'string',
-            max: 25,
-            message: '指令名称长度限制为25个字符'
-          },
-          {
-            type: 'string',
-            message: '指令名称仅支持中文、字母、数字或下划线“_”',
-            pattern: pattern.name2Reg
-          },
+          {required: true,message: '请输入指令名称'},
+          {type: 'string',max: 25,message: '指令名称长度限制为25个字符'},
+          {type: 'string',message: '指令名称仅支持中文、字母、数字或下划线“_”',pattern: pattern.name2Reg},
         ],
         commandMark: [
-          {
-            required: true,
-            message: '请输入指令标识'
-          },
-          {
-            max: 20,
-            message: '指令标识长度限制为20个字符'
-          },
-          {
-            type: 'string',
-            message: '指令标识仅支持数字、字母或下划线“_”',
-            pattern: pattern.nameReg
-          },
+          {required: true,message: '请输入指令标识'},
+          {max: 20, message: '指令标识长度限制为20个字符'},
+          {type: 'string',message: '指令标识仅支持数字、字母或下划线“_”',pattern: pattern.nameReg},
         ],
-        remark: [
-          {
-            max: 50,
-            message: '描述长度限制为50个字符'
-          },
-        ]
+        remark: {max: 50, message: '描述长度限制为50个字符'}
       }
     }
   },

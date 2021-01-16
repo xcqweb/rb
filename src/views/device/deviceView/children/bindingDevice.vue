@@ -37,7 +37,7 @@
 <script>
 import tableMixins from '@/mixins/tableMixins'
 import BindDeviceModal from '../modal/bindDevice'
-import {commomColumns} from '../base'
+import {commomColumns} from '@/views/base'
 import {
   deviceNetTypeList,
   deviceStatusTypeList,
@@ -68,13 +68,7 @@ export default {
     columns(){
       return [
         ...commomColumns,
-        {
-          title: '操作',
-          dataIndex: 'operate',
-          align: 'right',
-          width: 80,
-          scopedSlots: { customRender: 'operation' },
-        },
+        {title: '操作',dataIndex: 'operate',align: 'right',width: 80,scopedSlots: { customRender: 'operation' }},
       ]
     } 
   },

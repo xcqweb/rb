@@ -59,41 +59,24 @@ export default {
   components: {AttrModal},
   data() {
     return {
-      filtersList1: this.add ? [] : attrType,
-      filtersList2: this.add ? [] : getType,
+      filtersList1: this.filter ? attrType : [],
+      filtersList2: this.filter ? getType : [],
       selectList: [
         {name:'属性名称',key: 'attributeName'},
         {name:'属性标识',key: 'attributeMark'},
       ],
       innerColumns: [
-        {
-          dataIndex: 'enumKey',
-          title: '枚举值',
-          ellipsis: true
-        },
-        {
-          dataIndex: 'enumValue',
-          title: '显示名称',
-          ellipsis: true,
-        },
+        {dataIndex: 'enumKey',title: '枚举值',ellipsis: true},
+        {dataIndex: 'enumValue',title: '显示名称',ellipsis: true},
       ],
     };
   },
   computed: {
     columns(){
       let { filteredInfo1 } = this;
-      let that = this
       return [
-        {
-          title: '属性标识',
-          dataIndex: 'attributeMark',
-          ellipsis: true,
-        },
-        {
-          title: '属性名称',
-          dataIndex: 'attributeName',
-          ellipsis: true,
-        },
+        {title: '属性标识',dataIndex: 'attributeMark',ellipsis: true},
+        {title: '属性名称',dataIndex: 'attributeName',ellipsis: true},
         {
           title: '属性类型',
           ellipsis: true,
@@ -101,9 +84,7 @@ export default {
           filteredValue: filteredInfo1.attributeType || null,
           filters: this.$arrayItemToString(this.filtersList1),
           width: 120,
-          customRender: function({attributeType, unit}) {
-            return attributeType === 2 ? `${attrTypeList[attributeType]}/单位：${unit || '-'}` : attrTypeList[attributeType]
-          }
+          customRender: ({attributeType, unit}) => attributeType === 2 ? `${attrTypeList[attributeType]}/单位：${unit || '-'}` : attrTypeList[attributeType]
         },
         {
           title: '获取方式',
@@ -113,16 +94,9 @@ export default {
           filteredValue: filteredInfo1.createOption || null,
           filters: this.$arrayItemToString(this.filtersList2),
           width: 120,
-          customRender: function(data) {
-            return getTypeList[data]
-          }
+          customRender: data => getTypeList[data]
         },
-        {
-          title: '操作',
-          align: 'right',
-          width: 120,
-          scopedSlots: { customRender: 'operation' },
-        },
+        {title: '操作',align: 'right',width: 120,scopedSlots: { customRender: 'operation' }},
       ]
     } 
   },

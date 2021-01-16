@@ -13,7 +13,7 @@ export default {
     deviceList: {
       type: Array,
       default: function() {
-        return [{deviceName: '马达'},{deviceName: '轴承'},]
+        return []
       }
     }
   }

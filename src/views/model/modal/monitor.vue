@@ -52,10 +52,7 @@ import {formualList,formualMap} from '@/utils/baseData'
 export default {
   mixins: [modalMixins],
   data() {
-    return {
-      formualList,
-      model: {},
-    }
+    return {formualList,model: {}}
   },
   computed: {
     ...mapState({
@@ -63,56 +60,18 @@ export default {
     }),
     comRules() {
       return {
-        remark: [
-          {
-            type: 'string',
-            max: 50,
-            message: '报警信息长度限制为50个字符'
-          },
-        ],
+        remark: {type: 'string',max: 50,message: '报警信息长度限制为50个字符'},
         firstVal: this.extraType ? [
-          {
-            required: true,
-            message: '请输入阈值'
-          },
-          {
-            type: 'string',
-            max: 25,
-            message: '输入长度限制为25个字符'
-          },
-          {
-            message: '输入字符仅支持字母、数字（整数和小数）或下划线“_”',
-            pattern: pattern.name5Reg
-          },
-        ] : [
-          {
-            required: true,
-            message: '请输入阈值'
-          },
-          {
-            type: 'string',
-            max: 9,
-            message: '输入长度限制为9个字符'
-          },
-          {
-            message: '输入字符仅支持数字（整数和小数）',
-            pattern: pattern.numReg
-          },
-        ],
+          {required: true,message: '请输入阈值'},
+          {type: 'string',max: 25,message: '输入长度限制为25个字符'},
+          {message: '输入字符仅支持字母、数字（整数和小数）或下划线“_”',pattern: pattern.name5Reg}] : 
+          [{required: true,message: '请输入阈值'},
+          {type: 'string',max: 9,message: '输入长度限制为9个字符'},
+          {message: '输入字符仅支持数字（整数和小数）',pattern: pattern.numReg}],
         secondVal: !this.extraType && [
-          {
-            required: true,
-            message: '请输入阈值'
-          },
-          {
-            type: 'string',
-            max: 9,
-            message: '输入长度限制为9个字符'
-          },
-          {
-            message: '输入字符仅支持数字（整数和小数）',
-            pattern: pattern.numReg
-          },
+          {required: true,message: '请输入阈值'},
+          {type: 'string',max: 9,message: '输入长度限制为9个字符'},
+          {message: '输入字符仅支持数字（整数和小数）',pattern: pattern.numReg},
           {
             validator: (rule, value, callback) => {
               console.log(this.model, value)

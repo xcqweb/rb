@@ -243,12 +243,7 @@ export default {
       this.loadedKeys = loadedKeys;
     },
     operatorTree(key, {dataRef}) {
-      const handler = {
-        1: 'addNode',
-        2: 'editNode',
-        3: 'removeNode',
-        4: 'moveNodeHandler'
-      }[key];
+      const handler = ['addNode','editNode','removeNode','moveNodeHandler'][key - 1];
       this[handler](dataRef);
     },
     moveNodeHandler(item) {
@@ -394,11 +389,6 @@ export default {
       ul{
         padding: 0 0 0 24px;
       }
-      // .poros-tree-switcher{
-      //   display: inline-block;
-      //   width: 16px;
-      //   height: 16px;
-      // }
       padding: 0;
       // 叶子节点图标
       .poros-tree-switcher-line-icon{
@@ -426,12 +416,6 @@ export default {
         &:hover .tree-operator{
           visibility: visible;
         }
-        // &:hover{
-        //   background-color: #F2F3F4;
-        //   .poros-tree-title{
-        //     color: #1740DC;
-        //   }
-        // }
         &:hover{
           background-color:transparent;
           .tree-name{
@@ -441,12 +425,6 @@ export default {
         }
       }
       .poros-tree-node-selected{
-        // &:hover{
-          // background-color: #1740DC;
-          // .poros-tree-title{
-          //   color: #fff;
-          // }
-        // }
         &:hover{
           .tree-name{
             color: #fff;
@@ -457,10 +435,8 @@ export default {
             color: #fff;
             background-color: #1740DC;
           }
-        // background-color: #1740DC;
         background-color: transparent;
         .poros-tree-title{
-          // color: #fff;
           .tree-operator{
             visibility: visible;
           }

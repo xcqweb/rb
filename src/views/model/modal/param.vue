@@ -55,53 +55,25 @@ export default {
       model: {checkedList: []},
       rules: {
         paramName: [
-          {
-            type: 'string',
-            max: 25,
-            message: '参数名称长度限制为25个字符'
-          },
-          {
-            type: 'string',
-            message: '参数名称仅支持中文、字母、数字或下划线“_”',
-            pattern: pattern.name2Reg
-          },
+          {type: 'string',max: 25,message: '参数名称长度限制为25个字符'},
+          {type: 'string',message: '参数名称仅支持中文、字母、数字或下划线“_”',pattern: pattern.name2Reg},
         ],
         paramMark: [
-          {
-            required: true,
-            message: '请输入参数标识'
-          },
-          {
-            max: 20,
-            message: '参数标识长度限制为20个字符'
-          },
-          {
-            type: 'string',
-            message: '参数标识仅支持数字、字母或下划线“_”',
-            pattern: pattern.nameReg
-          },
+          {required: true,message: '请输入参数标识'},
+          {max: 20,message: '参数标识长度限制为20个字符'},
+          {type: 'string',message: '参数标识仅支持数字、字母或下划线“_”',pattern: pattern.nameReg},
         ],
-        paramPrecision: [
-          { type: 'number', max: 999999999, message: '计算精度长度限制为9个字符' },
-        ],
-        unit: [
-          {
-            type: 'string',
-            max: 25,
-            message: '单位长度限制为25个字符'
+        paramPrecision: [{ type: 'number', max: 999999999, message: '计算精度长度限制为9个字符' }],
+        unit: [{type: 'string',max: 25,message: '单位长度限制为25个字符'}],
+        checkedList: [{
+          validator: (rule, value, callback) => {
+            if (Array.isArray(value) && !value.length) {
+              callback(new Error('请勾选用途！'))
+            }else{
+              callback()
+            }
           },
-        ],
-        checkedList: [
-          {
-            validator: (rule, value, callback) => {
-              if (Array.isArray(value) && !value.length) {
-                callback(new Error('请勾选用途！'))
-              }else{
-                callback()
-              }
-            },
-          },
-        ],
+        }],
       }
     }
   },
@@ -117,11 +89,7 @@ export default {
         console.log(this.options)
         this.model = {paramType: 3,used: 2,...this.options}
         const {used} = this.model
-        const obj = {
-          0: ['存储'],
-          1: ['显示'],
-          2: ['存储','显示'],
-        }
+        const obj = {0: ['存储'],1: ['显示'],2: ['存储','显示']}
         this.$set(this.model, 'checkedList', obj[used])
       }
     });

@@ -4,13 +4,16 @@
   v-model="selectModelId"
   showSearch
   labelInValue
+  :allowClear='allowClear'
   @search='search'
   @dropdownVisibleChange='dropdownVisibleChange'
+  placeholder='请选择'
   v-clickOutSide='hide'
 >
   <Cycle-list
     slot="dropdownRender"
     :selectId='selectId'
+    :selectName='selectName'
     :api='api'
     :keyword='keyword'
     :dataKey='dataKey'
@@ -29,7 +32,11 @@ export default {
     value: Object,
     api: Function,
     dataKey: Object, //数据转换格式
-    showAll: Boolean
+    showAll: Boolean,
+    allowClear: {
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {
@@ -41,6 +48,9 @@ export default {
   computed: {
     selectId() {
       return this.value && this.value.key
+    },
+    selectName() {
+      return this.value && this.value.label
     }
   },
   watch: {

@@ -2,8 +2,8 @@
   <div>
     <div class="flex mb16">
       <Btn-tabs :tabs='tabs' @change="changeTab" extra='10'></Btn-tabs>
-      <Label label='记录时间' class="ml20 f1" v-show="!isCurrent">
-        <p-range-picker v-model="time"></p-range-picker>
+      <Label label='报警时间' class="ml20 f1" v-show="!isCurrent">
+        <p-range-picker v-model="time" @change="getTableData" show-time></p-range-picker>
       </Label>
       <p-button class="reset" @click="reset" icon="reload" />
     </div>
@@ -42,7 +42,7 @@
 import tableMixins from '@/mixins/tableMixins'
 import tableExpandMixins from '@/mixins/table-expand'
 import BtnTabs from '../children/btnTabs'
-import {alarmSource,alarmLevel} from '@/utils/baseData'
+import {alarmSource,alarmLevel,alarmSourceList,alarmLevelList} from '@/utils/baseData'
 export default {
   components: {BtnTabs},
   mixins: [tableMixins,tableExpandMixins],
@@ -60,21 +60,9 @@ export default {
       filtersList1: alarmLevel,
       filtersList2: alarmSource,
       innerColumns: [
-        {
-          dataIndex: 'tplType',
-          title: '参数',
-          ellipsis: true
-        },
-        {
-          dataIndex: 'tplType',
-          title: '监控',
-          ellipsis: true
-        },
-        {
-          dataIndex: 'tplType',
-          title: '数值',
-          ellipsis: true
-        },
+        {dataIndex: 'tplType',title: '参数',ellipsis: true},
+        {dataIndex: 'tplType',title: '监控',ellipsis: true},
+        {dataIndex: 'tplType',title: '数值',ellipsis: true},
       ],
     }
   },
@@ -85,48 +73,34 @@ export default {
     columns(){
       let { filteredInfo1 } = this;
       const arr1 = [
-        {
-          title: '结束时间',
-          dataIndex: 'systemName',
-          ellipsis: true,
-        }
+        {title: '结束时间',dataIndex: 'endTs',ellipsis: true,customRender: date => this.$formatDate(date)}
       ]
       const arr2 = [
         {
           title: '报警等级',
-          dataIndex: 'name',
+          dataIndex: 'alarmLevel',
           ellipsis: true,
           filterMultiple: false,
-          filteredValue: filteredInfo1.systemName || [],
+          filteredValue: filteredInfo1.alarmLevel || [],
           filters: this.$arrayItemToString(this.filtersList1),
-          width:120
+          width:120,
+          customRender: data => alarmLevelList[data]
         },
         {
           title: '报警来源',
-          dataIndex: 'systemName',
+          dataIndex: 'alarmType',
           ellipsis: true,
           filterMultiple: false,
-          filteredValue: filteredInfo1.systemName || [],
+          filteredValue: filteredInfo1.alarmType || [],
           filters: this.$arrayItemToString(this.filtersList2),
-          width:120
+          width:120,
+          customRender: data => alarmSourceList[data]
         },
-        {
-          title: '报警信息',
-          dataIndex: 'name',
-          ellipsis: true,
-        },
-        {
-          title: '报警时间',
-          dataIndex: 'systemName',
-          ellipsis: true,
-        },
+        {title: '报警信息',dataIndex: 'alarmInfo',ellipsis: true},
+        {title: '报警时间',dataIndex: 'startTs',ellipsis: true,customRender: date => this.$formatDate(date)},
       ]
       const arr3 = [
-        {
-          title: '持续时间',
-          dataIndex: 'systemName',
-          ellipsis: true,
-        },
+        {title: '持续时间',ellipsis: true},
       ]
       return this.isCurrent ? [...arr2,...arr3] : [...arr2,...arr1,...arr3]
     } 
@@ -134,26 +108,40 @@ export default {
   methods: {
     changeTab({symbol}) {
       this.currentTab = symbol
+      this.getTableData()
     },
     getTableData(){
-      const param = {
-        keyword: this.keyword,
+      const comParams = {
         limit: this.pagination.pageSize,
         pageNo: this.pagination.current,
-        systemId: this.systemId,
+        alarmLevel: this.filteredInfo1.alarmLevel && this.filteredInfo1.alarmLevel[0],
+        alarmType: this.filteredInfo1.alarmType && this.filteredInfo1.alarmType[0]
       }
-      // this.loading = true;
-      // rolePermissionApi.getPermissionRoleList(param).then( res =>{
-      //   if ( res.code === 0 ){
-      //     this.tableData = res.data.records || [];
-      //     this.pagination.total = res.data.total;
-      //   }
-      //   this.loading = false;
-      // }).catch( e =>{
-      //   this.loading = false;
-      //   console.log(e);
-      // });
+      const param = this.isCurren ? {
+        ...comParams,
+        alarmStatus: 0,
+      } : {
+        ...comParams,
+        alarmStatus: 1,
+        startTs: this.$UTC(this.time[0]),
+        endTs: this.$UTC(this.time[1]),
+      }
+      this.loading = true;
+      this.$API.getDeviceParamAlarmList(param).then( res =>{
+        if ( res.code === 0 ){
+          this.tableData = res.data.records || [];
+          this.pagination.total = res.data.total;
+        }
+        this.loading = false;
+      }).catch( e =>{
+        this.loading = false;
+        console.log(e);
+      });
     },
+    reset() {
+      this.time = []
+      this.getTableData()
+    }
   }
 }
 </script>

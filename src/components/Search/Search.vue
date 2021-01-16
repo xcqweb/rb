@@ -101,6 +101,9 @@ export default {
   /deep/.poros-select-selection{
     border-right: none;
     border-radius: 2px 0 0 2px;
+    &:hover{
+      border-right: 1px solid #3c64e8 !important;
+    }
   }
 }
 </style>

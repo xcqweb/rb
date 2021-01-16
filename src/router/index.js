@@ -109,7 +109,8 @@ const IframePage = () => import('@/views/iframePage')
 /** 根据menus创建动态路由 */
 export function createRouteByMenus() {
   const newRoutes = []
-  const { menus } = store.state.poros
+  store.state.poros.menus = store.state.poros.menus.filter( item => !item.hidden)
+  let { menus } = store.state.poros
   if(!Array.isArray(menus) || menus.length === 0) {
     return newRoutes
   }

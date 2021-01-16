@@ -30,7 +30,7 @@
 
 <script>
 import tableMixins from '@/mixins/tableMixins'
-import {commandColumns} from '../base'
+import {commandColumns} from '@/views/base'
 import ViewMsg from '../../deviceView/modal/viewMsg'
 import {sendType,resultType} from '@/utils/baseData'
 export default {
@@ -41,9 +41,9 @@ export default {
       filtersList1: sendType,
       filtersList2: resultType,
       selectList: [
-        {name:'指令名称',key: 'modelName'},
-        {name:'指令标识',key: 'creater'},
-        {name:'发送时间',key: 'time'},
+        {name:'指令名称',key: 'commandName'},
+        {name:'指令标识',key: 'commandMark'},
+        {name:'发送时间',key: 'createTime'},
       ]
     };
   },
@@ -52,17 +52,8 @@ export default {
       let { filteredInfo1} = this;
       return [
         ...commandColumns.slice(0,3),
-        {
-          title: '发送对象',
-          dataIndex: 'name',
-          scopedSlots: { customRender: 'name' },
-        },
-        {
-          title: '发送时间',
-          dataIndex: 'sendTime',
-          ellipsis: true,
-          scopedSlots: { customRender: 'sendTime' },
-        },
+        {title: '发送对象',dataIndex: 'name',scopedSlots: { customRender: 'name' }},
+        {title: '发送时间',dataIndex: 'sendTime',ellipsis: true,scopedSlots: { customRender: 'sendTime' }},
         {
           title: '发送状态',
           ellipsis: true,
@@ -87,23 +78,22 @@ export default {
           filters: this.$arrayItemToString(this.filtersList2),
           width: 120,
         },
-        {
-          title: '操作',
-          dataIndex: 'operate',
-          align: 'right',
-          width: 100,
-          scopedSlots: { customRender: 'operation' },
-        },
+        {title: '操作',dataIndex: 'operate',align: 'right',width: 100,scopedSlots: { customRender: 'operation' }},
       ]
     } 
   },
   methods: {
-    getTableData(){
+    getTableData({searchKey = this.selectList[0].key, keyword} = {}){
+      const isArray = Array.isArray(keyword)
       const param = {
-        keyword: this.keyword,
+        keyword: isArray ? undefined : keyword,
+        searchKey,
         limit: this.pagination.pageSize,
         pageNo: this.pagination.current,
-        systemId: this.systemId,
+        startTime: isArray ? this.$UTC(keyword[0]) : undefined,
+        endTime: isArray ? this.$UTC(keyword[1]) : undefined,
+        resultCode: this.filteredInfo1.resultCode && this.filteredInfo1.resultCode[0],
+        status: this.filteredInfo1.status && this.filteredInfo1.status[0]
       }
       this.loading = true;
       this.$API.getCommandSendRecordList(param).then( res =>{

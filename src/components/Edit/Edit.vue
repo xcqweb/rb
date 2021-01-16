@@ -9,7 +9,9 @@
     <template v-else>
       {{time ? time(value, format) : emunList ? emunList[value] : value}}
       <slot v-if="!normal"></slot>
-      <p-icon class="edit_icon" type='edit' @click="edit" />
+      <p-tooltip placement="top" title="编辑">
+        <p-icon class="edit_icon" type='edit' @click="edit" />
+      </p-tooltip>
     </template>
   </div>
 </template>

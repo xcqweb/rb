@@ -9,7 +9,7 @@
     @cancel="cancel"
     @ok="confirm"
   >
-  <Label label='所属模型' width='80'>
+  <!-- <Label label='所属模型' width='80'> -->
     <Infinity-select
       style="width:160px"
       :api='$API.getModelList'
@@ -17,7 +17,7 @@
       showAll
       :dataKey="{value: 'id', label: 'modelName'}"
     />
-  </Label>
+  <!-- </Label> -->
   <p-table
     class="mt10"
     rowKey="id"
@@ -39,7 +39,7 @@
 <script>
 import tableMixins from '@/mixins/tableMixins'
 import modalMixins from '@/mixins/modal'
-import {commomColumns} from '../base'
+import {commomColumns} from '@/views/base'
 import {
   deviceNetTypeList,
   deviceStatusTypeList,
@@ -55,7 +55,7 @@ export default {
   data() {
     return {
       loadingTable: false,
-      belongModel: {label: '全部', key: 'all'},
+      belongModel: {label: '全部模型', key: 'all'},
       selectedRowKeys: [],
       deviceNetTypeList,
       deviceStatusTypeList,
@@ -83,7 +83,7 @@ export default {
     }
   },
   watch: {
-    'belongModel.key'(val) {
+    belongModel(val) {
       this.getTableData()
     },
     visible(val) {

@@ -1,5 +1,5 @@
 <template>
-  <page :content='comTitle' @back='back'>
+  <page :content='deviceName' @back='$router.go(-1)'>
     <p-tabs v-model="activeKey">
       <p-tab-pane key="view" tab="概览">
         <Overview
@@ -12,20 +12,21 @@
         />
       </p-tab-pane>
       <p-tab-pane key="data" tab="数据">
+        <!-- 设备数据 -->
         <Data search isDevice :deviceId='comDeviceId' v-if="isDevice" />
-        <Collapse-list v-else :deviceList='deviceList'>
-          <tempalte slot-scope='{item}'>
-            <Data search componsition isDevice :deviceId='item.deviceId' />
-          </tempalte>
-      </Collapse-list>
+        <!-- 组合数据 -->
+        <Collapse-list :deviceList='deviceList' v-else>
+          <Data slot-scope='{item}' search componsition isDevice :deviceId='item.deviceId' />
+        </Collapse-list>
       </p-tab-pane>
       <p-tab-pane key="command" tab="指令">
+        <!-- 设备指令 -->
         <Command search isDevice :deviceId='comDeviceId' :deviceName='deviceName' :modelId='modelId' v-if="isDevice" />
-        <Collapse-list v-else :deviceList='deviceList'>
-          <tempalte slot-scope='{item}'>
-            <Command search componsition isDevice :modelId='item.modelId' :deviceName='item.deviceName' />
-          </tempalte>
+        <!-- 组合指令 -->
+        <Collapse-list :deviceList='deviceList' v-else>
+          <Command slot-scope='{item}' search componsition isDevice :modelId='item.modelId' :deviceName='item.deviceName' />
         </Collapse-list>
+        <!-- 发送记录 -->
         <Send-record />
       </p-tab-pane>
       <p-tab-pane key="alarm" tab="报警" v-if="isDevice">
@@ -47,6 +48,7 @@ import Alarm from './viewTabs/alarm'
 import Log from './viewTabs/log'
 import SendRecord from '../../model/children/sendRecord'
 export default {
+  name: 'viewDevice',
   components: {
     Overview,
     Data,
@@ -59,8 +61,8 @@ export default {
     return{
       activeKey: 'view',
       modelId: '',
-      deviceName: '',
-      deviceList: []
+      deviceName: '-',
+      deviceList: [], //设备列表
     }
   },
   watch: {
@@ -69,9 +71,6 @@ export default {
     }
   },
   computed: {
-    comTitle() {
-      return `查看${this.comLabel}`
-    },
     comType() {
       const {type} = this.$route.query
       return type
@@ -86,14 +85,5 @@ export default {
       return this.$route.query.id
     }
   },
-  methods: {
-    back() {
-      this.$router.go(-1)
-    }
-  },
 }
 </script>
-
-<style lang="less" scoped>
-  
-</style>

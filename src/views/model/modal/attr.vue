@@ -40,44 +40,18 @@
           <div class="flex" v-for="(item, index) in paramsValidateForm.emunList" v-if="isEmun">
             <p-form-model-item
             :prop="'emunList.' + index + '.enumKey'"
-            :rules="[
-              {
-                message: '请输入枚举值',
-                trigger: 'blur',
-                required: true,
-              },
-              {
-                message: '枚举值仅支持中文、字母、数字（整数和小数）或下划线“_”',
-                pattern: pattern.name4Reg
-              },
-              {
-                type: 'string',
-                max: 25,
-                message: '枚举值长度限制为25个字符'
-              },
-            ]"
+            :rules="[{message: '请输入枚举值',trigger: 'blur',required: true,},
+              {message: '枚举值仅支持中文、字母、数字（整数和小数）或下划线“_”',pattern: pattern.name4Reg},
+              {type: 'string',max: 25,message: '枚举值长度限制为25个字符'}]"
             >
               <p-input class="mr6 w160" v-model.trim="item.enumKey" :disabled='moreEdit && item.id' placeholder="请输入枚举值" />
             </p-form-model-item>
             <p-form-model-item
             class="ml6"
             :prop="'emunList.' + index + '.enumValue'"
-            :rules="[
-              {
-                message: '请输入显示名称',
-                trigger: 'blur',
-                required: true,
-              },
-              {
-                message: '显示名称仅支持中文、字母、数字或下划线“_”',
-                pattern: pattern.name2Reg
-              },
-              {
-                type: 'string',
-                max: 25,
-                message: '显示名称长度限制为25个字符'
-              },
-            ]"
+            :rules="[{message: '请输入显示名称',trigger: 'blur',required: true},
+              {message: '显示名称仅支持中文、字母、数字或下划线“_”',pattern: pattern.name2Reg},
+              {type: 'string',max: 25,message: '显示名称长度限制为25个字符'}]"
             >
               <p-input class="w160" v-model.trim="item.enumValue" :disabled='item.id && moreEdit' placeholder="请输入显示名称" />
             </p-form-model-item>
@@ -116,31 +90,13 @@ export default {
       model: {},
       rules: {
         attributeName: [
-          {
-            type: 'string',
-            max: 25,
-            message: '属性名称长度限制为25个字符'
-          },
-          {
-            type: 'string',
-            message: '属性名称仅支持中文、字母、数字或下划线“_”',
-            pattern: pattern.name2Reg
-          },
+          {type: 'string',max: 25,message: '属性名称长度限制为25个字符'},
+          {type: 'string',message: '属性名称仅支持中文、字母、数字或下划线“_”',pattern: pattern.name2Reg},
         ],
         attributeMark: [
-          {
-            required: true,
-            message: '请输入属性标识'
-          },
-          {
-            max: 20,
-            message: '属性标识长度限制为20个字符'
-          },
-          {
-            type: 'string',
-            message: '属性标识仅支持数字、字母或下划线“_”',
-            pattern: pattern.nameReg
-          },
+          {required: true,message: '请输入属性标识'},
+          {max: 20,message: '属性标识长度限制为20个字符'},
+          {type: 'string',message: '属性标识仅支持数字、字母或下划线“_”',pattern: pattern.nameReg},
         ],
       }
     }

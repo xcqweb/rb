@@ -65,14 +65,13 @@
     </p-form>
     <page-title>模型定义</page-title>
     <p-tabs class="mt20">
-      <p-tab-pane key="attr" tab="属性">
-        <Attr v-model="model.modelAttributeAddParamList" addBtn add />
-      </p-tab-pane>
-      <p-tab-pane key="data" tab="数据">
-        <Data v-model="model.modelParamAddParamList" addBtn add />
-      </p-tab-pane>
-      <p-tab-pane key="command" tab="指令">
-        <Command v-model="model.modelCommandAddParamList" addBtn add />
+      <p-tab-pane v-for="item in tabList" :key="item.key" :tab="item.tab">
+        <component
+          v-model="model[item.dataKey]"
+          :is="item.key"
+          add
+          addBtn
+        ></component>
       </p-tab-pane>
     </p-tabs>
     <div slot="footer" class="tr">
@@ -89,6 +88,7 @@ import Attr from './tabs/attr.vue'
 import Command from './tabs/command.vue'
 import {rateType,judgeType} from '@/utils/baseData'
 export default {
+  name: 'addModel',
   components: {
     Data,
     Attr,
@@ -96,11 +96,12 @@ export default {
   },
   data() {
     return {
-      model: {
-        modelAttributeAddParamList: [],
-        modelParamAddParamList: [],
-        modelCommandAddParamList: [],
-      },
+      tabList: [
+        {tab: '属性',key: 'Attr', dataKey: 'modelAttributeAddParamList'},
+        {tab: '数据',key: 'Data', dataKey: 'modelParamAddParamList'},
+        {tab: '指令',key: 'Command', dataKey: 'modelCommandAddParamList'},
+      ],
+      model: {modelAttributeAddParamList: [], modelParamAddParamList: [], modelCommandAddParamList: []},
       form: this.$form.createForm(this),
       loading: false,
       ruleUnit: 1,
@@ -126,13 +127,7 @@ export default {
       this.form.validateFields((err,values) => {
         if(!err) {
           console.log(err,values)
-          const params = {
-            modelAddParam: {
-              ruleUnit: this.ruleUnit,
-              ...values
-            },
-            ...this.model,
-          }
+          const params = {modelAddParam: {ruleUnit: this.ruleUnit,...values},...this.model}
           this.loading = true
           this.$API.addModel(params).then( res => {
             this.$message.success('提交成功！')
@@ -146,11 +141,7 @@ export default {
     },
     cancel() {
       this.$router.go(-1)
-      this.model = {
-        attrData: [],
-        paramData: [],
-        commandData: [],
-      }
+      this.model = {attrData: [],paramData: [],commandData: []}
       this.form.resetFields()
     },
     back(){

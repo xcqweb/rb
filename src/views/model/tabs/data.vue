@@ -85,7 +85,7 @@ export default {
         {name:'参数名称',key: 'paramName'},
         {name:'参数标识',key: 'paramMark'},
       ],
-      filtersList: this.add ? [] : paramType,
+      filtersList: this.filter ? paramType : [],
     };
   },
   computed: {
@@ -95,71 +95,23 @@ export default {
     innerColumns() {
       const that = this
       return [
-        {
-          dataIndex: 'alarmLevelId',
-          title: '报警等级',
-          ellipsis: true,
-          customRender(data) {
-            console.log(this)
-            return that.alarmLevelList[data]
-          }
-        },
-        {
-          title: '报警阈值',
-          ellipsis: true,
-          dataIndex: 'formulaView',
-        },
-        {
-          dataIndex: 'remark',
-          title: '报警信息',
-          ellipsis: true
-        },
-        {
-          title: '是否启用',
-          ellipsis: true,
-          scopedSlots: { customRender: 'switch' },
-        },
-        {
-          title: '操作',
-          ellipsis: true,
-          scopedSlots: { customRender: 'alarmOperator' },
-        },
+        {dataIndex: 'alarmLevelId',title: '报警等级',ellipsis: true,customRender: data => that.alarmLevelList[data]},
+        {title: '报警阈值',ellipsis: true,dataIndex: 'formulaView'},
+        {dataIndex: 'remark',title: '报警信息',ellipsis: true},
+        {title: '是否启用',ellipsis: true,scopedSlots: { customRender: 'switch' }},
+        {title: '操作',ellipsis: true,scopedSlots: { customRender: 'alarmOperator' }},
       ]
     },
     columns(){
       let { filteredInfo1 } = this;
       return this.isDevice ? [
-        {
-          title: '参数标识',
-          dataIndex: 'paramMark',
-          ellipsis: true,
-        },
-        {
-          title: '参数名称',
-          dataIndex: 'paramName',
-          ellipsis: true,
-        },
-        {
-          title: '最新上报数据',
-          dataIndex: 'name',
-          ellipsis: true,
-        },
-        {
-          title: '最近上报时间',
-          dataIndex: 'systemName',
-          ellipsis: true,
-        },
+        {title: '参数标识',dataIndex: 'paramMark',ellipsis: true},
+        {title: '参数名称',dataIndex: 'paramName',ellipsis: true},
+        {title: '最新上报数据',dataIndex: 'name',ellipsis: true},
+        {title: '最近上报时间',dataIndex: 'systemName',ellipsis: true},
       ] :[
-        {
-          title: '参数标识',
-          dataIndex: 'paramMark',
-          ellipsis: true,
-        },
-        {
-          title: '参数名称',
-          dataIndex: 'paramName',
-          ellipsis: true,
-        },
+        {title: '参数标识',dataIndex: 'paramMark',ellipsis: true},
+        {title: '参数名称',dataIndex: 'paramName',ellipsis: true},
         {
           title: '参数类型',
           ellipsis: true,
@@ -168,37 +120,12 @@ export default {
           filteredValue: filteredInfo1.paramType || [],
           filters: this.$arrayItemToString(this.filtersList),
           width: 120,
-          customRender: function(data) {
-            return paramTypeList[data]
-          }
+          customRender: data => paramTypeList[data]
         },
-        {
-          title: '计算精度',
-          ellipsis: true,
-          dataIndex: 'paramPrecision',
-          width: 100,
-        },
-        {
-          title: '单位',
-          ellipsis: true,
-          dataIndex: 'unit',
-          width: 100,
-        },
-        {
-          title: '用途',
-          ellipsis: true,
-          dataIndex: 'used',
-          width: 100,
-          customRender(data) {
-            return useOption[data]
-          }
-        },
-        {
-          title: '操作',
-          align: 'right',
-          width: 136,
-          scopedSlots: { customRender: 'operation' },
-        },
+        {title: '计算精度',ellipsis: true,dataIndex: 'paramPrecision',width: 100,},
+        {title: '单位',ellipsis: true,dataIndex: 'unit',width: 100,},
+        {title: '用途',ellipsis: true,dataIndex: 'used',width: 100,customRender(data) {return useOption[data]}},
+        {title: '操作',align: 'right',width: 136,scopedSlots: { customRender: 'operation' }},
       ]
     } 
   },

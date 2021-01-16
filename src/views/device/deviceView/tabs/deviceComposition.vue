@@ -34,12 +34,17 @@
         :data-source="record.innerData"
         :pagination="false"
         :loading='innerLoading'
-        row-key="id"
+        row-key="refId"
         style="margin:10px 0;"
         class="innerTable"
       >
         <span slot="deviceName" slot-scope="item" class="viewDetail" @click="viewDevice(item)">{{item.deviceName}}</span>
         <span slot="deviceModel" slot-scope="item" class="viewDetail" @click="viewModel(item)">{{item.modelName}}</span>
+        <p slot="netStatus" slot-scope="status">
+          <span :class="netStatusClass[status]"></span>
+          <span>{{deviceNetTypeList[status]}}</span>
+        </p>
+        <span slot="status" slot-scope="status" :class="statusClass[status]">{{deviceStatusTypeList[status]}}</span>
         <a href="javascript:;" slot="operation" slot-scope="item" @click="unbind(item)">解绑</a>
       </p-table>
     </p-table>
@@ -57,7 +62,8 @@
 <script>
 import tableMixins from '@/mixins/tableMixins'
 import tableExpandMixins from '@/mixins/table-expand'
-import {deviceNetType,deviceStatusType,deviceNetTypeList,deviceStatusTypeList} from '@/utils/baseData'
+import {deviceNetType,deviceStatusType,deviceNetTypeList,deviceStatusTypeList,netStatusClass,statusClass} from '@/utils/baseData'
+import {commomColumns} from '@/views/base'
 export default {
   mixins: [tableMixins,tableExpandMixins],
   components: {},
@@ -73,6 +79,10 @@ export default {
         {name:'创建人',key: 'createBy'},
         {name:'创建时间',key: 'createTime'},
       ],
+      deviceNetTypeList,
+      deviceStatusTypeList,
+      netStatusClass,
+      statusClass
     }
   },
   computed: {
@@ -80,96 +90,34 @@ export default {
       return !this.chooseNode.id
     },
     innerColumns(){
-      let { filteredInfo1 } = this;
-      const that = this
       return [
-        {
-          title: '设备名称',
-          ellipsis: true,
-          scopedSlots: { customRender: 'deviceName' }
-        },
-        {
-          title: '所属类型',
-          ellipsis: true,
-          scopedSlots: { customRender: 'deviceModel' }
-        },
-        {
-          dataIndex: 'name',
-          title: '网络',
-          ellipsis: true,
-          width: 100,
-          customRender:(item) => {
-            const className = ['online','offline', 'noActive'][1]
-            return <p>
-              <span class={className}></span>
-              <span>{deviceNetTypeList[1]}</span>
-            </p>
-          }
-        },
-        {
-          dataIndex: 'name',
-          title: '状态',
-          ellipsis: true,
-          width: 100,
-          customRender:(item) => {
-            const className = ['normal','offline_text'][1]
-            return <span class={className}>{deviceStatusTypeList[1]}</span>
-          }
-        },
-        {
-          title: '操作',
-          width: 120,
-          align: 'right',
-          scopedSlots: { customRender: 'operation' }
-        },
+        {title: '设备名称',ellipsis: true,scopedSlots: { customRender: 'deviceName' }},
+        {title: '所属类型',ellipsis: true,scopedSlots: { customRender: 'deviceModel' }},
+        ...commomColumns.slice(2),
+        {title: '操作',width: 120,align: 'right',scopedSlots: { customRender: 'operation' }},
       ]
     },
     columns() {
-      const that = this
       return [
-        {
-          title: '组合名称',
-          ellipsis: true,
-          scopedSlots: { customRender: 'composeName' }
-        },
-        {
-          dataIndex: 'remark',
-          title: '描述',
-          ellipsis: true
-        },
-        {
-          dataIndex: 'createBy',
-          title: '创建人',
-          ellipsis: true
-        },
+        {title: '组合名称',ellipsis: true,scopedSlots: { customRender: 'composeName' }},
+        {dataIndex: 'remark',title: '描述',ellipsis: true},
+        {dataIndex: 'createBy',title: '创建人',ellipsis: true},
         {
           dataIndex: 'createTime',
           title: '创建时间',
           ellipsis: true,
-          customRender(date) {
-            return that.$formatDate(date)
-          }
+          customRender: (date) => this.$formatDate(date)
         },
-        {
-          title: '操作',
-          width: 120,
-          align: 'right',
-          scopedSlots: { customRender: 'operation' }
-        },
+        {title: '操作',width: 120,align: 'right',scopedSlots: { customRender: 'operation' }},
       ]
     }
   },
   watch: {
     'chooseNode.id'() {
-      if (this.chooseNode.init || this.activeKey === 'deviceList') {
-        return
-      }
-      this.getTableData()
+      !(this.chooseNode.init || this.activeKey === 'deviceList') && this.getTableData()
     },
     activeKey(val) {
-      if (this.activeKey === 'deviceCompose') {
-        this.getTableData()
-      }
+      this.activeKey === 'deviceCompose' && this.getTableData()
     }
   },
   methods: {

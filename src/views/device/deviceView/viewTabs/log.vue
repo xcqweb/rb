@@ -1,8 +1,10 @@
 <template>
-  <div>
+  <div :class="{status: isCurrent}">
     <div class="flex mb16">
       <Btn-tabs :tabs='tabs' @change="changeTab"></Btn-tabs>
-      <p-range-picker v-show="!isCurrent" v-model="time" class="ml20"></p-range-picker>
+      <Label label='记录时间' width='60' class="ml20 f1" v-show="!isCurrent">
+        <p-range-picker @change="getTableData" v-show="!isCurrent" v-model="time" show-time class="ml20"></p-range-picker>
+      </Label>
       <p-button class="reset" @click="reset" icon="reload" />
     </div>
     <p-table
@@ -19,7 +21,7 @@
 <script>
 import tableMixins from '@/mixins/tableMixins'
 import BtnTabs from '../children/btnTabs'
-import {logType,operatorType} from '@/utils/baseData'
+import {logType,operatorType,logTypeList,operatorTypeList} from '@/utils/baseData'
 export default {
   components: {BtnTabs},
   mixins: [tableMixins],
@@ -46,63 +48,37 @@ export default {
     columns(){
       let { filteredInfo1 } = this;
       const arr = [
-        {
-          title: '设备',
-          dataIndex: 'systemName2',
-          ellipsis: true,
-        },
+        {title: '设备',dataIndex: 'deviceName',ellipsis: true},
       ] 
       const arr1 = [
         {
           title: '类型',
-          dataIndex: 'type',
+          dataIndex: 'changeType',
           ellipsis: true,
           filterMultiple: false,
-          filteredValue: filteredInfo1.systemName || [],
+          filteredValue: filteredInfo1.changeType || [],
           filters: this.$arrayItemToString(this.filtersList1),
-          width: 120
+          width: 120,
+          customRender: data => logTypeList[data]
         },
-        {
-          title: '变更前',
-          dataIndex: 'systemName2',
-          ellipsis: true,
-        },
-        {
-          title: '变更后',
-          dataIndex: 'systemName3',
-          ellipsis: true,
-        },
-        {
-          title: '变更时间',
-          dataIndex: 'systemName4',
-          ellipsis: true,
-        }
+        {title: '变更前',dataIndex: 'infoBefore',ellipsis: true},
+        {title: '变更后',dataIndex: 'infoAfter',ellipsis: true},
+        {title: '变更时间',dataIndex: 'ts',ellipsis: true,customRender: date => this.$formatDate(date)}
       ]
       const arr2 = [
-        {
-          title: '操作人',
-          dataIndex: 'name',
-          ellipsis: true,
-        },
+        {title: '操作人',dataIndex: 'operaUser',ellipsis: true},
         {
           title: '操作类型',
-          dataIndex: 'systemName6',
+          dataIndex: 'changeType',
           ellipsis: true,
           filterMultiple: false,
-          filteredValue: filteredInfo1.systemName || [],
+          filteredValue: filteredInfo1.changeType || [],
           filters: this.$arrayItemToString(this.filtersList2),
-          width:120
+          width:120,
+          customRender: data => operatorTypeList[data]
         },
-        {
-          title: '操作内容',
-          dataIndex: 'name2',
-          ellipsis: true,
-        },
-        {
-          title: '操作时间',
-          dataIndex: 'systemName',
-          ellipsis: true,
-        },
+        {title: '操作内容',dataIndex: 'changeInfo',ellipsis: true},
+        {title: '操作时间',dataIndex: 'ts',ellipsis: true,customRender: date => this.$formatDate(date)},
       ]
       return this.isCurrent ? this.isDevice ? arr1 : [...arr,...arr1] : arr2
     } 
@@ -110,26 +86,38 @@ export default {
   methods: {
     changeTab({symbol}) {
       this.currentTab = symbol
+      this.getTableData()
     },
     getTableData(){
-      const param = {
-        keyword: this.keyword,
+      const comParams = {
         limit: this.pagination.pageSize,
         pageNo: this.pagination.current,
-        systemId: this.systemId,
+        changeType: this.filteredInfo1.changeType && this.filteredInfo1.changeType[0]
       }
-      // this.loading = true;
-      // rolePermissionApi.getPermissionRoleList(param).then( res =>{
-      //   if ( res.code === 0 ){
-      //     this.tableData = res.data.records || [];
-      //     this.pagination.total = res.data.total;
-      //   }
-      //   this.loading = false;
-      // }).catch( e =>{
-      //   this.loading = false;
-      //   console.log(e);
-      // });
+      const param = this.isCurren ? {
+        ...comParams,
+      } : {
+        ...comParams,
+        startTime: this.$UTC(this.time[0]),
+        endTime: this.$UTC(this.time[1]),
+      }
+      this.loading = true;
+      const fun = this.$API[this.isCurrent ? 'getDeviceLogStateList' : 'getDeviceLogInfoList']
+      fun.getDeviceLogInfoList(param).then( res =>{
+        if ( res.code === 0 ){
+          this.tableData = res.data.records || [];
+          this.pagination.total = res.data.total;
+        }
+        this.loading = false;
+      }).catch( e =>{
+        this.loading = false;
+        console.log(e);
+      });
     },
+    reset() {
+      this.time = []
+      this.getTableData()
+    }
   }
 }
 </script>
@@ -143,4 +131,13 @@ export default {
     background-color: #F0F1F3;
   }
 }
+
+.status{
+  /deep/.poros-table-column-has-filters{
+    .anticon-filter{
+      right: 60px !important;
+    }
+  }
+}
+
 </style>
