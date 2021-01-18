@@ -73,7 +73,7 @@ export default {
       this.$refs.select.open = false
     },
     search(keyword) {
-      console.log(keyword)
+      // console.log(keyword)
       this.keyword = keyword
     },
     select(data) {

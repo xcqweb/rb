@@ -40,8 +40,9 @@
     },
     computed: {
       comStyle() {
+        const fix = this.showAll ? 1 : 0
         return {
-          height: this.noData ? '136px' : '266px'
+          height: this.noData ? '136px' : this.total < 7 ? `${38 * (this.total + fix)}px` : '266px',
         }
       }
     },
@@ -67,9 +68,6 @@
         },
         immediate: true
       },
-      total(val) {
-        val < 7 ? this.scroll.disable() : this.scroll.enable()
-      }
     },
     mounted() {
       this.$nextTick(() => {
@@ -78,7 +76,6 @@
     },
     methods: {
       init() {
-        this.scroll.scrollTo(0,0)
         this.scroll.refresh()
         this.scroll.destroy()
         this.scroll = null
@@ -158,22 +155,31 @@
                       return item
                     }
                   })
+                  reData.length < 7 ? this.scroll.disable() : this.scroll.enable()
+                  //显示全部
                   if (this.showAll) {
                     reData = [{value: 'all',label: this.selectName || '全部'},...reData]
-                  }
-                  if (reData.length === 1 && reData[0].value === 'all') {
-                    resolve(false)
-                    if(this.nextItem === 1) {
+                    if (reData.length === 1 && reData[0].value === 'all') { //显示全部是数据为空时
+                      resolve(false)
+                      if(this.nextItem === 1) {
+                        this.noData = true
+                      }
+                      return
+                    }
+                  }else{
+                    if (reData.length === 0 && this.nextItem === 1) { //没有显示全部是数据为空时
+                      resolve(false)
                       this.noData = true
-                    }
-                    return
-                  }
-                  const len = reData.length
-                  if (len && len < 7) {
-                    for (let i = 0; i < 7 - len; i++) {
-                      reData.push({disabled: true})
+                      return
                     }
                   }
+                  
+                  // const len = reData.length
+                  // if (len && len < 7) {
+                  //   for (let i = 0; i < 7 - len; i++) {
+                  //     reData.push({disabled: true})
+                  //   }
+                  // }
                   this.noData = false
                   this.total = res.data.total
                   if (res.data.total < (this.nextItem - 1) * this.pageNo) {
@@ -192,7 +198,6 @@
           }
         })
         // console.log(this.scroll)
-        this.scroll.scrollTo(0,0)
         this.scroll.refresh()
         this.scroll.on('scrollStart', (p) => {
           this.transformActive()
