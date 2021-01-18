@@ -17,16 +17,16 @@
   export default {
     name: 'CycleList',
     props: {
-      api: Function,
-      keyword: String,
-      selectId: String,
-      selectName: String,
-      pageNo: {
+      api: Function, //请求接口
+      keyword: String, //搜索关键词
+      selectId: String, //选中项id
+      selectName: String,//选中项name
+      pageNo: {//每页条数
         type: Number,
         default: 20
       },
-      dataKey: Object,
-      showAll: Boolean
+      dataKey: Object, //转换数据的key value
+      showAll: Boolean, // 下拉项是否显示全部
     },
     data() {
       return {
@@ -137,7 +137,7 @@
               return this.$refs.tombstone.cloneNode(true)
             },
             fetch: (count) => {
-              if (this.loadAll || isNullOrEmpty(this.total) || (this.total > 0 && this.total < this.nextItem * this.pageNo)) {
+              if (this.loadAll || isNullOrEmpty(this.total) || (this.total > 0 && this.total < (this.nextItem - 1) * this.pageNo)) {
                 return
               }
               const params = {

@@ -1,7 +1,6 @@
 <template>
   <div class="data">
-    <div class="c_searchArea" :class="{'fd':!addBtn,'fb': isDevice}">
-      <Btn-tabs :tabs='tabs' @change="changeTab" v-if="isDevice"></Btn-tabs>
+    <div class="c_searchArea" :class="{'fd':!addBtn}">
       <p-button @click="paramHandler" type="primary" v-if="addBtn">添加参数</p-button>
       <Search :selectList='selectList' @search='onSearch' v-model="keyword" @reset="reset" v-if="search" />
     </div>
@@ -66,7 +65,7 @@ import Monitor from '../modal/monitor'
 import BtnTabs from '../../device/deviceView/children/btnTabs'
 import { mapState } from 'vuex'
 import {paramType, paramTypeList,formualMap,useOption} from '@/utils/baseData'
-import {analysisFormula} from '@/utils/util'
+import {analysisFormula,formatnumber} from '@/utils/util'
 function formualTransfrom({limit, firstVal,secondVal}) {
   const isBetween = limit === '<>' || limit === '><'
   return formualMap[limit] + (isBetween ? `${firstVal} ~ ${secondVal}` : firstVal)
@@ -74,13 +73,12 @@ function formualTransfrom({limit, firstVal,secondVal}) {
 export default {
   mixins: [modelMixins],
   components: {DataModal,Monitor,BtnTabs},
+  props: {
+    deviceMark: String, //设备标识
+    modelMark: String, //模型标识
+  },
   data() {
     return {
-      currentTab: 'real',
-      tabs: [
-        {title: '实时数据',symbol: 'real'},
-        {title: '历史数据',symbol: 'history'},
-      ],
       selectList: [
         {name:'参数名称',key: 'paramName'},
         {name:'参数标识',key: 'paramMark'},
@@ -90,7 +88,8 @@ export default {
   },
   computed: {
     ...mapState({
-      alarmLevelList: state => state.dic.alarmLevelMap
+      alarmLevelList: state => state.dic.alarmLevelMap,
+      tenantMark: state => state.user.userInfo.tenantId
     }),
     innerColumns() {
       const that = this
@@ -107,8 +106,8 @@ export default {
       return this.isDevice ? [
         {title: '参数标识',dataIndex: 'paramMark',ellipsis: true},
         {title: '参数名称',dataIndex: 'paramName',ellipsis: true},
-        {title: '最新上报数据',dataIndex: 'name',ellipsis: true},
-        {title: '最近上报时间',dataIndex: 'systemName',ellipsis: true},
+        {title: '最新上报数据',dataIndex: 'paramValue',ellipsis: true},
+        {title: '最近上报时间',dataIndex: 'reportTime',ellipsis: true},
       ] :[
         {title: '参数标识',dataIndex: 'paramMark',ellipsis: true},
         {title: '参数名称',dataIndex: 'paramName',ellipsis: true},
@@ -130,9 +129,6 @@ export default {
     } 
   },
   methods: {
-    changeTab({symbol}) {
-      this.currentTab = symbol
-    },
     //展开子列表
     expandhandler(modelParamId, del) {
       if (!modelParamId) {
@@ -157,7 +153,28 @@ export default {
         this.innerLoading = false
       })
     },
+    setRealData({paramPrecision}, {paramValue, ts}) {
+      this.$set(item, 'paramValue', paramPrecision ? formatnumber(paramValue) : paramValue)
+      this.$set(item, 'reportTime', this.$formatDate(ts))
+    },
+    //获取最后一笔数据
+    getLastData(data = []) {
+      const params = {
+        tenantMark: this.tenantMark,
+        deviceModelMark: this.modelMark,
+        deviceMark: this.deviceMark,
+        deviceParams: data.map( item => item.paramMark)
+      }
+      this.$API.getLastData(params).then(res => {
+        const reData = res.data.deviceParams
+        data.forEach( item => {
+          const findItem = reData.find( el => el.paramMark === item.paramMark)
+          findItem && setRealData(findItem, item)
+        })
+      })
+    },
     getTableData({searchKey = this.selectList[0].key,keyword} = {}){
+      console.log(this.tenantMark)
       const param = {
         modelId: this.modelId,
         searchKey,
@@ -168,10 +185,14 @@ export default {
         deviceId: this.isDevice ? this.deviceId : undefined
       }
       this.loading = true;
-      let fun = this.isDevice ? (this.componsition ? this.$API.getDeviceParamList : this.$API.getDeviceParamList) : this.$API.getModelParamsList
+      let fun = this.$API[this.isDevice ? 'getDeviceParamList' : 'getModelParamsList']
       fun(param).then( res =>{
         if ( res.code === 0 ){
           this.tableData = res.data.records || [];
+          if (this.isDevice) {
+            //最后一笔数据
+            this.getLastData(this.tableData)
+          }
           this.tableData.forEach( item => {
             this.$set(item, 'innerData', [])
           })

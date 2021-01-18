@@ -33,7 +33,7 @@ export default {
     api: Function,
     dataKey: Object, //数据转换格式
     showAll: Boolean,
-    allowClear: {
+    allowClear: { //清除按钮
       type: Boolean,
       default: true
     }

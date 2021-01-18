@@ -8,15 +8,17 @@
           :type='comType'
           :modelId.sync='modelId'
           :deviceName.sync='deviceName'
+          :deviceMark.sync='deviceMark'
+          :modelMark.sync='modelMark'
           :label='comLabel'
         />
       </p-tab-pane>
       <p-tab-pane key="data" tab="数据">
         <!-- 设备数据 -->
-        <Data search isDevice :deviceId='comDeviceId' v-if="isDevice" />
+        <Data search isDevice :deviceId='comDeviceId' :modelMark='modelMark' :deviceMark='deviceMark' v-if="isDevice" />
         <!-- 组合数据 -->
         <Collapse-list :deviceList='deviceList' v-else>
-          <Data slot-scope='{item}' search componsition isDevice :deviceId='item.deviceId' />
+          <Data slot-scope='{item}' search componsition isDevice :deviceId='item.deviceId' :modelMark='item.modelMark' :deviceMark='item.deviceMark' />
         </Collapse-list>
       </p-tab-pane>
       <p-tab-pane key="command" tab="指令">
@@ -62,6 +64,8 @@ export default {
       activeKey: 'view',
       modelId: '',
       deviceName: '-',
+      modelMark: '',
+      deviceMark: '',
       deviceList: [], //设备列表
     }
   },

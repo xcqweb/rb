@@ -20,8 +20,8 @@
 export default {
   name: 'Edit',
   props: {
-    value: [String,Number],
-    width: [String,Number],
+    value: [String,Number], //绑定值
+    width: [String,Number], //label 宽度
 
     normal: Boolean, //通过卡槽
     time: Function, //时间转换方法

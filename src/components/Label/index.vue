@@ -16,11 +16,10 @@ export default {
     width: {
       type: [String,Number],
     },
-    classLabel: {
+    classLabel: { //定义label 左边宽度 传入class
       type: String,
       default: 'poros-col-2'
     },
-    rules: Array
   },
 }
 </script>

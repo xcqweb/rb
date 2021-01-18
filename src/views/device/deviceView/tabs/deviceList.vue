@@ -137,12 +137,13 @@ export default {
     },
     //////
     addDevice() {
+      const {id, locationNamePath} = this.chooseNode
       this.$router.push({
         path: '/device/addDevice',
         query: {
           type: 'device',
-          locationId: this.chooseNode.id,
-          locationNamePath: this.chooseNode.locationNamePath
+          locationId: id,
+          locationNamePath
         }
       })
     },

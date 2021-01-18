@@ -6,7 +6,7 @@
         <!-- 文本 -->
         <p-input v-model="item.attributeText" v-if="item.attributeType === 0"/>
         <!-- 日期 -->
-        <p-date-picker class="w100" v-model="item.attributeText" v-if="item.attributeType === 1"/>、
+        <p-date-picker class="w100" v-model="item.attributeText" v-if="item.attributeType === 1"/>
         <!-- 枚举 -->
         <p-select class="w100" v-model="item.attributeText" v-if="item.attributeType === 3" @focus='focusFun(item)'>
           <p-select-option v-for="list in item.listData" :value='list.enumValue' :key='list.enumValue'>{{list.enumValue}}</p-select-option>

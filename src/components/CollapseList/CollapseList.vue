@@ -10,7 +10,7 @@
 export default {
   name: 'CollapseList',
   props: {
-    deviceList: {
+    deviceList: { //列表
       type: Array,
       default: function() {
         return []

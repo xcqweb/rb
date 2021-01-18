@@ -8,11 +8,11 @@ export default {
     isDevice: Boolean, //是否是设备(组合和设备)下使用 否则为模型下
     componsition: Boolean, //组合中使用
     list: Object, //父组件数据
-    add: Boolean, //是否是在新增页面使用
+    add: Boolean, //是否是在新增模型页面使用
     filter: Boolean, //是否显示表格头部筛选
     modelId: String, //模型id
     deviceId: String, //设备id
-    value: Array, //table数据
+    value: Array, //table数据（新增模型时降数据传递至父组件）
   },
   data() {
     return {

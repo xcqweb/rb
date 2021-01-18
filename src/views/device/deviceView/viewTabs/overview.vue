@@ -2,13 +2,17 @@
   <div>
     <page-title>基本信息</page-title>
     <div class="content">
-      <Label :label="`${label}名称`">
-        <Edit v-model="model[namekey]" @submit="save" @cancel='cancel'></Edit>
-      </Label>
-      <Label v-if="!isDevice" label='描述'>
-        <Edit v-model="model.remark" normal @submit="save" @cancel='cancel'>
-          <p-input v-model="model.remark"></p-input>
+      <Label :label="`${label}名称`" v-clickOutSide="() => hide(namekey)">
+        <Edit :ref="namekey" v-model="model[namekey]" :error="isError === namekey" normal @submit="save" @cancel='cancel'>
+          <p-input v-model="model[namekey]" @change="validate(namekey)"></p-input>
         </Edit>
+        <p class="poros-form-explain" v-show="isError === namekey">{{errorInfo}}</p>
+      </Label>
+      <Label v-if="!isDevice" label='描述' v-clickOutSide="() => hide('remark')">
+        <Edit ref="remark" v-model="model.remark" normal :error="isError === 'remark'" @submit="save" @cancel='cancel'>
+          <p-input v-model="model.remark" @change="validate('remark')"></p-input>
+        </Edit>
+        <p class="poros-form-explain" v-show="isError ==='remark'">{{errorInfo}}</p>
       </Label>
       <Label v-if="isDevice" label='设备标识'>{{model.deviceMark}}</Label>
       <Label v-if="isDevice" label='所属模型'>{{model.modelName}}</Label>
@@ -49,6 +53,7 @@ import PageTitle from '@/components/PageTitle/PageTitle.vue'
 import BindingDevice from '../children/bindingDevice'
 import AttrInfo from '../children/attrInfo'
 import LinkConfig from '../children/linkConfig'
+import Schema from 'async-validator';
 import {
   netStatusClass,
   statusClass,
@@ -64,7 +69,9 @@ export default {
     isDevice: Boolean, //在设备中使用否则在组合中
     modelId: String,
     value: Array, //设备列表
-    deviceName: String
+    deviceName: String, //设备名称
+    deviceMark: String, //设备标识
+    modelMark: String, //模型标识
   },
   data() {
     return{
@@ -73,7 +80,10 @@ export default {
       deviceNetTypeList,
       deviceStatusTypeList,
       model: {},
-      deviceList: []
+      deviceList: [],
+      ////校验
+      isError: '',
+      errorInfo: ''
     }
   },
   watch: {
@@ -114,6 +124,41 @@ export default {
     },
     cancel() {
       this.model = this.$deepCopy(dataCopy)
+      this.isError = ''
+    },
+    hide(key) {
+      this.isError = ''
+      this.$refs[key] && this.$refs[key].cancel()
+    },
+    //校验
+    validate(key) {
+        const rurleMap = {
+          [this.namekey]: {
+            [this.namekey]: [
+              {required: true, message: `请输入${this.label}名称` },
+              {pattern: this.reg.name2Reg,message:`${this.label}名称仅支持中文、字母、数字和下划线“_”`},
+              {type: 'string', max: 25,message:`${this.label}名称长度限制为25个字符`},
+            ]
+          },
+          remark: {
+            remark: [
+              {max: 50,message: '描述长度限制为50个字符'},
+            ]
+          }
+        }
+        const descriptor = rurleMap[key]
+            
+        const validator = new Schema(descriptor);
+        validator.validate(this.model, (errors, fields) => {
+        if (errors) {
+          console.log(errors)
+          this.isError = key
+          this.errorInfo = errors[0].message
+          return handleErrors(errors, fields);
+        }else{
+          this.isError = ''
+        }
+      });
     },
     init() {
       if (!this.comDeviceId) {
@@ -127,6 +172,10 @@ export default {
         dataCopy = this.$deepCopy(this.model)
         this.$emit('update:modelId', reData.modelId)
         this.$emit('update:deviceName', reData.deviceName || reData.name)
+        if (this.isDevice) {
+          this.$emit('update:modelMark', reData.modelMark)
+          this.$emit('update:deviceMark', reData.deviceMark)
+        }
       })
     }
   }
@@ -142,6 +191,11 @@ export default {
     /deep/.label{
       width: 100%;
       line-height: 36px;
+    }
+    /deep/.poros-form-explain{
+      color: #f5222d;
+      margin-top: 6px;
+      transition: all 0.3s;
     }
   }
 </style>

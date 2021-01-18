@@ -23,4 +23,7 @@ export default{
 
 
   //////////////最后一笔数据///////////////////////////
+  getLastData: (params) => {
+    return instance.post(`${baseUrl}/persist/param/data/last`, params);
+  },
 }

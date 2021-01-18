@@ -103,7 +103,7 @@ export default {
       }
       this.loading = true;
       const fun = this.$API[this.isCurrent ? 'getDeviceLogStateList' : 'getDeviceLogInfoList']
-      fun.getDeviceLogInfoList(param).then( res =>{
+      fun(param).then( res =>{
         if ( res.code === 0 ){
           this.tableData = res.data.records || [];
           this.pagination.total = res.data.total;

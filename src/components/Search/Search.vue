@@ -15,7 +15,7 @@ export default {
   name: 'Search',
   props: {
     value: [String, Number],
-    selectList: {
+    selectList: { //搜索字段列表
       type: Array,
       default: function() {
         return []
