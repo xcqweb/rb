@@ -123,7 +123,7 @@ export default {
           console.log(this.$refs.componentRef.comList)
           let params = this.isDevice ? {
             deviceName: name,
-            modelId: modelId.key,
+            modelId: modelId.value,
             remark,
             locationId: this.locationId,
             deviceAttributeAddParamList: this.$refs.componentRef.comList
