@@ -94,7 +94,7 @@ const isUndef = function(o) {
         type: Number,
         default: 20
       },
-      offset: {
+      offset: { //距离底部多少加载
         type: Number,
         default: 100
       },
@@ -129,10 +129,6 @@ const isUndef = function(o) {
       window.removeEventListener(EVENT_RESIZE, this._onResize)
     },
     methods: {
-      init() {
-        this.list = []
-        this.promiseStack = []
-      },
       checkPromiseCompatibility() {
         /* istanbul ignore if */
         if (isUndef(window.Promise)) {

@@ -8,7 +8,7 @@
   @dropdownVisibleChange='dropdownVisibleChange'
   placeholder='请选择'
 >
-  <Cycle-list class="list" ref="cycle-list" :size='size' :on-fetch="onFetch" slot="dropdownRender" style="maxHeight:260px" v-if="flag">
+  <Cycle-list class="list" ref="cycle-list" :offset='50' :size='size' :on-fetch="onFetch" slot="dropdownRender" style="maxHeight:260px" v-if="flag">
     <template slot="item" slot-scope="{ data }">
       <div class="list_item" :class="{active: data.value === selectModel.value}" :id="data.value" @click="handleClick(data)" style="height:36px">
         {{data.label}}
@@ -74,7 +74,7 @@ export default {
           searchKey: 'modelName'
         }
         //判断是否加载完成
-        if (this.pageTotal > 0 && this.pageTotal < (this.pageIndex - 1) * this.size) {
+        if (this.$refs.select.open && this.pageTotal > 0 && this.pageTotal < (this.pageIndex - 1) * this.size) {
           return
         }
         this.api(params).then( res => {
@@ -86,7 +86,7 @@ export default {
               label: el[this.dataKey.label],
             }
           })
-          resolve(this.showAll ? [{value: 'all', label: '全部'},...reData] : reData)
+          resolve(this.showAll ? [{value: 'all', label: this.selectModel.label || '全部'},...reData] : reData)
         })
       })
     },
@@ -100,7 +100,8 @@ export default {
       this.flag = false
     },
     dropdownVisibleChange(status) {
-      this.init()
+      this.$refs.select.open = status
+      status && this.init()
     },
     init(keyword) {
       this.pageIndex = 1
@@ -112,7 +113,7 @@ export default {
       })
     },
     search: debounce(function(keyword) {
-      this.init(keyword)
+      this.$refs.select.open && this.init(keyword)
     },600)
   },
 }

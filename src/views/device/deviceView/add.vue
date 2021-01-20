@@ -38,7 +38,7 @@
     <Page-title>{{comPageTitle}}</Page-title>
     <component
       :is='componentId'
-      :modelId='model.modelId.key'
+      :modelId='model.modelId.value'
       @callback='callback'
       ref="componentRef"
       :error.sync='error'
@@ -54,7 +54,7 @@
 import AttrInfo from './children/attrInfo'
 import BindingDevice from './children/bindingDevice'
 const validateFun = (rule, value, callback) => {
-  if (!value.key) {
+  if (!value.value) {
     callback(new Error('请选择所属模型！'))
   }else{
     callback()
