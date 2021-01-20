@@ -30,4 +30,8 @@ export default{
   getDeviceParamMonitorList: (params) => {
     return instance.get(`${baseUrl}/ruban-device/deviceParam/alarm/list`, {params});
   },
+  // 修改设备数据参数告警信息
+  editDeviceParamAlarm: (params) => {
+    return instance.put(`${baseUrl}/ruban-device/deviceParamAlarm`, params);
+  },
 }

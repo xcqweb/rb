@@ -325,7 +325,7 @@ export default {
       this.$set(item, 'enabled', item.enabled ? 1 : 0)
       let message = !!item.enabled  ? '启用成功！' : '禁用成功！'
       if (!this.add) {
-        this.$API.editModelParamsAlarm(item).then(res => {
+        this.$API[this.isDevice ? 'editDeviceParamAlarm' : 'editModelParamsAlarm'](this.isDevice ? {enabled: item.enabled,id: item.deviceParamId} : item).then(res => {
           this.$message.success(message)
         }).catch(() => {
           this.$set(item, 'enabled', !item.enabled)
@@ -342,7 +342,7 @@ export default {
           data.alarmAddParamList = []
           this.tableData.push(data)
           this.$emit('input', this.tableData)
-        }else if (type === 'first-edit' && type === 'edit'){
+        }else if (type === 'first-edit' || type === 'edit'){
           const $index = this.tableData.findIndex( item => item.id === data.id)
           const innerData = this.tableData[$index].innerData || []
           const alarmAddParamList = this.tableData[$index].alarmAddParamList || []

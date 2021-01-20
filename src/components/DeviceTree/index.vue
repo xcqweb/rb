@@ -143,11 +143,11 @@ export default {
       this.expandedKeys = []
       this.getLocation({}).then( ({data}) => {
         this.treeData = this.tran(data)
-        const {id} = data[0]
+        const {id, hasChild} = data[0]
         if (this.checkRoot) {
           this.$emit('input', data[0])
           this.$emit('change', data[0])
-          this.defaultSelectedKeys = [id]
+          this.defaultSelectedKeys = hasChild ? [id] : []
           this.stroageNameSpace && sessionStorage.setItem(this.cacheDataKey[3], JSON.stringify(data[0]))
         }
         this.expandedKeys = [id]
