@@ -66,7 +66,6 @@ import {deviceNetType,deviceStatusType,deviceNetTypeList,deviceStatusTypeList,ne
 import {commomColumns} from '@/views/base'
 export default {
   mixins: [tableMixins,tableExpandMixins],
-  components: {},
   props: {
     chooseNode: Object,
     activeKey: String
@@ -114,20 +113,21 @@ export default {
   },
   watch: {
     'chooseNode.id'() {
-      !(this.chooseNode.init || this.activeKey === 'deviceList') && this.getTableData()
+      !(this.activeKey === 'deviceList') && this.getTableData()
     },
     activeKey(val) {
       this.activeKey === 'deviceCompose' && this.getTableData()
     }
   },
+  mounted() {
+    this.getTableData()
+  },
   methods: {
     addDevice() {
+      const {id, locationNamePath} = this.chooseNode
       this.$router.push({
         path: '/device/addComponsition',
-        query: {
-          locationId: this.chooseNode.id,
-          locationNamePath: this.chooseNode.locationNamePath
-        }
+        query: {locationId: id,locationNamePath}
       })
     },
     expandhandler(id) {
@@ -230,25 +230,19 @@ export default {
     view(item) {
       this.$router.push({
         path: '/device/viewComponsition',
-        query: {
-          id: item.id
-        }
+        query: {id: item.id}
       })
     },
     viewDevice(item) {
       this.$router.push({
         path: '/device/viewDevice',
-        query: {
-          id: item.id
-        }
+        query: {id: item.id}
       })
     },
     viewModel(item) {
       this.$router.push({
         path: '/model/viewModel',
-        query: {
-          id: item.modelId
-        }
+        query: {id: item.modelId}
       })
     }
   },

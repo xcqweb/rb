@@ -5,7 +5,6 @@
         <Overview
           v-model="deviceList"
           :isDevice='isDevice'
-          :type='comType'
           :modelId.sync='modelId'
           :deviceName.sync='deviceName'
           :deviceMark.sync='deviceMark'
@@ -32,10 +31,10 @@
         <Send-record />
       </p-tab-pane>
       <p-tab-pane key="alarm" tab="报警" v-if="isDevice">
-        <Alarm :deviceId='comDeviceId' />
+        <Alarm :deviceId='comDeviceId' :modelMark='modelMark' :deviceMark='deviceMark' />
       </p-tab-pane>
       <p-tab-pane key="log" tab="日志">
-        <Log :isDevice='isDevice' :deviceId='comDeviceId'/>
+        <Log :isDevice='isDevice' :deviceId='comDeviceId' :modelMark='modelMark' :deviceMark='deviceMark'/>
       </p-tab-pane>
     </p-tabs>
   </page>

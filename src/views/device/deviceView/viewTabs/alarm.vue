@@ -47,7 +47,9 @@ export default {
   components: {BtnTabs},
   mixins: [tableMixins,tableExpandMixins],
   props: {
-    modelId: String
+    modelId: String,
+    deviceMark: String, //设备标识
+    modelMark: String, //模型标识
   },
   data() {
     return {
@@ -71,9 +73,9 @@ export default {
       return this.currentTab === 'current'
     },
     columns(){
-      let { filteredInfo1 } = this;
+      let {$formatDate, $arrayItemToString, filteredInfo1, filtersList1, filtersList2, isCurrent} = this;
       const arr1 = [
-        {title: '结束时间',dataIndex: 'endTs',ellipsis: true,customRender: date => this.$formatDate(date)}
+        {title: '结束时间',dataIndex: 'endTs',ellipsis: true,customRender: date => $formatDate(date)}
       ]
       const arr2 = [
         {
@@ -82,7 +84,7 @@ export default {
           ellipsis: true,
           filterMultiple: false,
           filteredValue: filteredInfo1.alarmLevel || [],
-          filters: this.$arrayItemToString(this.filtersList1),
+          filters: $arrayItemToString(filtersList1),
           width:120,
           customRender: data => alarmLevelList[data]
         },
@@ -92,18 +94,21 @@ export default {
           ellipsis: true,
           filterMultiple: false,
           filteredValue: filteredInfo1.alarmType || [],
-          filters: this.$arrayItemToString(this.filtersList2),
+          filters: $arrayItemToString(filtersList2),
           width:120,
           customRender: data => alarmSourceList[data]
         },
         {title: '报警信息',dataIndex: 'alarmInfo',ellipsis: true},
-        {title: '报警时间',dataIndex: 'startTs',ellipsis: true,customRender: date => this.$formatDate(date)},
+        {title: '报警时间',dataIndex: 'startTs',ellipsis: true,customRender: date => $formatDate(date)},
       ]
       const arr3 = [
         {title: '持续时间',ellipsis: true},
       ]
-      return this.isCurrent ? [...arr2,...arr3] : [...arr2,...arr1,...arr3]
+      return isCurrent ? [...arr2,...arr3] : [...arr2,...arr1,...arr3]
     } 
+  },
+  mounted() {
+    this.getTableData()
   },
   methods: {
     changeTab({symbol}) {

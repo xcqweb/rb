@@ -1,272 +1,384 @@
 <template>
-  <div class="infinity" :style="comStyle">
-    <div class="template">
-      <li ref="message" class="infinity-item"></li>
-      <li ref="tombstone" class="infinity-item tombstone"></li>
+  <div class="cube-recycle-list">
+    <div class="cube-recycle-list-main">
+      <div class="cube-recycle-list-items" :style="{height: heights + 'px'}">
+        <div
+          v-for="item in visibleItems"
+          class="cube-recycle-list-item"
+          :style="{transform: 'translate(0,' + item.top + 'px)'}"
+        >
+          <div
+            v-if="infinite"
+            :class="{'cube-recycle-list-transition': infinite}"
+            :style="{opacity: +!item.loaded}"
+          >
+            <slot name="tombstone"></slot>
+          </div>
+          <div
+            :class="{'cube-recycle-list-transition': infinite}"
+            :style="{opacity: item.loaded}"
+          >
+            <slot name="item" :data="item.data"></slot>
+          </div>
+        </div>
+
+        <!-- preloads item for get its height, remove it after caculating height-->
+        <div class="cube-recycle-list-pool">
+          <div
+            class="cube-recycle-list-item cube-recycle-list-invisible"
+            v-if="item && !item.isTombstone && !item.height"
+            :ref="'preloads'+index"
+            v-for="(item, index) in items"
+          >
+            <slot name="item" :data="item.data"></slot>
+          </div>
+          <div ref="tomb" class="cube-recycle-list-item cube-recycle-list-invisible">
+            <slot name="tombstone"></slot>
+          </div>
+        </div>
+      </div>
+      <div
+        v-if="!infinite && !noMore"
+        class="cube-recycle-list-loading"
+        :style="{visibility: loading ? 'visible' : 'hidden'}"
+      >
+        <slot name="spinner">
+          <div class="cube-recycle-list-loading-content">
+            <p-spin class="cube-recycle-list-spinner" />
+          </div>
+        </slot>
+      </div>
+
+      <div v-show="noMore" class="cube-recycle-list-noMore">
+        <slot name="noMore" />
+      </div>
     </div>
-    <div ref="chat" class="infinity-timeline">
-      <ul @click="clickItem" ref="chat_ul" v-show="!noData"></ul>
-      <Gt-no-data borderColor='transparent' v-if="noData"></Gt-no-data>
-    </div>
+    <div class="cube-recycle-list-fake"></div>
   </div>
 </template>
 
 <script>
-  import BScroll from 'better-scroll'
-  import {isNullOrEmpty} from '@/utils/util'
+  const warn = function (msg, componentName) {
+  if (process.env.NODE_ENV !== 'production') {
+    const component = componentName ? `<${componentName}> ` : ''
+    console.error(`[warn]: ${component}${msg}`)
+  }
+}
+const isUndef = function(o) {
+  const toString = Object.prototype.toString
+  return toString.call(o) === `[object undefined]`
+}
+
+  const COMPONENT_NAME = 'CycleList'
+  const PROMISE_ERROR = 'requires a Promise polyfill in this browser.'
+  const EVENT_SCROLL = 'scroll'
+  const EVENT_RESIZE = 'resize'
+
   export default {
-    name: 'CycleList',
+    name: COMPONENT_NAME,
+    data() {
+      return {
+        items: [],
+        heights: 0,
+        startIndex: 0,
+        loadings: [],
+        noMore: false
+      }
+    },
     props: {
-      api: Function, //请求接口
-      keyword: String, //搜索关键词
-      selectId: String, //选中项id
-      selectName: String,//选中项name
-      pageNo: {//每页条数
+      infinite: {
+        type: Boolean,
+        default: false
+      },
+      size: {
         type: Number,
         default: 20
       },
-      dataKey: Object, //转换数据的key value
-      showAll: Boolean, // 下拉项是否显示全部
-    },
-    data() {
-      return {
-        nextItem: 1,
-        targetId: '',
-        targetName: '',
-        loadAll: false,
-        noData: false,
-        total: 0
+      offset: {
+        type: Number,
+        default: 100
+      },
+      onFetch: {
+        type: Function,
+        required: true
       }
     },
     computed: {
-      comStyle() {
-        const fix = this.showAll ? 1 : 0
-        return {
-          height: this.noData ? '136px' : this.total < 7 ? `${38 * (this.total + fix)}px` : '266px',
-        }
+      visibleItems() {
+        return this.items.slice(Math.max(0, this.startIndex - this.size), Math.min(this.items.length, this.startIndex + this.size))
+      },
+      tombHeight() {
+        return this.infinite ? this.$refs.tomb && this.$refs.tomb.offsetHeight : 0
+      },
+      loading() {
+        return this.loadings.length
       }
     },
-    watch: {
-      keyword() {
-        this.$nextTick(() => {
-          this.noData = false
-          this.nextItem = 1
-          const dom = this.$refs.chat_ul
-          for (let i = dom.childNodes.length - 1; i >= 0; i--) {
-            const chnode = dom.childNodes[i];
-            dom.removeChild(chnode);  
-          }
-          this.init()
-        })
-      },
-      selectId: {
-        handler(val) {
-          this.targetId = val
-          if (!val) {
-            this.transformActive()
-          }
-        },
-        immediate: true
-      },
+    created() {
+      this.list = []
+      this.promiseStack = []
     },
     mounted() {
-      this.$nextTick(() => {
-        this.createInfinityScroll()
-      })
+      this.checkPromiseCompatibility()
+      this.$el.addEventListener(EVENT_SCROLL, this._onScroll)
+      window.addEventListener(EVENT_RESIZE, this._onResize)
+      this.load()
+    },
+    beforeDestroy() {
+      this.$el.removeEventListener(EVENT_SCROLL, this._onScroll)
+      window.removeEventListener(EVENT_RESIZE, this._onResize)
     },
     methods: {
       init() {
-        this.scroll.refresh()
-        this.scroll.destroy()
-        this.scroll = null
-        this.createInfinityScroll()
+        this.list = []
+        this.promiseStack = []
       },
-      clickItem(e) {
-        this.targetId = e.target.dataset.id
-        if (!this.targetId) {
-          return
-        }
-        const txt = e.target.innerHTML
-        this.transformActive()
-        if (this.targetId) {
-          this.$emit('select', {key: this.targetId,label: txt})
+      checkPromiseCompatibility() {
+        /* istanbul ignore if */
+        if (isUndef(window.Promise)) {
+          warn(PROMISE_ERROR)
         }
       },
-      transformActive() {
-        const uls = this.$refs.chat_ul ? [...this.$refs.chat_ul.children] : []
-        uls.forEach( item => {
-          item.classList.remove('active')
-          if (item.dataset.id === this.targetId) {
-            this.targetName = item.innerHTML
-            item.classList.add('active')
-          }
-        })
+      load() {
+        if (this.infinite) {
+          const items = this.items
+          const start = items.length
+          // increase capacity of items to display tombstone
+          items.length += this.size
+          const end = items.length
+          this.loadItems(start, end)
+          this.getItems()
+        } else if (!this.loading) {
+          this.getItems()
+        }
       },
-      createInfinityScroll() {
-        this.scroll = new BScroll(this.$refs.chat, {
-          mouseWheel:true,
-          scrollY: true,
-          scrollX: false,
-          bounce: false,
-          click: true,
-          momentum: false,
-          scrollbar: true,
-          infinity: {
-            render: (item, div) => {
-              const cloneNodes = this.$refs.message.cloneNode(true)
-              div = div || cloneNodes
-              div.dataset.id = item.value || ''
-              div.innerHTML = item.label || ''
-              if (item.self) {
-                div.classList.add('infinity-from-me')
-              } else {
-                div.classList.remove('infinity-from-me')
-              }
-              
-              if (item.disabled) {
-                div.classList.add('disabled')
-              }else{
-                div.classList.remove('disabled')
-              }
-              return div
-            },
-            createTombstone: () => {
-              return this.$refs.tombstone.cloneNode(true)
-            },
-            fetch: (count) => {
-              if (this.loadAll || isNullOrEmpty(this.total) || (this.total > 0 && this.total < (this.nextItem - 1) * this.pageNo)) {
-                return
-              }
-              const params = {
-                limit: this.pageNo,
-                pageNo: this.nextItem,
-                keyword: this.keyword,
-                searchKey: 'modelName'
-              }
-              return new Promise((resolve, reject) => {
-                this.api(params).then( res => {
-                  let reData = (res.data.records || res.data).map( item => {
-                    if (this.dataKey) {
-                      return {
-                        value: item[this.dataKey.value],
-                        label: item[this.dataKey.label],
-                      }
-                    }else{
-                      return item
-                    }
-                  })
-                  reData.length < 7 ? this.scroll.disable() : this.scroll.enable()
-                  //显示全部
-                  if (this.showAll) {
-                    reData = [{value: 'all',label: this.selectName || '全部'},...reData]
-                    if (reData.length === 1 && reData[0].value === 'all') { //显示全部是数据为空时
-                      resolve(false)
-                      if(this.nextItem === 1) {
-                        this.noData = true
-                      }
-                      return
-                    }
-                  }else{
-                    if (reData.length === 0 && this.nextItem === 1) { //没有显示全部是数据为空时
-                      resolve(false)
-                      this.noData = true
-                      return
-                    }
-                  }
-                  
-                  // const len = reData.length
-                  // if (len && len < 7) {
-                  //   for (let i = 0; i < 7 - len; i++) {
-                  //     reData.push({disabled: true})
-                  //   }
-                  // }
-                  this.noData = false
-                  this.total = res.data.total
-                  if (res.data.total < (this.nextItem - 1) * this.pageNo) {
-                    this.loadAll = true
-                    resolve(false) //结束加载
-                  }else{
-                    this.nextItem++
-                    resolve(reData)
-                    this.$nextTick( () => { //选中初始值
-                      this.transformActive()
-                    })
-                  }
-                })
-              })
+      getItems() {
+        const index = this.promiseStack.length
+        const promiseFetch = this.onFetch()
+        this.loadings.push('pending')
+        this.promiseStack.push(promiseFetch)
+        promiseFetch.then((res) => {
+          this.loadings.pop()
+          /* istanbul ignore if */
+          if (!res) {
+            this.stopScroll(index)
+          } else {
+            this.setList(index, res)
+            this.loadItemsByIndex(index)
+            if (res.length < this.size) {
+              this.stopScroll(index)
             }
           }
         })
-        // console.log(this.scroll)
-        this.scroll.refresh()
-        this.scroll.on('scrollStart', (p) => {
-          this.transformActive()
+      },
+      removeUnusedTombs(copy, index) {
+        let cursor
+        let size = this.size
+        let start = index * size
+        let end = (index + 1) * size
+        for (cursor = start; cursor < end; cursor++) {
+          if (copy[cursor] && copy[cursor].isTombstone) break
+        }
+        this.items = copy.slice(0, cursor)
+      },
+      stopScroll(index) {
+        this.noMore = true
+        this.removeUnusedTombs(this.items.slice(0), index)
+        this.updateItemTop()
+        this.updateStartIndex()
+      },
+      setList(index, res) {
+        const list = this.list
+        const baseIndex = index * this.size
+        for (let i = 0; i < res.length; i++) {
+          list[baseIndex + i] = res[i]
+        }
+      },
+      loadItemsByIndex(index) {
+        const size = this.size
+        const start = index * size
+        const end = (index + 1) * size
+        this.loadItems(start, end)
+      },
+      loadItems(start, end) {
+        const items = this.items
+        let promiseTasks = []
+        let item
+        for (let i = start; i < end; i++) {
+          item = items[i]
+          /* istanbul ignore if */
+          if (item && item.loaded) {
+            continue
+          }
+          this.setItem(i, this.list[i])
+          // get each item's height in nextTick
+          promiseTasks.push(this.$nextTick().then(() => {
+            this.updateItemHeight(i)
+          }))
+        }
+        // update items top and full list height
+        window.Promise.all(promiseTasks).then(() => {
+          this.updateItemTop()
+          this.updateStartIndex()
         })
-        this.scroll.on('scrollEnd', (p) => {
-          this.transformActive()
+      },
+      setItem(index, data) {
+        this.$set(this.items, index, {
+          data: data || {},
+          height: 0,
+          top: -1000,
+          isTombstone: !data,
+          loaded: data ? 1 : 0
         })
+      },
+      updateItemHeight(index) {
+        // update item height
+        let cur = this.items[index]
+        let dom = this.$refs['preloads' + index]
+        if (dom && dom[0]) {
+          cur.height = dom[0].offsetHeight
+        } else if (cur) {
+          cur.height = this.tombHeight
+        }
+      },
+      updateItemTop() {
+        let heights = 0
+        const items = this.items
+        let pre
+        let current
+        // loop all items to update item top and list height
+        for (let i = 0; i < items.length; i++) {
+          pre = items[i - 1]
+          current = items[i]
+          // it is empty in array
+          /* istanbul ignore if */
+          if (!items[i]) {
+            heights += 0
+          } else {
+            current.top = pre ? pre.top + pre.height : 0
+            heights += current.height
+          }
+        }
+        this.heights = heights
+      },
+      updateStartIndex() {
+        // update visible items start index
+        let top = this.$el.scrollTop
+        let item
+        const items = this.items
+        for (let i = 0; i < items.length; i++) {
+          item = items[i]
+          if (!item || item.top > top) {
+            this.startIndex = Math.max(0, i - 1)
+            break
+          }
+        }
+      },
+      reset () {
+        const map = [
+          {
+            key: 'items',
+            value: []
+          },
+          {
+            key: 'heights',
+            value: 0
+          },
+          {
+            key: 'startIndex',
+            value: 0
+          },
+          {
+            key: 'loadings',
+            value: []
+          },
+          {
+            key: 'noMore',
+            value: false
+          },
+          {
+            key: 'list',
+            value: []
+          },
+          {
+            key: 'promiseStack',
+            value: []
+          }
+        ]
+        map.forEach(({ key, value }) => {
+          this[key] = value
+        })
+        this.$el.scrollTop = 0
+        this.load()
+      },
+      _onScroll() {
+        // trigger load
+        if (!this.noMore && this.$el.scrollTop + this.$el.offsetHeight > this.heights - this.offset) {
+          this.load()
+        }
+        this.updateStartIndex()
+      },
+      _onResize() {
+        const items = this.items
+        items.forEach((item) => {
+          item.loaded = false
+        })
+        this.loadItems(0, items.length)
       }
-    }
+    },
   }
 </script>
 
 <style lang="less" scoped>
-  .infinity{
-    width: 100%;
-    background: #fff;
-    .template{
-      display: none;
-    }
-  }
-
-  .infinity-timeline{
+  .cube-recycle-list{
     position: relative;
     height: 100%;
-    border: 1px solid #ccc;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+    
+
+  .cube-recycle-list-main{
+    min-height: 100%;
+  }
+    
+
+  .cube-recycle-list-fake{
+    height: 1px;
+  }
+
+  .cube-recycle-list-invisible{
+    top: -1000px;
+    visibility: hidden;
+  }
+
+  .cube-recycle-list-item{
+    width: 100%;
+    position: absolute;
+    box-sizing: border-box;
+  }
+    
+  .cube-recycle-list-transition{
+    position: absolute;
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 500ms;
+
+  }
+    
+  .cube-recycle-list-loading{
     overflow: hidden;
-    will-change: transform;
-    background-color: #fff;
-    ul{
-      position: relative;
-      backface-visibility: hidden;
-      transform-style: flat;
-    }
   }
-.com{
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  left: 0;
-  padding: 10px 0 10px 10px;
-  width: 100%;
-  height: 38px;
-  line-height: 38px;
-  contain: layout;
-  will-change: transform;
-  list-style: none;
-}
-  .infinity-item{
-    .com();
-    background-color: #fff;
-    cursor: pointer;
-    &:hover{
-      color: #fff !important;
-      background-color: #1740DC !important;
-    }
+    
+  .cube-recycle-list-loading-content{
+    text-align: center;
   }
-  .active{
-    color: #fff !important;
-    background-color: #1740DC !important;
+    
+  .cube-recycle-list-spinner{
+    margin: 10px auto;
+    display: flex;
+    justify-content: center;
   }
-  .disabled{
-    .com();
-    cursor: inherit;
-    &:hover{
-      color: #fff !important;
-      background-color: #fff !important;
-    }
-  }
-  .poros-empty{
-    background: #fff;
-  }
+    
 </style>

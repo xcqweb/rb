@@ -52,7 +52,7 @@ export default {
       this.$emit('input', this.keyword)
     }
   },
-  mounted() {
+  created() {
     this.selectType = this.selectList[0] && this.selectList[0].key
   },
   methods: {
@@ -60,13 +60,13 @@ export default {
       if (!this.keyword) {
         return
       }
-      this.reset()
+      this.reset(true)
     },
-    reset() {
+    reset(flag) {
       this.$emit('reset')
       this.keyword = ''
       this.$emit('input', '')
-      this.selectType = this.selectList[0] && this.selectList[0].key
+      !flag && (this.selectType = this.selectList[0] && this.selectList[0].key)
     },
     onSearch: debounce(function () {
       this.$emit('search', {keyword: this.keyword, searchKey: this.selectType})

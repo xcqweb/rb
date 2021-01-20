@@ -127,7 +127,7 @@ Vue.directive('drag',{
 })
 
 Vue.directive('copy',{
-  bind(el, { value }) {
+  bind(el, {value} ) {
     el.$value = value
     el.handler = () => {
       if (!el.$value) {
@@ -148,8 +148,8 @@ Vue.directive('copy',{
       // 选中值并复制
       textarea.select()
       const result = document.execCommand('Copy')
+      Vue.prototype.$message.destroy()
       if (result) {
-        console.log('复制成功') // 可根据项目UI仔细设计
         Vue.prototype.$message.success('复制成功！')
       }
       document.body.removeChild(textarea)

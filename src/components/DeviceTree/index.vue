@@ -74,6 +74,7 @@ export default {
     showOperator: Boolean, //是否显示操作按钮
     value: Array,
     checkRoot: Boolean, //默认选中根节点
+    stroageNameSpace: String, //缓存设备树时存放在sessionStroage数据区分
     replaceFields: {
       type: Object,
       default: function() {
@@ -95,14 +96,45 @@ export default {
       componentId: '',
       //tree
       treeData: [],
-      moveTargetNode: [], //要移入的节点
       loadedKeys: [],
       expandedKeys: [],
+      defaultSelectedKeys: [],
       moveNode: []
     }
   },
+  computed: {
+    //缓存数据key
+    cacheDataKey() {
+      const prefix = this.stroageNameSpace
+      return [`${prefix}_treeData`,`${prefix}_loadedKeys`,`${prefix}_expandedKeys`,`${prefix}_defaultSelectedKeys`]
+    }
+  },
+  watch: {
+    treeData: {
+      handler(val) {
+        this.stroageNameSpace && sessionStorage.setItem(this.cacheDataKey[0], JSON.stringify(val))
+      },
+      deep: true
+    }
+  },
   mounted() {
-    this.initTree()
+    // console.log(JSON.parse(sessionStorage.getItem('treeData')))
+    if (this.showOperator) { //只在有操作页面缓存树节点
+      this.treeData = JSON.parse(sessionStorage.getItem(this.cacheDataKey[0]))
+      this.loadedKeys = JSON.parse(sessionStorage.getItem(this.cacheDataKey[1])) || []
+      this.expandedKeys = JSON.parse(sessionStorage.getItem(this.cacheDataKey[2])) || []
+      const selectObj = JSON.parse(sessionStorage.getItem(this.cacheDataKey[3])) || {}
+      this.defaultSelectedKeys = selectObj.id ? [selectObj.id] : []
+      if (selectObj) {
+        this.$emit('input', selectObj)
+        this.$emit('change', selectObj)
+      }
+      if (!this.treeData || (this.treeData && !this.treeData.length)) {
+        this.initTree()
+      }
+    }else{
+      this.initTree()
+    }
   },
   methods: {
     initTree() {
@@ -111,13 +143,15 @@ export default {
       this.expandedKeys = []
       this.getLocation({}).then( ({data}) => {
         this.treeData = this.tran(data)
+        const {id} = data[0]
         if (this.checkRoot) {
-          const {id, locationName,locationNamePath} = data[0]
-          this.$emit('input', {id, locationName,locationNamePath,init: true})
-          this.$emit('change', {id, locationName,locationNamePath,init: true})
-          this.defaultSelectedKeys = [data[0].id]
+          this.$emit('input', data[0])
+          this.$emit('change', data[0])
+          this.defaultSelectedKeys = [id]
+          this.stroageNameSpace && sessionStorage.setItem(this.cacheDataKey[3], JSON.stringify(data[0]))
         }
-        this.expandedKeys = [data[0].id]
+        this.expandedKeys = [id]
+        this.stroageNameSpace && sessionStorage.setItem(this.cacheDataKey[2], JSON.stringify(this.expandedKeys))
       }).catch( () => {/** */})
     },
     tran(data) {
@@ -154,7 +188,7 @@ export default {
     /*
     type 0 新增 1 编辑 2 删除 3 移动
     */
-    treeOperator({locationName, parentId, parentName, id, p_isLeaf, node}, type) {
+    treeOperator({locationName, parentId, parentName, id, p_isLeaf, level}, type) {
       const that = this;
       function loop(trees) {
         for (const [index, tree] of trees.entries()) {
@@ -165,6 +199,7 @@ export default {
               parentName,
               locationName,
               id,
+              level,
               isLeaf: true,
               leaf: true,
               expanded: false,
@@ -186,7 +221,7 @@ export default {
               if (tree.children && tree.children.length) { //已展开
                   tree.children.push(addItem);
               }else{//未展开,查询子节点
-                that.getLocation(parentId);
+                that.getLocation({parentId});
               }
             }
             that.expandedKeys.push(parentId);
@@ -220,10 +255,10 @@ export default {
       if (type === 3) { //移动
         this.$API.moveLocation({
           id: this.moveNode.id,
-          newId: node.id
+          newId: id
         }).then( res => {
           this.$message.success('操作成功！')
-          this.moveHandler([this.moveNode], [node])
+          this.moveHandler([this.moveNode], {id,level})
         })
       }else{
         loop(this.treeData);
@@ -231,16 +266,18 @@ export default {
     },
     selectTree(data, node) {
       const {dataRef} = node.node
-      const {id, locationName,locationNamePath} = dataRef
-      this.$emit('input', node.selected ? {id, locationName,locationNamePath} : {})
-      this.$emit('change', node.selected ? {id, locationName,locationNamePath} : {})
+      this.$emit('input', node.selected ? dataRef : {})
+      this.$emit('change', node.selected ? dataRef : {})
       this.choseNode = !node.selected ? dataRef : {}
+      this.stroageNameSpace && sessionStorage.setItem(this.cacheDataKey[3], JSON.stringify(dataRef))
     },
     expand(expandedKeys,{expanded, node}) {
       this.expandedKeys = expandedKeys;
+      this.stroageNameSpace && sessionStorage.setItem(this.cacheDataKey[2], JSON.stringify(expandedKeys))
     },
     load(loadedKeys) {
       this.loadedKeys = loadedKeys;
+      this.stroageNameSpace && sessionStorage.setItem(this.cacheDataKey[1], JSON.stringify(loadedKeys))
     },
     operatorTree(key, {dataRef}) {
       const handler = ['addNode','editNode','removeNode','moveNodeHandler'][key - 1];
@@ -329,11 +366,11 @@ export default {
       function loopAdd(target, moveTarget, loopData){
           //移入
           for (const [index, node] of loopData.entries()) {
-              if (node.id === moveTarget[0].id) { //移入节点操作
+              if (node.id === moveTarget.id) { //移入节点操作
                   if (!node.loading && node.locationType !== 1 && (!node.children || (node.children && node.children.length === 0)) && !node.hasChild) {//移入为加载的节点 非根节点 无子节点
                       const cloneObj = Object.assign({}, target[0]);
-                      cloneObj.parentId = moveTarget[0].id;
-                      cloneObj.level = moveTarget[0].level;
+                      cloneObj.parentId = moveTarget.id;
+                      cloneObj.level = moveTarget.level;
                       node.isLeaf = false;
                       node.children = []
                       node.children.push(cloneObj);
@@ -343,13 +380,13 @@ export default {
                       if (node.children && node.children.length > 0) { //节点已展开
                           //深拷贝一份
                           const cloneObj = Object.assign({}, target[0]);
-                          cloneObj.parentId = moveTarget[0].id;
-                          cloneObj.level = moveTarget[0].level;
+                          cloneObj.parentId = moveTarget.id;
+                          cloneObj.level = moveTarget.level;
                           cloneObj.selected = true;
                           node.children.push(cloneObj);
                           node.children = sortTree(node.children, that);
                       }else if (node.hasChild) { //节点未展开
-                          that.getLocation(node).then( (res) => {
+                          that.getLocation({parentId: node.id}).then( (res) => {
                               node.isLeaf = false;
                               //判断是否有子节点 有加上展开箭头
                               node.children = []
@@ -419,8 +456,8 @@ export default {
         &:hover{
           background-color:transparent;
           .tree-name{
-            color: #fff;
-            background-color: #1740DC;
+            color: #1740DC;
+            background-color: #F0F1F3;
           }
         }
       }
@@ -430,17 +467,17 @@ export default {
             color: #fff;
             background-color: #1740DC;
           }
+          .poros-tree-title{
+            .tree-operator{
+              visibility: visible;
+            }
+          }
         }
         .tree-name{
-            color: #fff;
-            background-color: #1740DC;
-          }
-        background-color: transparent;
-        .poros-tree-title{
-          .tree-operator{
-            visibility: visible;
-          }
+          color: #fff;
+          background-color: #1740DC;
         }
+        background-color: transparent;
       }
       position: relative;
       .poros-tree-title{

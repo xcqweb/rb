@@ -3,19 +3,23 @@
     <!-- 新增设备中使用 -->
     <template v-if="!overview">
       <Label v-for="item in list" :label='item.attributeName' :key="item.id" class="mt10">
-        <!-- 文本 -->
-        <p-input v-model="item.attributeText" v-if="item.attributeType === 0"/>
-        <!-- 日期 -->
-        <p-date-picker class="w100" v-model="item.attributeText" v-if="item.attributeType === 1"/>
-        <!-- 枚举 -->
-        <p-select class="w100" v-model="item.attributeText" v-if="item.attributeType === 3" @focus='focusFun(item)'>
-          <p-select-option v-for="list in item.listData" :value='list.enumValue' :key='list.enumValue'>{{list.enumValue}}</p-select-option>
-        </p-select>
-         <!--数值  -->
-        <div class="flex w100" v-if="item.attributeType === 2">
-          <p-input-number v-model="item.attributeText" class="f1 mr6"/>
-          <span>{{item.unit || '-'}}</span>
-        </div>
+        <template v-if="item.createOption === 0">
+          <!-- 文本 -->
+          <p-input v-model="item.attributeText" @change="validate(item.id)" v-if="item.attributeType === 0"/>
+          <!-- 日期 -->
+          <p-date-picker class="w100" v-model="item.attributeText" v-if="item.attributeType === 1"/>
+          <!-- 枚举 -->
+          <p-select class="w100" v-model="item.attributeText" v-if="item.attributeType === 3" @focus='focusFun(item)'>
+            <p-select-option v-for="list in item.listData" :value='list.enumValue' :key='list.enumValue'>{{list.enumValue}}</p-select-option>
+          </p-select>
+          <!--数值  -->
+          <div class="flex w100" v-if="item.attributeType === 2">
+            <p-input @change="validate(item.id)" v-model="item.attributeText" class="f1 mr6"/>
+            <span>{{item.unit}}</span>
+          </div>
+        </template>
+        <span v-else>{{item.attributeText}} <span v-if="item.attributeType === 2">{{item.unit}}</span></span>
+        <p class="poros-form-explain" v-show="item.error === item.id">{{item.errorInfo}}</p>
       </Label>
     </template>
     <!-- 设备概览中使用（带编辑） -->
@@ -23,7 +27,7 @@
       <Label v-for="(item,index) in list" :label='item.attributeName' :key="item.id" class="mt10">
         <Edit :ref="item.id" v-model="item.attributeText" :time="item.attributeType === 1 && $formatDate" normal @submit="save(index)">
           <!-- 文本 -->
-          <p-input v-model="item.attributeText" @blur="hide(item.id)" v-if="item.attributeType === 0"/>
+          <p-input v-model="item.attributeText" @change="validate(item.id)" @blur="hide(item.id)" v-if="item.attributeType === 0"/>
           <!-- 日期 -->
           <p-date-picker class="w100" v-model="item.attributeText" v-if="item.attributeType === 1"/>
           <!-- 枚举 -->
@@ -32,22 +36,25 @@
           </p-select>
           <!-- 数值 -->
           <div class="flex w100" v-if="item.attributeType === 2">
-            <p-input-number class="f1 mr6" v-model="item.attributeText" @blur="hide(item.id)"/>
-            <span>{{item.unit || '-'}}</span>
+            <p-input class="f1 mr6" @change="validate(item.id)" v-model="item.attributeText" @blur="hide(item.id)"/>
+            <span>{{item.unit}}</span>
           </div>
         </Edit>
+        <p class="poros-form-explain" v-show="isError === item.id">{{errorInfo}}</p>
       </Label>
     </template>
   </div>
 </template>
 
 <script>
+import Schema from 'async-validator';
 export default {
   props: {
     overview: Boolean, //设备概览中使用
     componsition: Boolean, //组合设备
     modelId: String,
-    deviceId: String
+    deviceId: String,
+    error: Boolean, //错误校验
   },
   watch: {
     modelId(id) { //新增设备
@@ -82,7 +89,9 @@ export default {
   },
   data() {
     return {
-      list: []
+      list: [],
+      ////校验
+      model: {}
     }
   },
   computed: {
@@ -91,6 +100,30 @@ export default {
         const {attributeText,id} = el
         return {modelAttributeId: id,attributeText}
       })
+    },
+    filterList() {
+      return this.list.filter( el => el.attributeType === 0 || el.attributeType === 2)
+    },
+    comRules() {
+      const ruleMap = {}
+      this.list.forEach( el => {
+        const {id,attributeType,attributeText} = el
+        if (attributeType === 0 || attributeType === 2) {
+          const rule = {
+            0: [
+                {pattern: this.reg.name2Reg,message:`输入字符仅支持中文、字母、数字和下划线“_”`},
+                {type: 'string', max: 25,message:`输入字符长度限制为25个字符`},
+              ],
+            2: [
+                {type: 'string',max: 9,message: '输入长度限制为9个字符'},
+                {message: '输入字符仅支持数字（整数和小数）',pattern: this.reg.numReg},
+              ]
+          }
+          ruleMap[id] = rule[attributeType]
+          this.model[id] = attributeText
+        }
+      })
+      return ruleMap
     }
   },
   methods: {
@@ -107,11 +140,51 @@ export default {
           if (item.attributeType === 3 && item.modelAttributeId === modelAttributeId) {
             this.$set(item, 'listData',res.data.records)
           }
+          if (item.attributeType === 0 && item.attributeType === 2) {
+            this.$set(item, 'error', '')
+            this.$set(item, 'errorInfo', '')
+          }
         })
       })
     },
     hide(key) {
       this.$refs[key] && this.$refs[key][0] && this.$refs[key][0].cancel()
+    },
+    //校验错误信息
+    setError(errors = []) {
+      const errorIds = errors.map( el => el.field)
+      this.filterList.forEach( el => {
+        if (!errors.length) {
+          this.$set(el, 'error', '')
+          this.$set(el, 'errorInfo', '')
+        }else{
+          errors.forEach(item => {
+            if (el.id === item.field) {
+              this.$set(el, 'error', item.field)
+              this.$set(el, 'errorInfo', item.message)
+            }
+            if (!errorIds.includes(el.id)) {
+              this.$set(el, 'error', '')
+              this.$set(el, 'errorInfo', '')
+            }
+          })
+        }
+      })
+    },
+    //校验
+    validate(key) {
+        const validator = new Schema(this.comRules);
+        validator.validate(this.model, (errors, fields) => {
+        if (errors) {
+          console.log(errors)
+          this.setError(errors)
+          this.$emit('update:error', true)
+          return handleErrors(errors, fields);
+        }else{
+          this.setError()
+          this.$emit('update:error', false)
+        }
+      });
     },
   }
 }
@@ -127,5 +200,10 @@ export default {
   }
   .attrInfoComponsition{
     padding-top: 0;
+  }
+  .poros-form-explain{
+    color: #f5222d;
+    margin-top: 6px;
+    transition: all 0.3s;
   }
 </style>

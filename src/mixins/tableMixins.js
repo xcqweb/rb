@@ -16,7 +16,7 @@ export default {
       innerLoading: false,
     }
   },
-  mounted() {
+  activated(){
     if (!this.add) { //新增模型时不走此方法
       this.getTableData(); 
     }

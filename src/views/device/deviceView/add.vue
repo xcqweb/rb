@@ -41,6 +41,7 @@
       :modelId='model.modelId.key'
       @callback='callback'
       ref="componentRef"
+      :error.sync='error'
     ></component>
     <div slot="footer" class="tr">
       <p-button type="primary" @click="submit" :loading="loading">提交</p-button>
@@ -68,6 +69,7 @@ export default {
       modelList: [],
       bindDada: [],
       model: {modelId: {}},
+      error: false, //输入错误提示
     }
   },
   computed: {
@@ -115,7 +117,7 @@ export default {
   methods: {
     submit() {
       this.$refs.form.validate((valid) => {
-        if(valid) {
+        if(valid && !this.error) {
           let fun = this.isDevice ? this.$API.addDevice : this.$API.addComposition
           const {name,modelId,remark} = this.model
           console.log(this.$refs.componentRef.comList)

@@ -2,7 +2,7 @@
   <div>
     <page-title>基本信息</page-title>
     <div class="content">
-      <Label label='模型名称' v-clickOutSide="() => hide('modelName')">
+      <Label label='模型名称'>
         <Edit ref="modelName" normal v-model="model.modelName" :error="isError ==='modelName'" @submit="save" @cancel='cancel'>
           <p-input class="edit_input" @change="validate('modelName')" allow-clear v-model="model.modelName" placeholder="请输入" />
         </Edit>
@@ -16,14 +16,14 @@
           <p-select class='mr6' v-model="model.ruleType" style="width:120px">
             <p-select-option v-for="item in judgeType" :key="item.value" :value="item.value">{{item.text}}</p-select-option>
           </p-select>
-          <p-input @change="validate('ruleNum')" v-model="model.ruleNum" class="f1" @blur="hide('ruleNum')" />
+          <p-input @change="validate('ruleNum')" v-model="model.ruleNum" class="f1" />
           <p-select class="mr6 ml6" v-model="model.ruleUnit" style="width:80px;">
             <p-select-option v-for="item in rateType" :key="item.value" :value="item.value">{{item.text}}</p-select-option>
           </p-select>
         </Edit>
         <p class="poros-form-explain" v-show="isError ==='ruleNum'">{{errorInfo}}</p>
       </Label>
-      <Label label='描述' v-clickOutSide="() => hide('remark')">
+      <Label label='描述'>
         <Edit ref='remark' normal @change="validate('remark')" :error="isError ==='remark'" v-model="model.remark" @submit="save" @cancel='cancel'>
           <p-input class="edit_input" @change="validate('remark')" allow-clear v-model="model.remark" placeholder="请输入描述内容" />
         </Edit>
@@ -83,10 +83,6 @@ export default {
     },
     cancel() {
       this.model = this.$deepCopy(dataCopy)
-    },
-    hide(key) {
-      this.isError = ''
-      this.$refs[key] && this.$refs[key].cancel()
     },
     //校验
     validate(key) {

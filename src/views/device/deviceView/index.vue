@@ -31,7 +31,7 @@
 import DeviceList from './tabs/deviceList'
 import DeviceComposition from './tabs/deviceComposition'
 export default {
-  name: 'deviceList',
+  name: 'deviceView',
   components: {DeviceList,DeviceComposition},
   data() {
     return {
@@ -139,7 +139,7 @@ export default {
   }
 
   &-right {
-    max-height: 100%;
+    height: 100%;
     margin-left: 160px;
   }
 }

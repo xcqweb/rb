@@ -6,7 +6,7 @@
         <Infinity-select
         class="w160"
         :api='$API.getModelList'
-        v-model="selectModelId"
+        v-model="selectModel"
         :dataKey="{value: 'id', label: 'modelName'}"
         showAll
         @change="changeSelect"
@@ -67,7 +67,7 @@ export default {
       searchName: '',
       pageLoad: false,
       ///////
-      selectModelId: {label: '全部模型', key: 'all'},
+      selectModel: {label: '全部模型', key: 'all'},
       filtersList1: deviceNetType,
       filtersList2: deviceStatusType,
       data: [],
@@ -83,7 +83,7 @@ export default {
       return !this.chooseNode.id
     },
     columns() {
-      let { filteredInfo1 } = this;
+      let {$formatDate,$arrayItemToString, filteredInfo1, filtersList1, filtersList2 } = this;
       const that = this
       return [
         {title: '设备名称',ellipsis: true,scopedSlots: { customRender: 'deviceName' }},
@@ -94,7 +94,7 @@ export default {
           ellipsis: true,
           filterMultiple: false,
           filteredValue: filteredInfo1.netStatus || null,
-          filters: this.$arrayItemToString(this.filtersList1),
+          filters: $arrayItemToString(filtersList1),
           width: 120,
           customRender: status => {
             const className = netStatusClass[status]
@@ -110,7 +110,7 @@ export default {
           ellipsis: true,
           filterMultiple: false,
           filteredValue: filteredInfo1.status || null,
-          filters: this.$arrayItemToString(this.filtersList2),
+          filters: $arrayItemToString(filtersList2),
           width: 120,
           customRender: status => {
             const className = statusClass[status]
@@ -118,14 +118,14 @@ export default {
           }
         },
         {dataIndex: 'createBy',title: '创建人',ellipsis: true},
-        {dataIndex: 'createTime',title: '创建时间',ellipsis: true,customRender: date => that.$formatDate(date)},
+        {dataIndex: 'createTime',title: '创建时间',ellipsis: true,customRender: date => $formatDate(date)},
         {title: '操作',width: 120,align: 'right',scopedSlots: { customRender: 'operation' }},
       ]
     }
   },
   watch: {
     'chooseNode.id'() {
-      !(this.chooseNode.init || this.activeKey === 'deviceCompose') && this.getTableData()
+      !(this.activeKey === 'deviceCompose') && this.getTableData()
     },
     activeKey(val) {
       this.activeKey === 'deviceList' && this.getTableData()
@@ -148,6 +148,9 @@ export default {
       })
     },
     getTableData({searchKey = this.selectList[0].key, keyword} = {}){
+      if (!this.chooseNode.id) {
+        return
+      }
       const isArray = Array.isArray(keyword)
       const param = {
         keyword: isArray ? undefined : keyword,
@@ -156,7 +159,7 @@ export default {
         pageNo: this.pagination.current,
         startTime: isArray ? this.$UTC(keyword[0]) : undefined,
         endTime: isArray ? this.$UTC(keyword[1]) : undefined,
-        modelId: this.selectModelId.key === 'all' ? undefined : this.selectModelId.key,
+        modelId: this.selectModel.key === 'all' ? undefined : this.selectModel.key,
         locationId: this.chooseNode.id,
         netStatus: this.filteredInfo1.netStatus && this.filteredInfo1.netStatus[0],
         status: this.filteredInfo1.status && this.filteredInfo1.status[0]
@@ -195,33 +198,21 @@ export default {
         }
       })
     },
-    move(item) {
+    move({id, modelId}) {
       this.visible = true
       this.componentId = 'ModalSelectTree'
-      this.moveDeviceData = {
-        id: item.id,
-        modelId: item.modelId
-      }
+      this.moveDeviceData = {id, modelId}
     },
     //移动设备
     callback(data) {
-      const params = {
-        ...this.moveDeviceData,
-        locationId: data.id,
-      }
+      const params = {...this.moveDeviceData,locationId: data.id}
       this.$API.editDevice(params).then(res => {
         this.$message.success('操作成功！')
         this.getTableData()
       })
     },
     view(path, id, type) {
-      this.$router.push({
-        path,
-        query:{
-          id,
-          type,
-        }
-      })
+      this.$router.push({path,query:{id,type}})
     },
   },
 }

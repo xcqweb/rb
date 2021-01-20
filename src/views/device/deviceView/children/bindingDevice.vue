@@ -16,7 +16,7 @@
           <span>{{deviceNetTypeList[status]}}</span>
         </p>
         <span slot="status" slot-scope="status" :class="statusClass[status]">{{deviceStatusTypeList[status]}}</span>
-        <template slot="operation" slot-scope="text, record">
+        <template slot="operation" slot-scope="text,record">
           <span class="operateBtn" @click="unBind(record)">解绑</span>
         </template>
       </p-table>
@@ -72,6 +72,9 @@ export default {
       ]
     } 
   },
+  mounted() {
+    this.getTableData()
+  },
   methods: {
     getTableData(){
       this.loading = true;
@@ -102,14 +105,19 @@ export default {
           }, str);
         },
         onOk() {
-          that.$API.compositionUnBindDevice({id: row.refId}).then( res =>{
-            if ( res.code === 0 ){
-              that.$message.success('操作成功！');
-              that.getTableData();
-            }
-          }).catch( e =>{
-            console.log(e);
-          });
+          if (that.overview) { //预览
+            that.$API.compositionUnBindDevice({id: row.refId}).then( res =>{
+              if ( res.code === 0 ){
+                that.$message.success('操作成功！');
+                that.getTableData();
+              }
+            }).catch( e =>{
+              console.log(e);
+            });
+          }else{ //新增时
+            const $index = that.tableData.findIndex( item => item.id === row.id)
+            that.tableData.splice($index, 1)
+          }
         },
         onCancel() {
           console.log('Cancel');

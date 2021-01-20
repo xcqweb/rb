@@ -22,12 +22,15 @@
 import tableMixins from '@/mixins/tableMixins'
 import BtnTabs from '../children/btnTabs'
 import {logType,operatorType,logTypeList,operatorTypeList} from '@/utils/baseData'
+import { mapState } from 'vuex'
 export default {
   components: {BtnTabs},
   mixins: [tableMixins],
   props: {
     isDevice: Boolean,
-    modelId: String
+    modelId: String,
+    deviceMark: String, //设备标识
+    modelMark: String, //模型标识
   },
   data() {
     return {
@@ -45,8 +48,11 @@ export default {
     isCurrent() {
       return this.currentTab === 'status'
     },
+    ...mapState({
+      tenantMark: state => state.user.userInfo.tenantId
+    }),
     columns(){
-      let { filteredInfo1 } = this;
+      let {$formatDate, $arrayItemToString, filteredInfo1, filtersList1, filtersList2, isCurrent} = this;
       const arr = [
         {title: '设备',dataIndex: 'deviceName',ellipsis: true},
       ] 
@@ -57,13 +63,13 @@ export default {
           ellipsis: true,
           filterMultiple: false,
           filteredValue: filteredInfo1.changeType || [],
-          filters: this.$arrayItemToString(this.filtersList1),
+          filters: $arrayItemToString(filtersList1),
           width: 120,
           customRender: data => logTypeList[data]
         },
         {title: '变更前',dataIndex: 'infoBefore',ellipsis: true},
         {title: '变更后',dataIndex: 'infoAfter',ellipsis: true},
-        {title: '变更时间',dataIndex: 'ts',ellipsis: true,customRender: date => this.$formatDate(date)}
+        {title: '变更时间',dataIndex: 'ts',ellipsis: true,customRender: date => $formatDate(date)}
       ]
       const arr2 = [
         {title: '操作人',dataIndex: 'operaUser',ellipsis: true},
@@ -73,15 +79,18 @@ export default {
           ellipsis: true,
           filterMultiple: false,
           filteredValue: filteredInfo1.changeType || [],
-          filters: this.$arrayItemToString(this.filtersList2),
+          filters: $arrayItemToString(filtersList2),
           width:120,
           customRender: data => operatorTypeList[data]
         },
         {title: '操作内容',dataIndex: 'changeInfo',ellipsis: true},
-        {title: '操作时间',dataIndex: 'ts',ellipsis: true,customRender: date => this.$formatDate(date)},
+        {title: '操作时间',dataIndex: 'ts',ellipsis: true,customRender: date => $formatDate(date)},
       ]
-      return this.isCurrent ? this.isDevice ? arr1 : [...arr,...arr1] : arr2
+      return isCurrent ? this.isDevice ? arr1 : [...arr,...arr1] : arr2
     } 
+  },
+  mounted() {
+    this.getTableData()
   },
   methods: {
     changeTab({symbol}) {
@@ -92,7 +101,10 @@ export default {
       const comParams = {
         limit: this.pagination.pageSize,
         pageNo: this.pagination.current,
-        changeType: this.filteredInfo1.changeType && this.filteredInfo1.changeType[0]
+        changeType: this.filteredInfo1.changeType && this.filteredInfo1.changeType[0],
+        tenantMark: this.tenantMark,
+        deviceMark: this.deviceMark,
+        deviceModelMark: this.modelMark
       }
       const param = this.isCurren ? {
         ...comParams,

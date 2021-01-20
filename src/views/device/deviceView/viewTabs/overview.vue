@@ -2,13 +2,13 @@
   <div>
     <page-title>基本信息</page-title>
     <div class="content">
-      <Label :label="`${label}名称`" v-clickOutSide="() => hide(namekey)">
+      <Label :label="`${label}名称`">
         <Edit :ref="namekey" v-model="model[namekey]" :error="isError === namekey" normal @submit="save" @cancel='cancel'>
           <p-input v-model="model[namekey]" @change="validate(namekey)"></p-input>
         </Edit>
         <p class="poros-form-explain" v-show="isError === namekey">{{errorInfo}}</p>
       </Label>
-      <Label v-if="!isDevice" label='描述' v-clickOutSide="() => hide('remark')">
+      <Label v-if="!isDevice" label='描述'>
         <Edit ref="remark" v-model="model.remark" normal :error="isError === 'remark'" @submit="save" @cancel='cancel'>
           <p-input v-model="model.remark" @change="validate('remark')"></p-input>
         </Edit>
@@ -64,10 +64,9 @@ let dataCopy = {}
 export default {
   components: { PageTitle, BindingDevice, AttrInfo, LinkConfig },
   props: {
-    type: String,
-    label: String,
+    label: String, //‘组合’或‘设备’
     isDevice: Boolean, //在设备中使用否则在组合中
-    modelId: String,
+    modelId: String, //模型id
     value: Array, //设备列表
     deviceName: String, //设备名称
     deviceMark: String, //设备标识
@@ -126,10 +125,6 @@ export default {
       this.model = this.$deepCopy(dataCopy)
       this.isError = ''
     },
-    hide(key) {
-      this.isError = ''
-      this.$refs[key] && this.$refs[key].cancel()
-    },
     //校验
     validate(key) {
         const rurleMap = {
@@ -164,7 +159,7 @@ export default {
       if (!this.comDeviceId) {
         return
       }
-      //设备详情
+      //设备/组合 详情
       let fun = this.isDevice ? this.$API.getDeviceDetailById : this.$API.getCompositionDetailById
       fun({id: this.comDeviceId}).then( res => {
         const reData = res.data
