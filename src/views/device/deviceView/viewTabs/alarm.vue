@@ -43,6 +43,7 @@ import tableMixins from '@/mixins/tableMixins'
 import tableExpandMixins from '@/mixins/table-expand'
 import BtnTabs from '../children/btnTabs'
 import {alarmSource,alarmLevel,alarmSourceList,alarmLevelList} from '@/utils/baseData'
+import {mapState} from 'vuex'
 export default {
   components: {BtnTabs},
   mixins: [tableMixins,tableExpandMixins],
@@ -72,6 +73,9 @@ export default {
     isCurrent() {
       return this.currentTab === 'current'
     },
+    ...mapState({
+      tenantMark: state => state.user.userInfo.tenantId
+    }),
     columns(){
       let {$formatDate, $arrayItemToString, filteredInfo1, filtersList1, filtersList2, isCurrent} = this;
       const arr1 = [
@@ -120,7 +124,10 @@ export default {
         limit: this.pagination.pageSize,
         pageNo: this.pagination.current,
         alarmLevel: this.filteredInfo1.alarmLevel && this.filteredInfo1.alarmLevel[0],
-        alarmType: this.filteredInfo1.alarmType && this.filteredInfo1.alarmType[0]
+        alarmType: this.filteredInfo1.alarmType && this.filteredInfo1.alarmType[0],
+        tenantMark: this.tenantMark,
+        deviceMark: this.deviceMark,
+        deviceModelMark: this.modelMark
       }
       const param = this.isCurren ? {
         ...comParams,

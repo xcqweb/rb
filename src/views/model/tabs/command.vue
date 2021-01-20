@@ -95,6 +95,9 @@ export default {
       ]
     } 
   },
+  mounted() {
+    this.getTableData()
+  },
   methods: {
     expandhandler(modelCommandId) {
       if (!modelCommandId) {

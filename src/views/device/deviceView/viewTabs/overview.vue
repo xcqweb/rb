@@ -31,7 +31,10 @@
     <page-title class="mt20">{{isDevice ? '连接配置' : '绑定设备'}}</page-title>
     <!-- 设备 -->
     <template v-if="isDevice">
-      <Link-config class="mt10" :deviceId='comDeviceId' v-model="model.authEnabled" @change='save' />
+      <Link-config class="mt10" :deviceId='comDeviceId'>
+        <Label label='设备认证'><p-switch v-model="model.authEnabled" @change="save" /></Label>
+        <Label label='设备密钥' v-show="!!model.authEnabled"></Label>
+      </Link-config>
       <page-title class="mt20">属性信息</page-title>
       <Attr-info overview :deviceId='comDeviceId' />
     </template>
@@ -54,6 +57,7 @@ import BindingDevice from '../children/bindingDevice'
 import AttrInfo from '../children/attrInfo'
 import LinkConfig from '../children/linkConfig'
 import Schema from 'async-validator';
+import {debounce} from 'lodash'
 import {
   netStatusClass,
   statusClass,
@@ -105,7 +109,7 @@ export default {
   },
   methods: {
     //编辑保存设备信息
-    save() {
+    save: debounce(function() {
       const params = this.isDevice ? {
         id: this.comDeviceId,
         modelId: this.model.modelId,
@@ -120,7 +124,7 @@ export default {
       fun(params).then(res => {
         this.$message.success('操作成功！')
       })
-    },
+    },600),
     cancel() {
       this.model = this.$deepCopy(dataCopy)
       this.isError = ''

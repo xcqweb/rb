@@ -128,18 +128,25 @@ export default {
       ]
     } 
   },
+  mounted() {
+    this.getTableData()
+  },
   methods: {
     //展开子列表
     expandhandler(modelParamId, del) {
       if (!modelParamId) {
         return
       }
-      const params = {
+      const params = this.isDevice ? {
+        ...this.paramsInner,
+        deviceId: this.deviceId,
+        modelParamId,
+      } : {
         ...this.paramsInner,
         modelParamId
       }
       this.innerLoading = true
-      this.$API.getModelParamsAlarmList(params).then( res => {
+      this.$API[this.isDevice ? 'getDeviceParamMonitorList' : 'getModelParamsAlarmList'](params).then( res => {
         this.tableData.forEach( item => {
           if (item.id === modelParamId) {
             this.$set(item, 'innerData',res.data.records)

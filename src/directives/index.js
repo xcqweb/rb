@@ -1,7 +1,8 @@
 import Vue from "vue";
 import ElementResize from 'element-resize-detector'
 const eleResize = ElementResize()
-import { isFunction, isPlainObject, throttle } from '../utils/util.js'
+import { isFunction, isPlainObject } from '../utils/util.js'
+import {debounce} from 'lodash'
 
 function deal(el, isVisible) {
   if (isVisible.value) {
@@ -155,7 +156,7 @@ Vue.directive('copy',{
       document.body.removeChild(textarea)
     }
     // 绑定点击事件，就是所谓的一键 copy 啦
-    el.addEventListener('click', throttle(el.handler, 5000))
+    el.addEventListener('click', debounce(el.handler, 5000, {leading:true}))
   },
   // 当传进来的值更新的时候触发
   componentUpdated(el, { value }) {

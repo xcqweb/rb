@@ -10,12 +10,12 @@
 >
   <Cycle-list class="list" ref="cycle-list" :offset='50' :size='size' :on-fetch="onFetch" slot="dropdownRender" style="maxHeight:260px" v-if="flag">
     <template slot="item" slot-scope="{ data }">
+      <slot :item='data'>
       <div class="list_item" :class="{active: data.value === selectModel.value}" :id="data.value" @click="handleClick(data)" style="height:36px">
         {{data.label}}
       </div>
+      </slot>
     </template>
-    <slot></slot>
-    <input type="hidden" :value="selectModel">
   </Cycle-list>
 </p-select>
   
@@ -80,12 +80,12 @@ export default {
         this.api(params).then( res => {
           this.pageIndex++
           this.pageTotal = res.data.total
-          const reData = (res.data.records || res.data).map( el => {
-            return {
+          const reData = this.dataKey ? (res.data.records || res.data).map( el => {
+            return  {
               value: el[this.dataKey.value],
               label: el[this.dataKey.label],
             }
-          })
+          }) : (res.data.records || res.data)
           resolve(this.showAll ? [{value: 'all', label: this.selectModel.label || '全部'},...reData] : reData)
         })
       })

@@ -1,8 +1,7 @@
 <template>
   <div>
     <div class="mt20">
-      <Label label='设备认证'><p-switch v-model="confirm" @change="changeSwitch" /></Label>
-      <Label label='设备密钥' v-show="confirm">wwwww</Label>
+      <slot></slot>
     </div>
     <!--  :defaultActiveKey='[0]' -->
     <p-collapse class="mt10" v-show="protocolList.length">
@@ -30,30 +29,16 @@ const titleMap = {
 export default {
   props: {
     deviceId: String,
-    value: [String, Number, Boolean]
   },
   data() {
     return {
-      confirm: false,
       protocolList: []
-    }
-  },
-  watch: {
-    value: {
-      handler(val) {
-        this.confirm = !!val
-      },
-      immediate: true
     }
   },
   mounted() {
     this.init()
   },
   methods: {
-    changeSwitch(state) {
-      this.$emit('input', state)
-      this.$emit('change', state)
-    },
     init() {
       if (!this.deviceId) {
         return

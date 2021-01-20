@@ -25,4 +25,9 @@ export default{
   getDeviceParamDetailById: (params) => {
     return instance.put(`${baseUrl}/ruban-device/deviceParam/${params.id}`);
   },
+  //////////////////监控///////////////////
+  // 分页获取设备数据参数监控告警规则信息列表
+  getDeviceParamMonitorList: (params) => {
+    return instance.get(`${baseUrl}/ruban-device/deviceParam/alarm/list`, {params});
+  },
 }
