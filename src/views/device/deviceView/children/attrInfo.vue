@@ -25,7 +25,15 @@
     <!-- 设备概览中使用（带编辑） -->
     <template v-else>
       <Label v-for="(item,index) in list" :label='item.attributeName' :key="item.id" class="mt10">
-        <Edit :ref="item.id" v-model="item.attributeText" :time="item.attributeType === 1 && $formatDate" normal @submit="save(index)">
+        <Edit
+          v-model="item.attributeText"
+          :ref="item.id"
+          :time="item.attributeType === 1 && $formatDate"
+          normal
+          :error='item.error === item.id'
+          @submit="save(index)"
+          @cancel='cancel'
+        >
           <!-- 文本 -->
           <p-input v-model="item.attributeText" @change="validate(item.id)" @blur="hide(item.id)" v-if="item.attributeType === 0"/>
           <!-- 日期 -->
@@ -36,11 +44,11 @@
           </p-select>
           <!-- 数值 -->
           <div class="flex w100" v-if="item.attributeType === 2">
-            <p-input class="f1 mr6" @change="validate(item.id)" v-model="item.attributeText" @blur="hide(item.id)"/>
+            <p-input class="f1 mr6" @change="validate(item.id)" @blur="hide(item.id)" v-model="item.attributeText"/>
             <span>{{item.unit}}</span>
           </div>
         </Edit>
-        <p class="poros-form-explain" v-show="isError === item.id">{{errorInfo}}</p>
+        <p class="poros-form-explain" v-show="item.error === item.id">{{item.errorInfo}}</p>
       </Label>
     </template>
   </div>
@@ -48,6 +56,7 @@
 
 <script>
 import Schema from 'async-validator';
+let copyData = []; //备份编辑数据 取消保存时恢复
 export default {
   props: {
     overview: Boolean, //设备概览中使用
@@ -68,6 +77,7 @@ export default {
               this.$set(item, 'listData',[])
             }
           })
+          copyData = this.$deepCopy(this.list)
         })
       }
     },
@@ -81,6 +91,7 @@ export default {
                 this.$set(item, 'listData',[])
               }
             })
+            copyData = this.$deepCopy(this.list)
           })
         }
       },
@@ -130,9 +141,11 @@ export default {
     //保存属性
     save(index) {
       this.$API.editDeviceAttr(this.list[index]).then( res => {
+        copyData = this.$deepCopy(this.list)
         this.$message.success('操作成功！')
       })
     },
+    //获取枚举属性下拉项目
     focusFun({modelAttributeId}) {
       const params = {modelAttributeId,size: 10000000,pageNo: 1}
       this.$API.getModelAttrEmunList(params).then( res => {
@@ -149,6 +162,9 @@ export default {
     },
     hide(key) {
       this.$refs[key] && this.$refs[key][0] && this.$refs[key][0].cancel()
+    },
+    cancel() {
+      this.list = this.$deepCopy(copyData)
     },
     //校验错误信息
     setError(errors = []) {

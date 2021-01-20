@@ -8,7 +8,7 @@
   @dropdownVisibleChange='dropdownVisibleChange'
   placeholder='请选择'
 >
-  <Cycle-list class="list" ref="cycle-list" :offset='50' :size='size' :on-fetch="onFetch" slot="dropdownRender" style="maxHeight:260px" v-if="flag">
+  <Cycle-list class="list" ref="cycle-list" :offset='50' :size='size' :on-fetch="onFetch" slot="dropdownRender" v-if="flag">
     <template slot="item" slot-scope="{ data }">
       <slot :item='data'>
       <div class="list_item" :class="{active: data.value === selectModel.value}" :id="data.value" @click="handleClick(data)" style="height:36px">
@@ -16,6 +16,7 @@
       </div>
       </slot>
     </template>
+    <p-divider slot="noMore">到底啦</p-divider>
   </Cycle-list>
 </p-select>
   
@@ -133,5 +134,9 @@ export default {
   .active{
     color: #fff !important;
     background-color: #1740DC !important;
+  }
+  .poros-divider{
+    font-size: 12px;
+    margin: 0 0 5px 0;
   }
 </style>

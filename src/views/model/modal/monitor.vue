@@ -64,17 +64,27 @@ export default {
         firstVal: this.extraType ? [
           {required: true,message: '请输入阈值'},
           {type: 'string',max: 25,message: '输入长度限制为25个字符'},
-          {message: '输入字符仅支持字母、数字（整数和小数）或下划线“_”',pattern: pattern.name5Reg}] : 
-          [{required: true,message: '请输入阈值'},
-          {type: 'string',max: 9,message: '输入长度限制为9个字符'},
-          {message: '输入字符仅支持数字（整数和小数）',pattern: pattern.numReg}],
+          {message: '输入字符仅支持字母、数字（整数和小数）或下划线“_”',pattern: pattern.nameReg},
+          {
+            validator: (rule, value, callback) => {
+              if (!isNaN(value) && value.length > 9) {
+                callback(new Error('输入长度限制为9个字符！'))
+              }else{
+                callback()
+              }
+            },
+          },
+          ] : [
+            {required: true,message: '请输入阈值'},
+            {type: 'string',max: 9,message: '输入长度限制为9个字符'},
+            {message: '输入字符仅支持数字（整数和小数）',pattern: pattern.numReg}
+          ],
         secondVal: !this.extraType && [
           {required: true,message: '请输入阈值'},
           {type: 'string',max: 9,message: '输入长度限制为9个字符'},
           {message: '输入字符仅支持数字（整数和小数）',pattern: pattern.numReg},
           {
             validator: (rule, value, callback) => {
-              console.log(this.model, value)
               const {firstVal,secondVal} = this.model
               if (+firstVal >= +secondVal) {
                 callback(new Error('左边阈值须小于右边阈值！'))
@@ -136,6 +146,7 @@ export default {
     changeLimit() {
       this.model.firstVal = ''
       this.model.secondVal = ''
+      this.$refs.form.resetFields()
     },
     cancel() {
       this.loading = false

@@ -342,7 +342,7 @@ export default {
           data.alarmAddParamList = []
           this.tableData.push(data)
           this.$emit('input', this.tableData)
-        }else if (type === 'first-edit' || type === 'edit'){
+        }else if (type === 'first-edit'){
           const $index = this.tableData.findIndex( item => item.id === data.id)
           const innerData = this.tableData[$index].innerData || []
           const alarmAddParamList = this.tableData[$index].alarmAddParamList || []

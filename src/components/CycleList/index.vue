@@ -1,5 +1,5 @@
 <template>
-  <div class="cube-recycle-list">
+  <div class="cube-recycle-list" :style="{maxHeight: `${maxHeight}px`}">
     <div class="cube-recycle-list-main">
       <div class="cube-recycle-list-items" :style="{height: heights + 'px'}">
         <div
@@ -49,7 +49,7 @@
         </slot>
       </div>
 
-      <div v-show="noMore" class="cube-recycle-list-noMore">
+      <div v-show="noMore && showNoMore" class="cube-recycle-list-noMore">
         <slot name="noMore" />
       </div>
     </div>
@@ -101,6 +101,10 @@ const isUndef = function(o) {
       onFetch: {
         type: Function,
         required: true
+      },
+      maxHeight: { //滚动容器最大高度
+        type: Number,
+        default: 252
       }
     },
     computed: {
@@ -112,6 +116,9 @@ const isUndef = function(o) {
       },
       loading() {
         return this.loadings.length
+      },
+      showNoMore() {
+        return (this.items.length / this.size) > 1
       }
     },
     created() {
@@ -333,13 +340,11 @@ const isUndef = function(o) {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
-    
 
   .cube-recycle-list-main{
     min-height: 100%;
   }
     
-
   .cube-recycle-list-fake{
     height: 1px;
   }
@@ -370,7 +375,9 @@ const isUndef = function(o) {
   .cube-recycle-list-loading-content{
     text-align: center;
   }
-    
+  .cube-recycle-list-noMore{
+    overflow: hidden;
+  }
   .cube-recycle-list-spinner{
     margin: 10px auto;
     display: flex;

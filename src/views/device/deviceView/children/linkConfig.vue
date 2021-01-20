@@ -11,11 +11,11 @@
           <Label width='80' label='端口号'>{{item.port}}<Copy :value='item.port' /></Label>
         </div>
         <p-divider />
-        <Label label='数据上报'>{{item.dataUploadTopic}}<Copy :value='item.dataUploadTopic' /></Label>
+        <Label label='数据上报Topic'>{{item.dataUploadTopic}}<Copy :value='item.dataUploadTopic' /></Label>
         <p-divider />
-        <Label label='属性上报'>{{item.attrUploadTopic}}<Copy :value='item.attrUploadTopic' /></Label>
+        <Label label='属性上报Topic'>{{item.attrUploadTopic}}<Copy :value='item.attrUploadTopic' /></Label>
         <p-divider />
-        <Label label='指令下发'>{{item.commandTopic}}<Copy :value='item.commandTopic' /></Label>
+        <Label label='指令下发Topic'>{{item.commandTopic}}<Copy :value='item.commandTopic' /></Label>
       </p-collapse-panel>
     </p-collapse>
   </div>
