@@ -7,15 +7,15 @@
     <p-collapse class="mt10" v-show="protocolList.length">
       <p-collapse-panel v-for="(item,index) in protocolList" :key="index" :header="item.title">
         <div class="flex">
-          <Label width='80' label='服务地址'>{{item.address}}<Copy :value='item.address' /></Label>
+          <Label width='100' label='服务地址'>{{item.address}}<Copy :value='item.address' /></Label>
           <Label width='80' label='端口号'>{{item.port}}<Copy :value='item.port' /></Label>
         </div>
         <p-divider />
-        <Label label='数据上报Topic'>{{item.dataUploadTopic}}<Copy :value='item.dataUploadTopic' /></Label>
+        <Label width='100' label='数据上报Topic'>{{item.dataUploadTopic}}<Copy :value='item.dataUploadTopic' /></Label>
         <p-divider />
-        <Label label='属性上报Topic'>{{item.attrUploadTopic}}<Copy :value='item.attrUploadTopic' /></Label>
+        <Label width='100' label='属性上报Topic'>{{item.attrUploadTopic}}<Copy :value='item.attrUploadTopic' /></Label>
         <p-divider />
-        <Label label='指令下发Topic'>{{item.commandTopic}}<Copy :value='item.commandTopic' /></Label>
+        <Label width='100' label='指令下发Topic'>{{item.commandTopic}}<Copy :value='item.commandTopic' /></Label>
       </p-collapse-panel>
     </p-collapse>
   </div>

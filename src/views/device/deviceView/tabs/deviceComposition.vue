@@ -138,7 +138,7 @@ export default {
       this.$API.getCompositionDeviceInfo({id}).then( res => {
         this.tableData.forEach( item => {
           if (item.id === id) {
-            this.$set(item, 'innerData',res.data)
+            this.$set(item, 'innerData',res.data && res.data[0] === null ? [] : res.data)
           }
         })
         this.innerLoading = false
@@ -161,7 +161,8 @@ export default {
       this.$API.getCompositionDeviceList(params).then( res => {
         this.tableData = res.data.records || [];
         this.pagination.total = res.data.total || 0;
-        this.loading = false 
+        this.loading = false
+        this.expandhandler(this.expandedRowKeys[0])
       }).catch( () => {
         this.loading = false 
       });

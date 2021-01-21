@@ -63,7 +63,7 @@ export default {
   },
   computed: {
     selectedDevceIds() {
-      return this.tableData.map( item => item.deviceId)
+      return this.tableData.map( item => item && item.deviceId)
     },
     columns(){
       return [
@@ -80,10 +80,10 @@ export default {
       this.loading = true;
       this.$API.getCompositionDeviceInfo({id: this.deviceId}).then( res => {
         if ( res.code === 0 ){
-          this.tableData = res.data || [];
+          this.loading = false;
+          this.tableData = (res.data.length && !res.data[0]) ? [] : res.data || [];
           this.$emit('input', this.tableData)
         }
-        this.loading = false;
       }).catch( e =>{
         this.loading = false;
         console.log(e);

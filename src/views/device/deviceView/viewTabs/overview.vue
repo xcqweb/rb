@@ -123,12 +123,17 @@ export default {
       let fun = this.isDevice ? this.$API.editDevice : this.$API.editComposition
       fun(params).then(res => {
         this.$message.success('操作成功！')
+      }).catch( () => {
+        this.cancel()
       })
     },600),
     cancel() {
       this.model = this.$deepCopy(dataCopy)
       this.isError = ''
     },
+    // hide(key) {
+    //   this.$refs[key] && this.$refs[key].cancel()
+    // },
     //校验
     validate(key) {
         const rurleMap = {

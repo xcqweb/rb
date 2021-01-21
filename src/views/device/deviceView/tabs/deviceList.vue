@@ -113,7 +113,7 @@ export default {
           filters: $arrayItemToString(filtersList2),
           width: 120,
           customRender: status => {
-            const className = statusClass[status]
+            const className = statusClass[1]
             return <span class={className}>{deviceStatusTypeList[status]}</span>
           }
         },

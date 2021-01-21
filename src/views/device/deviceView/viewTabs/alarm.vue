@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="flex mb16">
-      <Btn-tabs :tabs='tabs' @change="changeTab" extra='10'></Btn-tabs>
+      <Btn-tabs :tabs='tabs' @change="changeTab"></Btn-tabs>
       <Label label='报警时间' class="ml20 f1" v-show="!isCurrent">
         <p-range-picker v-model="time" @change="getTableData" show-time></p-range-picker>
       </Label>
@@ -27,8 +27,7 @@
             :columns="innerColumns"
             :data-source="record.innerData"
             :pagination="false"
-            :loading='record.loading'
-            :class="{noExpand: !record.innerData || !record.innerData.length}"
+            :loading='innerLoading'
             row-key="id"
             style="margin:10px 0;"
             class="innerTable"
@@ -44,6 +43,7 @@ import tableExpandMixins from '@/mixins/table-expand'
 import BtnTabs from '../children/btnTabs'
 import {alarmSource,alarmLevel,alarmSourceList,alarmLevelList} from '@/utils/baseData'
 import {mapState} from 'vuex'
+import {formatDuration} from '@/utils/format'
 export default {
   components: {BtnTabs},
   mixins: [tableMixins,tableExpandMixins],
@@ -55,17 +55,17 @@ export default {
   data() {
     return {
       tabs: [
-        {title: '当前报警',symbol: 'current'},
-        {title: '历史报警',symbol: 'history'},
+        {title: '当前报警',symbol: 'current', extra: 0},
+        {title: '历史报警',symbol: 'history', extra: 0},
       ],
       currentTab: 'current',
       time: [],
       filtersList1: alarmLevel,
       filtersList2: alarmSource,
       innerColumns: [
-        {dataIndex: 'tplType',title: '参数',ellipsis: true},
-        {dataIndex: 'tplType',title: '监控',ellipsis: true},
-        {dataIndex: 'tplType',title: '数值',ellipsis: true},
+        {dataIndex: 'paramName',title: '参数',ellipsis: true},
+        {dataIndex: 'formula',title: '监控',ellipsis: true},
+        {dataIndex: 'paramValue',title: '数值',ellipsis: true},
       ],
     }
   },
@@ -76,6 +76,14 @@ export default {
     ...mapState({
       tenantMark: state => state.user.userInfo.tenantId
     }),
+    signCommon() {
+      const signCommon = {
+        tenantMark: this.tenantMark,
+        deviceMark: this.deviceMark,
+        deviceModelMark: this.modelMark
+      }
+      return signCommon
+    },
     columns(){
       let {$formatDate, $arrayItemToString, filteredInfo1, filtersList1, filtersList2, isCurrent} = this;
       const arr1 = [
@@ -105,29 +113,38 @@ export default {
         {title: '报警信息',dataIndex: 'alarmInfo',ellipsis: true},
         {title: '报警时间',dataIndex: 'startTs',ellipsis: true,customRender: date => $formatDate(date)},
       ]
+      const smtap =  a => +new Date(a) 
       const arr3 = [
-        {title: '持续时间',ellipsis: true},
+        {title: '持续时间',ellipsis: true, customRender: ({startTs, endTs}) => formatDuration(smtap(endTs)  - smtap(startTs))},
       ]
       return isCurrent ? [...arr2,...arr3] : [...arr2,...arr1,...arr3]
     } 
   },
   mounted() {
     this.getTableData()
+    this.getAlarmCount()
   },
   methods: {
     changeTab({symbol}) {
       this.currentTab = symbol
       this.getTableData()
     },
+    getAlarmCount() {
+      this.$API.getAlarmLogCount({...this.signCommon,alarmStatus: 1}).then( res => {
+        this.tabs[1].extra = res.data
+      })
+    },
     getTableData(){
+      if (!this.tenantMark || !this.deviceMark || !this.modelMark) {
+        console.error('标识不存在！')
+        return
+      }
       const comParams = {
         limit: this.pagination.pageSize,
         pageNo: this.pagination.current,
         alarmLevel: this.filteredInfo1.alarmLevel && this.filteredInfo1.alarmLevel[0],
         alarmType: this.filteredInfo1.alarmType && this.filteredInfo1.alarmType[0],
-        tenantMark: this.tenantMark,
-        deviceMark: this.deviceMark,
-        deviceModelMark: this.modelMark
+        ...this.signCommon
       }
       const param = this.isCurren ? {
         ...comParams,
@@ -143,12 +160,20 @@ export default {
         if ( res.code === 0 ){
           this.tableData = res.data.records || [];
           this.pagination.total = res.data.total;
+          this.setTotal(this.currentTab, this.pagination.total)
         }
         this.loading = false;
       }).catch( e =>{
         this.loading = false;
         console.log(e);
       });
+    },
+    setTotal(key, num) {
+      this.tabs.forEach( el => {
+        if (key === el.symbol) {
+          this.$set(el, 'extra', num)
+        }
+      })
     },
     reset() {
       this.time = []

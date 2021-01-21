@@ -3,9 +3,8 @@ import moment from 'moment'
 import 'moment/locale/zh-cn'
 import API from '@/api' 
 moment.locale('zh-cn')
-// console.log(moment().format())
 // 时间
-Vue.prototype.$moment = moment;
+// Vue.prototype.$moment = moment;
 // 常用格式化时间
 Vue.prototype.$formatDate = (timestamp, fmt = 'YYYY-MM-DD HH:mm:ss') => {
   return timestamp ? moment(timestamp).format(fmt): '';

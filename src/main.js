@@ -14,7 +14,6 @@ import "@/assets/iconfont/iconfont.css";
 import '@/utils/prototype'
 import '@/directives'
 import reg from '@/utils/pattern'
-
 /*** 判断mac系统(含iphone手机) ***/
 const isMac = /macintosh|mac os x/i.test(navigator.userAgent);
 const bodyEle = document.querySelector('body')
@@ -25,12 +24,13 @@ if (process.env.NODE_ENV === 'development') {
   Vue.config.devtools = true
 }
 Vue.use(SvgIcon)
-
+console.log(Poros)
 Vue.use(Poros, {
   system,
   store
 })
 Vue.use(PorosUI)
+
 Vue.mixin({
   data() {
     return{

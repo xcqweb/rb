@@ -34,7 +34,10 @@
         <Alarm :deviceId='comDeviceId' :modelMark='modelMark' :deviceMark='deviceMark' />
       </p-tab-pane>
       <p-tab-pane key="log" tab="日志">
-        <Log :isDevice='isDevice' :deviceId='comDeviceId' :modelMark='modelMark' :deviceMark='deviceMark'/>
+        <Log :isDevice='isDevice' :deviceId='comDeviceId' :modelMark='modelMark' :deviceMark='deviceMark' v-if="isDevice"/>
+        <Collapse-list :deviceList='deviceList' v-else>
+          <Log slot-scope='{item}' :deviceId='item.deviceId' :modelMark='item.modelMark' :deviceMark='item.deviceMark'/>
+        </Collapse-list>
       </p-tab-pane>
     </p-tabs>
   </page>

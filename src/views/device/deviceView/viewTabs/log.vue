@@ -21,7 +21,7 @@
 <script>
 import tableMixins from '@/mixins/tableMixins'
 import BtnTabs from '../children/btnTabs'
-import {logType,operatorType,logTypeList,operatorTypeList} from '@/utils/baseData'
+import {logType,operatorType} from '@/utils/baseData'
 import { mapState } from 'vuex'
 export default {
   components: {BtnTabs},
@@ -40,8 +40,10 @@ export default {
       ],
       currentTab: 'status',
       time: [],
+      filteredInfo2: {},
       filtersList1: logType,
       filtersList2: operatorType,
+      cacheFilter: {}
     }
   },
   computed: {
@@ -51,8 +53,12 @@ export default {
     ...mapState({
       tenantMark: state => state.user.userInfo.tenantId
     }),
+    comChangeType() {
+      return this.isCurrent ? (this.filteredInfo1.changeType && this.filteredInfo1.changeType[0]) : 
+      (this.filteredInfo2.changeType && this.filteredInfo2.changeType[0])
+    },
     columns(){
-      let {$formatDate, $arrayItemToString, filteredInfo1, filtersList1, filtersList2, isCurrent} = this;
+      let {$formatDate, $arrayItemToString, filteredInfo1,filteredInfo2, filtersList1, filtersList2, isCurrent} = this;
       const arr = [
         {title: '设备',dataIndex: 'deviceName',ellipsis: true},
       ] 
@@ -65,7 +71,7 @@ export default {
           filteredValue: filteredInfo1.changeType || [],
           filters: $arrayItemToString(filtersList1),
           width: 120,
-          customRender: data => logTypeList[data]
+          // customRender: data => logTypeList[data]
         },
         {title: '变更前',dataIndex: 'infoBefore',ellipsis: true},
         {title: '变更后',dataIndex: 'infoAfter',ellipsis: true},
@@ -78,16 +84,21 @@ export default {
           dataIndex: 'changeType',
           ellipsis: true,
           filterMultiple: false,
-          filteredValue: filteredInfo1.changeType || [],
+          filteredValue: filteredInfo2.changeType || [],
           filters: $arrayItemToString(filtersList2),
           width:120,
-          customRender: data => operatorTypeList[data]
+          // customRender: data => operatorTypeList[data]
         },
         {title: '操作内容',dataIndex: 'changeInfo',ellipsis: true},
         {title: '操作时间',dataIndex: 'ts',ellipsis: true,customRender: date => $formatDate(date)},
       ]
       return isCurrent ? this.isDevice ? arr1 : [...arr,...arr1] : arr2
     } 
+  },
+  watch: {
+    filteredInfo1(val) {
+      this.cacheFilter[this.currentTab] = val.changeType
+    }
   },
   mounted() {
     this.getTableData()
@@ -98,10 +109,15 @@ export default {
       this.getTableData()
     },
     getTableData(){
+      console.log(this.cacheFilter)
+      if (!this.tenantMark || !this.deviceMark || !this.modelMark) {
+        console.error('标识不存在！')
+        return
+      }
       const comParams = {
         limit: this.pagination.pageSize,
         pageNo: this.pagination.current,
-        changeType: this.filteredInfo1.changeType && this.filteredInfo1.changeType[0],
+        changeType: this.comChangeType,
         tenantMark: this.tenantMark,
         deviceMark: this.deviceMark,
         deviceModelMark: this.modelMark
@@ -126,8 +142,18 @@ export default {
         console.log(e);
       });
     },
+    tableChange(pagination, filters, sorter){
+      if (this.isCurrent) {
+        this.filteredInfo1 = filters
+      }else{
+        this.filteredInfo2 = filters
+      }
+      this.getTableData(); 
+    },
     reset() {
       this.time = []
+      this.filteredInfo1 = {}
+      this.filteredInfo2 = {}
       this.getTableData()
     }
   }

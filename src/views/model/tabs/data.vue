@@ -6,7 +6,7 @@
     </div>
     <div class="tableCon">
       <p-table
-        rowKey="id"
+        :row-key="isDevice ? 'modelParamId' : 'id'"
         @change="tableChange"
         @expand="expand"
         :loading="loading"
@@ -32,7 +32,7 @@
             :data-source="record.innerData"
             :pagination="false"
             :loading='innerLoading'
-            row-key="id"
+            :row-key="isDevice ? 'modelParamId' : 'id'"
             style="margin:10px 0;"
             class="innerTable"
           >
@@ -93,13 +93,14 @@ export default {
     }),
     innerColumns() {
       const that = this
-      return [
+      const arr1 = [
         {dataIndex: 'alarmLevelId',title: '报警等级',ellipsis: true,customRender: data => that.alarmLevelList[data]},
         {title: '报警阈值',ellipsis: true,dataIndex: 'formulaView'},
         {dataIndex: 'remark',title: '报警信息',ellipsis: true},
         {title: '是否启用',ellipsis: true,scopedSlots: { customRender: 'switch' }},
-        {title: '操作',ellipsis: true,scopedSlots: { customRender: 'alarmOperator' }},
       ]
+      const arr2 = [{title: '操作',ellipsis: true,scopedSlots: { customRender: 'alarmOperator' }},]
+      return this.isDevice ? arr1 : [...arr1, ...arr2]
     },
     columns(){
       let { filteredInfo1 } = this;
@@ -129,7 +130,9 @@ export default {
     } 
   },
   mounted() {
-    this.getTableData()
+    if (!this.add) {
+      this.getTableData()
+    }
   },
   methods: {
     //展开子列表

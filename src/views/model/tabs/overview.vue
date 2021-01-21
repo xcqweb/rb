@@ -78,7 +78,7 @@ export default {
         this.$message.success('提交成功！')
         dataCopy = this.$deepCopy(this.model)
       }).catch(() => {
-        // 
+        this.cancel()
       })
     },
     cancel() {

@@ -9,7 +9,6 @@
     @cancel="cancel"
     @ok="confirm"
   >
-  <!-- <Label label='所属模型' width='80'> -->
     <Infinity-select
       style="width:160px"
       :api='$API.getModelList'
@@ -17,7 +16,6 @@
       showAll
       :dataKey="{value: 'id', label: 'modelName'}"
     />
-  <!-- </Label> -->
   <p-table
     class="mt10"
     rowKey="id"
@@ -91,6 +89,9 @@ export default {
         this.selectedRowKeys = this.selectedDevceIds
       }
     }
+  },
+  mounted() {
+    this.getTableData()
   },
   methods: {
     cancel() {

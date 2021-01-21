@@ -62,19 +62,17 @@ export const alarmLevelList = ['注意','告警','危险']
 
 //日志类型
 export const logType = [
-  {text: '网络',value: 0},
-  {text: '状态',value: 1},
+  {text: '网络',value: '网络'},
+  {text: '状态',value: '状态'},
 ]
-export const logTypeList = ['网络','状态']
 
 //操作类型
 export const operatorType = [
-  {text: '信息编辑',value: 0},
-  {text: '设备解绑',value: 1},
-  {text: '设备绑定',value: 2},
-  {text: '设备移动',value: 3},
+  {text: '信息编辑',value: '信息编辑'},
+  {text: '设备解绑',value: '设备解绑'},
+  {text: '设备绑定',value: '设备绑定'},
+  {text: '设备移动',value: '设备移动'},
 ]
-export const operatorTypeList = ['信息编辑','设备解绑','设备绑定','设备移动']
 
 //属性类型
 export const attrType = [

@@ -5,7 +5,7 @@
       v-for="(item, index) in tabs"
       :key='index'
       @click="clickHandler(index,item)"
-    >{{isNullOrEmpty(extra) ? item.title : `${item.title}(${comExtra})`}}</li>
+    >{{isNullOrEmpty(item.extra) ? item.title : `${item.title}(${comExtra(item.extra)})`}}</li>
   </ul>
 </template>
 
@@ -14,7 +14,6 @@ import {isNullOrEmpty} from '@/utils/util'
 export default {
   props: {
     tabs: Array,
-    extra: [Number,String]
   },
   data() {
     return {
@@ -22,16 +21,14 @@ export default {
       isNullOrEmpty,
     }
   },
-  computed: {
-    comExtra() {
-      const num = !isNaN(this.extra) && Number(this.extra) || 0
-      return num > 99 ? '+99' : num
-    }
-  },
   methods: {
     clickHandler(index, item) {
       this.currentIndex = index
       this.$emit('change',item)
+    },
+    comExtra(extra) {
+      const num = !isNaN(extra) && Number(extra) || 0
+      return num > 99 ? '+99' : num
     }
   },
 }
@@ -51,6 +48,7 @@ export default {
       text-align: center;
       transition: all 0.3s;
       cursor: pointer;
+      user-select: none;
     }
     &>li:first-child{
       border-radius: 2px 0 0 2px;

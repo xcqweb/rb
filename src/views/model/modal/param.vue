@@ -86,11 +86,10 @@ export default {
   created() {
     this.$watch('visible', (val) => {
       if (val) {
-        console.log(this.options)
         this.model = {paramType: 3,used: 2,...this.options}
         const {used} = this.model
         const obj = {0: ['存储'],1: ['显示'],2: ['存储','显示']}
-        this.$set(this.model, 'checkedList', obj[used])
+        this.$set(this.model, 'checkedList', used === null ? [] : obj[used])
       }
     });
   },

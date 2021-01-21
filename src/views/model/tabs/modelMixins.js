@@ -40,7 +40,7 @@ export default {
       }}><span class={isExpand ? "iconfont iconjiantouxiangzuoshangyitiao" : ''}></span></a>
     },
     expand(expanded, record) {
-      const id = record.id
+      const id = record.id || record.modelParamId
       // if(this.expandedRowKeys.includes(id) && !expanded){
       //   this.expandedRowKeys = this.expandedRowKeys.filter( item => item !== id)
       // } else {

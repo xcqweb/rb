@@ -19,6 +19,10 @@ export default{
   getDeviceLogInfoList: (params) => {
     return instance.get(`${baseUrl}/persist/log/device/info`, {params});
   },
+  // 查询设备告警日志条数
+  getAlarmLogCount: (params) => {
+    return instance.get(`${baseUrl}/persist/log/alarm/count`, {params});
+  },
 
 
 
