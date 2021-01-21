@@ -86,7 +86,10 @@ export default {
     },
     visible(val) {
       if (val) {
+        this.getTableData()
         this.selectedRowKeys = this.selectedDevceIds
+      }else{
+        this.cancel()
       }
     }
   },

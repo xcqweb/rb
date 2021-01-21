@@ -1,7 +1,7 @@
 <template>
   <div class="mt20">
     <div class="c_searchArea">
-      <p-button @click="bind" type="primary">绑定设备</p-button>
+      <p-button @click="bind" type="primary" :disabled='showAddBind'>绑定设备</p-button>
     </div>
     <div class="tableCon">
       <p-table
@@ -63,7 +63,10 @@ export default {
   },
   computed: {
     selectedDevceIds() {
-      return this.tableData.map( item => item && item.deviceId)
+      return this.tableData.map( item => item && item.id || item.deviceId)
+    },
+    showAddBind() {
+      return this.tableData.length >= 20
     },
     columns(){
       return [

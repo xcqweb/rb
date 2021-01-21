@@ -38,7 +38,7 @@
     <Page-title>{{comPageTitle}}</Page-title>
     <component
       :is='componentId'
-      :modelId='model.modelId.value'
+      :modelId='model.modelId.key'
       @callback='callback'
       ref="componentRef"
       :error.sync='error'
@@ -54,7 +54,7 @@
 import AttrInfo from './children/attrInfo'
 import BindingDevice from './children/bindingDevice'
 const validateFun = (rule, value, callback) => {
-  if (!value.value) {
+  if (!value.key) {
     callback(new Error('请选择所属模型！'))
   }else{
     callback()
@@ -123,7 +123,7 @@ export default {
           console.log(this.$refs.componentRef.comList)
           let params = this.isDevice ? {
             deviceName: name,
-            modelId: modelId.value,
+            modelId: modelId.key,
             remark,
             locationId: this.locationId,
             deviceAttributeAddParamList: this.$refs.componentRef.comList
@@ -137,7 +137,7 @@ export default {
           fun(params).then( res => {
             this.loading = false
             this.$message.success('操作成功！')
-            this.$router.push('/device/deviceView')
+            this.back()
           }).catch( () => {
             this.loading = false
           })
@@ -148,7 +148,10 @@ export default {
       this.back()
     },
     back() {
-      this.$router.go(-1)
+      this.$router.push({
+        path: '/device/deviceView',
+        query: {from: this.$route.query.from}
+      })
     }
   },
 }

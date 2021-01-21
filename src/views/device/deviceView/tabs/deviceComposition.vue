@@ -91,7 +91,7 @@ export default {
     innerColumns(){
       return [
         {title: '设备名称',ellipsis: true,scopedSlots: { customRender: 'deviceName' }},
-        {title: '所属类型',ellipsis: true,scopedSlots: { customRender: 'deviceModel' }},
+        {title: '所属模型',ellipsis: true,scopedSlots: { customRender: 'deviceModel' }},
         ...commomColumns.slice(2),
         {title: '操作',width: 120,align: 'right',scopedSlots: { customRender: 'operation' }},
       ]
@@ -116,7 +116,7 @@ export default {
       !(this.activeKey === 'deviceList') && this.getTableData()
     },
     activeKey(val) {
-      this.activeKey === 'deviceCompose' && this.getTableData()
+      this.activeKey === 'deviceCompose' && this.$router.push({path: '/device/deviceView',query: {from: val}})
     }
   },
   activated() {
@@ -127,7 +127,10 @@ export default {
       const {id, locationNamePath} = this.chooseNode
       this.$router.push({
         path: '/device/addComponsition',
-        query: {locationId: id,locationNamePath}
+        query: {
+          locationId: id,locationNamePath,
+          from: this.activeKey,
+        }
       })
     },
     expandhandler(id) {
@@ -147,6 +150,9 @@ export default {
       })
     },
     getTableData({searchKey = this.selectList[0].key, keyword} = {}) {
+      if (!this.chooseNode.id) {
+        return
+      }
       const isArray = Array.isArray(keyword)
       const params = {
         keyword: isArray ? undefined : keyword,

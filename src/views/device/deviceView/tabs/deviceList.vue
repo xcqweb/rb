@@ -128,13 +128,20 @@ export default {
       !(this.activeKey === 'deviceCompose') && this.getTableData()
     },
     activeKey(val) {
-      this.activeKey === 'deviceList' && this.getTableData()
+      this.activeKey === 'deviceList' && this.$router.push({path: '/device/deviceView',query: {from: val}})
     }
   },
   activated() {
     this.activeKey === 'deviceList' && this.getTableData()
   },
   methods: {
+    reset(){
+      this.filteredInfo1 = {}
+      this.pagination.pageSize = 10
+      this.pagination.current = 1
+      this.selectModel = {label: '全部模型', key: 'all'};
+      this.getTableData();
+    },
     changeSelect(data) {
       this.getTableData()
     },
@@ -145,6 +152,7 @@ export default {
         path: '/device/addDevice',
         query: {
           type: 'device',
+          from: this.activeKey,
           locationId: id,
           locationNamePath
         }

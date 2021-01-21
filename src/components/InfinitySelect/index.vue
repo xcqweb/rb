@@ -11,7 +11,7 @@
   <Cycle-list class="list" ref="cycle-list" :offset='50' :size='size' :on-fetch="onFetch" slot="dropdownRender" v-if="flag">
     <template slot="item" slot-scope="{ data }">
       <slot :item='data'>
-      <div class="list_item" :class="{active: data.value === selectModel.value}" :id="data.value" @click="handleClick(data)" style="height:36px">
+      <div class="list_item" :class="{active: data.value === selectModel.key}" :id="data.value" @click="handleClick(data)" style="height:36px">
         {{data.label}}
       </div>
       </slot>
@@ -38,7 +38,11 @@ export default {
     size: {
       type: Number,
       default: 20
-    }
+    },
+    allLabel: {
+      type: String,
+      default: '全部模型'
+    }, //全部文字 例如 全部模型 全部设备
   },
   data() {
     return {
@@ -87,13 +91,13 @@ export default {
               label: el[this.dataKey.label],
             }
           }) : (res.data.records || res.data)
-          resolve(this.showAll ? [{value: 'all', label: this.selectModel.label || '全部'},...reData] : reData)
+          resolve(this.showAll ? [{value: 'all', label: this.allLabel || '全部'},...reData] : reData)
         })
       })
     },
     handleClick(item) {
       this.selectModel = {
-        value: item.value,
+        key: item.value,
         label: item.label,
       }
       this.$emit('input', this.selectModel || {})

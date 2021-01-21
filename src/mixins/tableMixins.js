@@ -18,8 +18,9 @@ export default {
   },
   mounted() {
     const comName = this.$options._componentTag
+    console.log(comName)
     //不走mounted方法的组件
-    const extraComponentList = ['Device-list']
+    const extraComponentList = ['Device-list','BindDeviceModal']
     if (!this.add && comName && !extraComponentList.includes(comName)) { //新增模型时不走此方法
       this.getTableData(); 
     }

@@ -50,6 +50,10 @@ export default {
       }
     });
   },
+  activated() {
+    const from = this.$route.query.from
+    from && (this.activeKey = from)
+  },
   methods: {
     viewUserDetail(item) {
       const that = this;
