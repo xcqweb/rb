@@ -119,8 +119,8 @@ export default {
       this.activeKey === 'deviceCompose' && this.getTableData()
     }
   },
-  mounted() {
-    this.getTableData()
+  activated() {
+    this.activeKey === 'deviceCompose' && this.getTableData()
   },
   methods: {
     addDevice() {

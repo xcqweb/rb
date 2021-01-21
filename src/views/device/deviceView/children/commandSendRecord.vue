@@ -82,6 +82,9 @@ export default {
       ]
     } 
   },
+  mounted() {
+    this.getTableData()
+  },
   methods: {
     getTableData({searchKey = this.selectList[0].key, keyword} = {}){
       const isArray = Array.isArray(keyword)

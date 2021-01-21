@@ -72,9 +72,6 @@ export default {
       ]
     } 
   },
-  mounted() {
-    this.getTableData()
-  },
   methods: {
     getTableData(){
       this.loading = true;

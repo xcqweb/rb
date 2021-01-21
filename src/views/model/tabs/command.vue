@@ -95,11 +95,6 @@ export default {
       ]
     } 
   },
-  mounted() {
-    if (!this.add) {
-      this.getTableData()
-    }
-  },
   methods: {
     expandhandler(modelCommandId) {
       if (!modelCommandId) {

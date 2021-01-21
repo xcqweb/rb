@@ -50,9 +50,6 @@ export default {
       }
     });
   },
-  beforeDestroy() {
-    this.destroyWatchIntance();
-  },
   methods: {
     viewUserDetail(item) {
       const that = this;

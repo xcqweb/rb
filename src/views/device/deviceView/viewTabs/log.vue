@@ -100,9 +100,6 @@ export default {
       this.cacheFilter[this.currentTab] = val.changeType
     }
   },
-  mounted() {
-    this.getTableData()
-  },
   methods: {
     changeTab({symbol}) {
       this.currentTab = symbol

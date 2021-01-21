@@ -129,11 +129,6 @@ export default {
       ]
     } 
   },
-  mounted() {
-    if (!this.add) {
-      this.getTableData()
-    }
-  },
   methods: {
     //展开子列表
     expandhandler(modelParamId, del) {

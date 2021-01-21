@@ -131,6 +131,9 @@ export default {
       this.activeKey === 'deviceList' && this.getTableData()
     }
   },
+  activated() {
+    this.activeKey === 'deviceList' && this.getTableData()
+  },
   methods: {
     changeSelect(data) {
       this.getTableData()

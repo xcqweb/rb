@@ -100,11 +100,6 @@ export default {
       ]
     } 
   },
-  mounted() {
-    if (!this.add) {
-      this.getTableData()
-    }
-  },
   methods: {
     customExpandIcon(props) {
       const isEmun = props.record.attributeType === 3

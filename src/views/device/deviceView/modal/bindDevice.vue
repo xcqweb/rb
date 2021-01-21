@@ -90,9 +90,6 @@ export default {
       }
     }
   },
-  mounted() {
-    this.getTableData()
-  },
   methods: {
     cancel() {
       this.selectedRowKeys = []
