@@ -128,7 +128,7 @@ export default {
       !(this.activeKey === 'deviceCompose') && this.getTableData()
     },
     activeKey(val) {
-      this.activeKey === 'deviceList' && this.$router.push({path: '/device/deviceView',query: {from: val}})
+      this.activeKey === 'deviceList' && this.getTableData()
     }
   },
   activated() {

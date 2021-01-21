@@ -32,7 +32,7 @@
 import tableMixins from '@/mixins/tableMixins'
 import {commandColumns} from '@/views/base'
 import ViewMsg from '../../deviceView/modal/viewMsg'
-import {sendType,resultType} from '@/utils/baseData'
+import {sendType,sendTypeList,resultType} from '@/utils/baseData'
 export default {
   mixins: [tableMixins],
   components: {ViewMsg},
@@ -62,6 +62,7 @@ export default {
           filteredValue: filteredInfo1.status || [],
           filters: this.$arrayItemToString(this.filtersList1),
           width: 120,
+          customRender: data => sendTypeList[data]
         },
         {
           title: '执行时间',
@@ -78,7 +79,7 @@ export default {
           filters: this.$arrayItemToString(this.filtersList2),
           width: 120,
         },
-        {title: '操作',dataIndex: 'operate',align: 'right',width: 100,scopedSlots: { customRender: 'operation' }},
+        {title: '操作',dataIndex: 'operate',align: 'right',width: 80,scopedSlots: { customRender: 'operation' }},
       ]
     } 
   },
@@ -93,10 +94,10 @@ export default {
         searchKey,
         limit: this.pagination.pageSize,
         pageNo: this.pagination.current,
-        startTime: isArray ? this.$UTC(keyword[0]) : undefined,
-        endTime: isArray ? this.$UTC(keyword[1]) : undefined,
+        startTs: isArray ? this.$UTC(keyword[0]) : undefined,
+        endTs: isArray ? this.$UTC(keyword[1]) : undefined,
         resultCode: this.filteredInfo1.resultCode && this.filteredInfo1.resultCode[0],
-        status: this.filteredInfo1.status && this.filteredInfo1.status[0]
+        status: this.filteredInfo1.status && this.filteredInfo1.status[0],
       }
       this.loading = true;
       this.$API.getCommandSendRecordList(param).then( res =>{

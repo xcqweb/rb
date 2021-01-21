@@ -81,10 +81,16 @@ export default {
           title: '属性类型',
           ellipsis: true,
           filterMultiple: false,
+          dataIndex: 'attributeType',
           filteredValue: filteredInfo1.attributeType || null,
           filters: this.$arrayItemToString(this.filtersList1),
           width: 120,
-          customRender: ({attributeType, unit}) => attributeType === 2 ? `${attrTypeList[attributeType]}/单位：${unit || '-'}` : attrTypeList[attributeType]
+          customRender: (data) => {
+            const temp = isNaN(data) ? data.split('@@@') : data
+            const isArray = Array.isArray(temp)
+            console.log(temp)
+            return isArray ? `${attrTypeList[temp[0]]}/单位：${temp[1] || '-'}` : attrTypeList[temp]
+          }
         },
         {
           title: '获取方式',
@@ -152,6 +158,9 @@ export default {
           this.tableData.forEach( item => {
             if (item.attributeType === 3) {
               this.$set(item, 'innerData', [])
+            }
+            if (item.attributeType === 2) {
+              this.$set(item, 'attributeType', `${item.attributeType}@@@${item.unit}`)
             }
           })
           this.pagination.total = res.data.total;

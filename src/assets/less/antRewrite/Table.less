@@ -16,6 +16,17 @@
     height: 30px;
     background: @c-bg-2;
   }
+  .poros-table-expanded-row{
+    &:hover{
+      background: #F7F7F8;
+    }
+    background: #F7F7F8;
+  }
+  .poros-table-placeholder{
+    border-bottom: none;
+    border-top: 1px solid #E5E6E9;
+    // background: #F7F7F8;
+  }
   .poros-table-tbody > tr > td{
     padding: 14px 10px;
     font-weight: 400;
@@ -47,13 +58,16 @@
   .poros-table-thead,.poros-table-tbody{
     tr>th,tr>td{
       background: #F7F7F8 !important;
+      border-bottom: 1px solid #E5E6E9;
     }
+  }
+  .poros-table-placeholder{
+    // background: #F7F7F8;
   }
 }
 
 .poros-table-column-has-filters{
   .anticon-filter{
-    // top: -2px !important;
     right: 36px!important;
     width: 20px !important;
   }

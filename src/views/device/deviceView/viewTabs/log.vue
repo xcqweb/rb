@@ -71,7 +71,6 @@ export default {
           filteredValue: filteredInfo1.changeType || [],
           filters: $arrayItemToString(filtersList1),
           width: 120,
-          // customRender: data => logTypeList[data]
         },
         {title: '变更前',dataIndex: 'infoBefore',ellipsis: true},
         {title: '变更后',dataIndex: 'infoAfter',ellipsis: true},
@@ -87,7 +86,6 @@ export default {
           filteredValue: filteredInfo2.changeType || [],
           filters: $arrayItemToString(filtersList2),
           width:120,
-          // customRender: data => operatorTypeList[data]
         },
         {title: '操作内容',dataIndex: 'changeInfo',ellipsis: true},
         {title: '操作时间',dataIndex: 'ts',ellipsis: true,customRender: date => $formatDate(date)},
@@ -123,8 +121,8 @@ export default {
         ...comParams,
       } : {
         ...comParams,
-        startTime: this.$UTC(this.time[0]),
-        endTime: this.$UTC(this.time[1]),
+        startTs: this.$UTC(this.time[0]),
+        endTs: this.$UTC(this.time[1]),
       }
       this.loading = true;
       const fun = this.$API[this.isCurrent ? 'getDeviceLogStateList' : 'getDeviceLogInfoList']
