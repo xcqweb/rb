@@ -169,7 +169,7 @@ export default {
         };
       });
     },
-    //禁止移动至自身节点近期子节点
+    //禁止移动至自身节点及其子节点
     cacheDisabledNodeIds(item) {
       const isDisabled = this.disabledNodeIds.includes(item.id) || this.disabledNodeIds.includes(item.parentId)
       if (isDisabled) {
