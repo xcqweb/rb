@@ -85,6 +85,7 @@ export default {
         }
       }
     },
+    moveNodeId: String
   },
   data() {
     return {
@@ -99,7 +100,9 @@ export default {
       loadedKeys: [],
       expandedKeys: [],
       defaultSelectedKeys: [],
-      moveNode: []
+      moveNode: [],
+      //禁用的节点id
+      disabledNodeIds: []
     }
   },
   computed: {
@@ -110,12 +113,12 @@ export default {
     }
   },
   watch: {
-    treeData: {
-      handler(val) {
-        this.stroageNameSpace && sessionStorage.setItem(this.cacheDataKey[0], JSON.stringify(val))
-      },
-      deep: true
-    }
+  //   treeData: {
+  //     handler(val) {
+  //       this.stroageNameSpace && sessionStorage.setItem(this.cacheDataKey[0], JSON.stringify(val))
+  //     },
+  //     deep: true
+  //   }
   },
   mounted() {
     // console.log(JSON.parse(sessionStorage.getItem('treeData')))
@@ -141,6 +144,7 @@ export default {
       this.treeData = []
       this.loadedKeys = []
       this.expandedKeys = []
+      this.disabledNodeIds = this.moveNodeId ? [this.moveNodeId] : []
       this.getLocation({}).then( ({data}) => {
         this.treeData = this.tran(data)
         const {id, hasChild} = data[0]
@@ -159,10 +163,19 @@ export default {
         return {
           isLeaf: !item.hasChild,
           expanded: false,
+          disabled: this.moveNodeId ? this.cacheDisabledNodeIds(item) : false,
           scopedSlots: { title: 'custom' },
           ...item,
         };
       });
+    },
+    //禁止移动至自身节点近期子节点
+    cacheDisabledNodeIds(item) {
+      const isDisabled = this.disabledNodeIds.includes(item.id) || this.disabledNodeIds.includes(item.parentId)
+      if (isDisabled) {
+        this.disabledNodeIds.push(item.id)
+      }
+      return isDisabled
     },
     getLocation(params) {
       return this.$API.queryChildLocation(params)
@@ -288,6 +301,9 @@ export default {
       this.title = '移动节点'
       this.componentId = 'ModalSelectTree'
       this.moveNode = item
+      this.options =  {
+        id: item.id
+      }
     },
     addNode(item) {
       this.visible = true

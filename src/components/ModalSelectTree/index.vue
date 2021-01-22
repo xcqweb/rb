@@ -9,7 +9,7 @@
   >
     <div class="content">
       <span class="required-doc">移动至：</span>
-      <Device-tree ref="tree" class="content_border f1" v-model="chooseNode" showLine showIcon/>
+      <Device-tree ref="tree" class="content_border f1" v-model="chooseNode" :moveNodeId='moveNodeId' showLine showIcon/>
     </div>
   </p-modal>
 </template>
@@ -22,6 +22,12 @@ export default {
   data() {
     return {
       chooseNode: null
+    }
+  },
+  computed: {
+    //移动的树节点id
+    moveNodeId() {
+      return this.options && this.options.id || ''
     }
   },
   watch: {

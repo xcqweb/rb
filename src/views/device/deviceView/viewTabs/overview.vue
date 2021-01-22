@@ -32,7 +32,7 @@
     <!-- 设备 -->
     <template v-if="isDevice">
       <Link-config class="mt10" :deviceId='comDeviceId'>
-        <Label label='设备认证'><p-switch v-model="model.authEnabled" @change="save" /></Label>
+        <Label label='设备认证'><p-switch v-model="model.authEnabled" :disabled='loading' @change="save" /></Label>
         <Label label='设备密钥' v-show="!!model.authEnabled">{{model.token}}<Copy :value='model.token' /></Label>
       </Link-config>
       <page-title class="mt20">属性信息</page-title>
@@ -86,7 +86,8 @@ export default {
       deviceList: [],
       ////校验
       isError: '',
-      errorInfo: ''
+      errorInfo: '',
+      loading: false
     }
   },
   watch: {
@@ -120,11 +121,14 @@ export default {
         name: this.model.name,
         remark: this.model.remark,
       }
+      this.loading = true
       let fun = this.isDevice ? this.$API.editDevice : this.$API.editComposition
       fun(params).then(res => {
         this.$message.success('操作成功！')
+        this.loading = false
       }).catch( () => {
         this.cancel()
+        this.loading = false
       })
     },600),
     cancel() {
@@ -166,6 +170,7 @@ export default {
     },
     init() {
       if (!this.comDeviceId) {
+        console.error('设备id不存在！')
         return
       }
       //设备/组合 详情
