@@ -11,6 +11,7 @@ import SvgIcon from '@/components/svg-icon'
 import '@/components'
 import '@/assets/less/index.less'
 import "@/assets/iconfont/iconfont.css";
+import "@/assets/font/index.css";
 import '@/utils/prototype'
 import '@/directives'
 import reg from '@/utils/pattern'
