@@ -11,6 +11,7 @@
 
 <script>
 import {debounce} from '@/utils/util'
+const empty = undefined
 export default {
   name: 'Search',
   props: {
@@ -24,7 +25,7 @@ export default {
   },
   data() {
     return {
-      keyword: '',
+      keyword: empty,
       selectType: this.extra ? [] : '',
     }
   },
@@ -64,8 +65,8 @@ export default {
     },
     reset(flag) {
       this.$emit('reset')
-      this.keyword = ''
-      this.$emit('input', '')
+      this.keyword = empty
+      this.$emit('input', empty)
       !flag && (this.selectType = this.selectList[0] && this.selectList[0].key)
     },
     onSearch: debounce(function () {

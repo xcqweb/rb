@@ -55,7 +55,6 @@ import {
   netStatusClass,
   statusClass
 } from '@/utils/baseData'
-import {toQueryString} from '@/utils/util'
 export default {
   mixins: [tableMixins],
   props: {
@@ -80,11 +79,6 @@ export default {
     }
   },
   computed: {
-    comPath() {//deviceCompose
-      const {path, query} = this.$route
-      const queryStr = toQueryString({...query,tab: 'deviceList'})
-      return queryStr.includes('&') ? `${path}?&${queryStr}` : `${path}?${queryStr}`
-    },
     disabledBtnAdd() {
       return !this.chooseNode.id
     },
@@ -158,7 +152,6 @@ export default {
         path: '/device/addDevice',
         query: {
           type: 'device',
-          from: this.comPath,
           locationId: id,
           locationNamePath
         }
@@ -229,7 +222,7 @@ export default {
       })
     },
     view(path, id, type) {
-      this.$router.push({path,query:{id,type,from:this.comPath}})
+      this.$router.push({path,query:{id,type}})
     },
   },
 }

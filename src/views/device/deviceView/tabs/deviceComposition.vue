@@ -64,7 +64,6 @@ import tableMixins from '@/mixins/tableMixins'
 import tableExpandMixins from '@/mixins/table-expand'
 import {deviceNetType,deviceStatusType,deviceNetTypeList,deviceStatusTypeList,netStatusClass,statusClass} from '@/utils/baseData'
 import {commomColumns} from '@/views/base'
-import {toQueryString} from '@/utils/util'
 export default {
   mixins: [tableMixins,tableExpandMixins],
   props: {
@@ -86,11 +85,6 @@ export default {
     }
   },
   computed: {
-    comPath() {//deviceCompose
-      const {path, query} = this.$route
-      const queryStr = toQueryString({...query,tab: 'deviceCompose'})
-      return queryStr.includes('&') ? `${path}?&${queryStr}` : `${path}?${queryStr}`
-    },
     disabledBtnAdd() {
       return !this.chooseNode.id
     },
@@ -135,7 +129,6 @@ export default {
         path: '/device/addComponsition',
         query: {
           locationId: id,locationNamePath,
-          from: this.comPath,
         }
       })
     },
@@ -243,19 +236,19 @@ export default {
     view(item) {
       this.$router.push({
         path: '/device/viewComponsition',
-        query: {id: item.id,from: this.comPath}
+        query: {id: item.id}
       })
     },
     viewDevice(item) {
       this.$router.push({
         path: '/device/viewDevice',
-        query: {type: 'device',id: item.deviceId,from: this.comPath}
+        query: {type: 'device',id: item.deviceId}
       })
     },
     viewModel(item) {
       this.$router.push({
         path: '/model/viewModel',
-        query: {id: item.modelId,from: this.comPath}
+        query: {id: item.modelId}
       })
     }
   },

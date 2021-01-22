@@ -158,23 +158,25 @@ export default {
         this.innerLoading = false
       })
     },
-    setRealData({paramPrecision}, {paramValue, ts}) {
+    setRealData(dataItem, item) {
+      const {paramValue, ts} = dataItem
+      const {paramPrecision} = item
       this.$set(item, 'paramValue', paramPrecision ? formatnumber(paramValue) : paramValue)
       this.$set(item, 'reportTime', this.$formatDate(ts))
     },
     //获取最后一笔数据
     getLastData(data = []) {
-      const params = {
+      const params = [{
         tenantMark: this.tenantMark,
         deviceModelMark: this.modelMark,
         deviceMark: this.deviceMark,
         deviceParams: data.map( item => item.paramMark)
-      }
+      }]
       this.$API.getLastData(params).then(res => {
-        const reData = res.data.deviceParams
+        const reData = res.data[0].deviceParams
         data.forEach( item => {
           const findItem = reData.find( el => el.paramMark === item.paramMark)
-          findItem && setRealData(findItem, item)
+          findItem && this.setRealData(findItem, item)
         })
       })
     },

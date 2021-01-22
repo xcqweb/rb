@@ -98,10 +98,6 @@ export default {
     locationNamePath() {
       return this.$route.query.locationNamePath
     },
-    comFrom() {
-      const {from} = this.$route.query
-      return from
-    },
     rules() {
       return {
         name: [
@@ -151,11 +147,7 @@ export default {
       this.back()
     },
     back() {
-      if (this.comFrom) {
-        this.$router.push(this.comFrom)
-      }else{
-        this.$router.go(-1)
-      }
+      this.$router.go(-1)
     }
   },
 }

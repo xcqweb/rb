@@ -81,10 +81,6 @@ export default {
       const {type} = this.$route.query
       return type
     },
-    comFrom() {
-      const {from} = this.$route.query
-      return from
-    },
     comLabel() {
       return this.comType === 'device' ? '设备' : '组合'
     },
@@ -97,11 +93,7 @@ export default {
   },
   methods: {
     back() {
-      if (this.comFrom) {
-        this.$router.push(this.comFrom)
-      }else{
-        this.$router.go(-1)
-      }
+      this.$router.go(-1)
     }
   }
 }

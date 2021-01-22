@@ -14,7 +14,7 @@
       </div>
       <!--右侧菜单-->
       <div class="platform-org-right pl20">
-        <p-tabs v-model="activeKey">
+        <p-tabs v-model="activeKey" @change="changeTab">
           <p-tab-pane key="deviceList" tab="设备列表">
             <Device-list :chooseNode='chooseNode' :activeKey='activeKey' />
           </p-tab-pane>
@@ -41,8 +41,11 @@ export default {
       activeKey: 'deviceList'
     }
   },
-  deactivated() {
+  beforeDestroy() {
     this.destroyWatchIntance();
+  },
+  mounted() {
+    this.setTab()
     // 左侧菜单收起时如果拖动宽度大于800 则重置为最大800
     this.watchInstance = this.$watch('this.$store.state.common.sliderBarWidth ', (val) => {
       if (val && this.comWidth > 800) {
@@ -51,10 +54,17 @@ export default {
     });
   },
   activated() {
-    const tab = this.$route.query.tab
-    tab && (this.activeKey = tab)
+    this.setTab()
   },
   methods: {
+    changeTab(tab) {
+      sessionStorage.setItem('device_view_tab',tab)
+    },
+    setTab() {
+      const tab = sessionStorage.device_view_tab
+      tab && (this.activeKey = tab)
+      sessionStorage.setItem('device_view_tab',this.activeKey)
+    },
     viewUserDetail(item) {
       const that = this;
       return function() {
