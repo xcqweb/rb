@@ -24,7 +24,6 @@ if (process.env.NODE_ENV === 'development') {
   Vue.config.devtools = true
 }
 Vue.use(SvgIcon)
-console.log(Poros)
 Vue.use(Poros, {
   system,
   store

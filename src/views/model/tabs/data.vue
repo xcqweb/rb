@@ -179,7 +179,6 @@ export default {
       })
     },
     getTableData({searchKey = this.selectList[0].key,keyword} = {}){
-      console.log(this.tenantMark)
       const param = {
         modelId: this.modelId,
         searchKey,
@@ -247,7 +246,6 @@ export default {
           this.options.modelParamId = pItem.id
           this.options.paramId = pItem.id
           this.options.paramMark = pItem.paramMark
-          console.log(analysisFormula(item.formulaView))
         }
       }else{
         this.title = '添加监控'
@@ -290,7 +288,6 @@ export default {
                 that.expandedRowKeys = []
               }
               that.$message.success('删除成功');
-              console.log(that.tableData)
             }
           }else{
             if (type === 'param') {

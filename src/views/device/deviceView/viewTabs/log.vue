@@ -104,7 +104,6 @@ export default {
       this.getTableData()
     },
     getTableData(){
-      console.log(this.cacheFilter)
       if (!this.tenantMark || !this.deviceMark || !this.modelMark) {
         console.error('标识不存在！')
         return

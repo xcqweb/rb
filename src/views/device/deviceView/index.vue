@@ -51,8 +51,8 @@ export default {
     });
   },
   activated() {
-    const from = this.$route.query.from
-    from && (this.activeKey = from)
+    const tab = this.$route.query.tab
+    tab && (this.activeKey = tab)
   },
   methods: {
     viewUserDetail(item) {

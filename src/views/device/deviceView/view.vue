@@ -1,5 +1,5 @@
 <template>
-  <page :content='deviceName' @back='$router.go(-1)'>
+  <page :content='deviceName' @back='back'>
     <p-tabs v-model="activeKey">
       <p-tab-pane key="view" tab="概览">
         <Overview
@@ -81,6 +81,10 @@ export default {
       const {type} = this.$route.query
       return type
     },
+    comFrom() {
+      const {from} = this.$route.query
+      return from
+    },
     comLabel() {
       return this.comType === 'device' ? '设备' : '组合'
     },
@@ -91,5 +95,14 @@ export default {
       return this.$route.query.id
     }
   },
+  methods: {
+    back() {
+      if (this.comFrom) {
+        this.$router.push(this.comFrom)
+      }else{
+        this.$router.go(-1)
+      }
+    }
+  }
 }
 </script>

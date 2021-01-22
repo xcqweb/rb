@@ -98,6 +98,10 @@ export default {
     locationNamePath() {
       return this.$route.query.locationNamePath
     },
+    comFrom() {
+      const {from} = this.$route.query
+      return from
+    },
     rules() {
       return {
         name: [
@@ -120,7 +124,6 @@ export default {
         if(valid && !this.error) {
           let fun = this.isDevice ? this.$API.addDevice : this.$API.addComposition
           const {name,modelId,remark} = this.model
-          console.log(this.$refs.componentRef.comList)
           let params = this.isDevice ? {
             deviceName: name,
             modelId: modelId.key,
@@ -148,10 +151,11 @@ export default {
       this.back()
     },
     back() {
-      this.$router.push({
-        path: '/device/deviceView',
-        query: {from: this.$route.query.from}
-      })
+      if (this.comFrom) {
+        this.$router.push(this.comFrom)
+      }else{
+        this.$router.go(-1)
+      }
     }
   },
 }

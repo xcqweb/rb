@@ -1,64 +1,63 @@
 <template>
-  <div class="cube-recycle-list" :style="{maxHeight: `${maxHeight}px`}">
-    <div class="cube-recycle-list-main">
-      <div class="cube-recycle-list-items" :style="{height: heights + 'px'}">
+  <div class="gt-recycle-list" :style="{maxHeight: `${maxHeight}px`}">
+    <div class="gt-recycle-list-main">
+      <div class="gt-recycle-list-items" :style="{height: heights + 'px'}">
         <div
           v-for="item in visibleItems"
-          class="cube-recycle-list-item"
+          class="gt-recycle-list-item"
           :style="{transform: 'translate(0,' + item.top + 'px)'}"
         >
           <div
             v-if="infinite"
-            :class="{'cube-recycle-list-transition': infinite}"
+            :class="{'gt-recycle-list-transition': infinite}"
             :style="{opacity: +!item.loaded}"
           >
             <slot name="tombstone"></slot>
           </div>
           <div
-            :class="{'cube-recycle-list-transition': infinite}"
+            :class="{'gt-recycle-list-transition': infinite}"
             :style="{opacity: item.loaded}"
           >
             <slot name="item" :data="item.data"></slot>
           </div>
         </div>
 
-        <!-- preloads item for get its height, remove it after caculating height-->
-        <div class="cube-recycle-list-pool">
+        <div class="gt-recycle-list-pool">
           <div
-            class="cube-recycle-list-item cube-recycle-list-invisible"
+            class="gt-recycle-list-item gt-recycle-list-invisible"
             v-if="item && !item.isTombstone && !item.height"
             :ref="'preloads'+index"
             v-for="(item, index) in items"
           >
             <slot name="item" :data="item.data"></slot>
           </div>
-          <div ref="tomb" class="cube-recycle-list-item cube-recycle-list-invisible">
+          <div ref="tomb" class="gt-recycle-list-item gt-recycle-list-invisible">
             <slot name="tombstone"></slot>
           </div>
         </div>
       </div>
       <div
         v-if="!infinite && !noMore"
-        class="cube-recycle-list-loading"
+        class="gt-recycle-list-loading"
         :style="{visibility: loading ? 'visible' : 'hidden'}"
       >
         <slot name="spinner">
-          <div class="cube-recycle-list-loading-content">
-            <p-spin class="cube-recycle-list-spinner" />
+          <div class="gt-recycle-list-loading-content">
+            <p-spin class="gt-recycle-list-spinner" />
           </div>
         </slot>
       </div>
 
-      <div v-show="noMore && showNoMore" class="cube-recycle-list-noMore">
+      <div v-show="noMore && showNoMore" class="gt-recycle-list-noMore">
         <slot name="noMore" />
       </div>
     </div>
-    <div class="cube-recycle-list-fake"></div>
+    <div class="gt-recycle-list-fake"></div>
   </div>
 </template>
 
 <script>
-  const warn = function (msg, componentName) {
+const warn = function (msg, componentName) {
   if (process.env.NODE_ENV !== 'production') {
     const component = componentName ? `<${componentName}> ` : ''
     console.error(`[warn]: ${component}${msg}`)
@@ -137,7 +136,6 @@ const isUndef = function(o) {
     },
     methods: {
       checkPromiseCompatibility() {
-        /* istanbul ignore if */
         if (isUndef(window.Promise)) {
           warn(PROMISE_ERROR)
         }
@@ -146,7 +144,6 @@ const isUndef = function(o) {
         if (this.infinite) {
           const items = this.items
           const start = items.length
-          // increase capacity of items to display tombstone
           items.length += this.size
           const end = items.length
           this.loadItems(start, end)
@@ -162,7 +159,6 @@ const isUndef = function(o) {
         this.promiseStack.push(promiseFetch)
         promiseFetch.then((res) => {
           this.loadings.pop()
-          /* istanbul ignore if */
           if (!res) {
             this.stopScroll(index)
           } else {
@@ -209,17 +205,14 @@ const isUndef = function(o) {
         let item
         for (let i = start; i < end; i++) {
           item = items[i]
-          /* istanbul ignore if */
           if (item && item.loaded) {
             continue
           }
           this.setItem(i, this.list[i])
-          // get each item's height in nextTick
           promiseTasks.push(this.$nextTick().then(() => {
             this.updateItemHeight(i)
           }))
         }
-        // update items top and full list height
         window.Promise.all(promiseTasks).then(() => {
           this.updateItemTop()
           this.updateStartIndex()
@@ -235,7 +228,6 @@ const isUndef = function(o) {
         })
       },
       updateItemHeight(index) {
-        // update item height
         let cur = this.items[index]
         let dom = this.$refs['preloads' + index]
         if (dom && dom[0]) {
@@ -249,12 +241,9 @@ const isUndef = function(o) {
         const items = this.items
         let pre
         let current
-        // loop all items to update item top and list height
         for (let i = 0; i < items.length; i++) {
           pre = items[i - 1]
           current = items[i]
-          // it is empty in array
-          /* istanbul ignore if */
           if (!items[i]) {
             heights += 0
           } else {
@@ -265,7 +254,6 @@ const isUndef = function(o) {
         this.heights = heights
       },
       updateStartIndex() {
-        // update visible items start index
         let top = this.$el.scrollTop
         let item
         const items = this.items
@@ -315,7 +303,6 @@ const isUndef = function(o) {
         this.load()
       },
       _onScroll() {
-        // trigger load
         if (!this.noMore && this.$el.scrollTop + this.$el.offsetHeight > this.heights - this.offset) {
           this.load()
         }
@@ -333,7 +320,7 @@ const isUndef = function(o) {
 </script>
 
 <style lang="less" scoped>
-  .cube-recycle-list{
+  .gt-recycle-list{
     position: relative;
     height: 100%;
     overflow-x: hidden;
@@ -341,26 +328,26 @@ const isUndef = function(o) {
     -webkit-overflow-scrolling: touch;
   }
 
-  .cube-recycle-list-main{
+  .gt-recycle-list-main{
     min-height: 100%;
   }
     
-  .cube-recycle-list-fake{
+  .gt-recycle-list-fake{
     height: 1px;
   }
 
-  .cube-recycle-list-invisible{
+  .gt-recycle-list-invisible{
     top: -1000px;
     visibility: hidden;
   }
 
-  .cube-recycle-list-item{
+  .gt-recycle-list-item{
     width: 100%;
     position: absolute;
     box-sizing: border-box;
   }
     
-  .cube-recycle-list-transition{
+  .gt-recycle-list-transition{
     position: absolute;
     opacity: 0;
     transition-property: opacity;
@@ -368,17 +355,17 @@ const isUndef = function(o) {
 
   }
     
-  .cube-recycle-list-loading{
+  .gt-recycle-list-loading{
     overflow: hidden;
   }
     
-  .cube-recycle-list-loading-content{
+  .gt-recycle-list-loading-content{
     text-align: center;
   }
-  .cube-recycle-list-noMore{
+  .gt-recycle-list-noMore{
     overflow: hidden;
   }
-  .cube-recycle-list-spinner{
+  .gt-recycle-list-spinner{
     margin: 10px auto;
     display: flex;
     justify-content: center;

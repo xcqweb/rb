@@ -289,3 +289,23 @@ export const debounce = function(fn, delay,immediate = true) {
     }, delay)
   }
 }
+const cleanArray = (actual) => {
+  const newArray = [];
+  for (const i of actual) {
+    if (i) {
+      newArray.push(i);
+    }
+  }
+  return newArray;
+};
+// 将一个对象转成QueryString
+export const toQueryString = (obj) => {
+  if (!obj) { return ''; }
+  return cleanArray(
+    Object.keys(obj).filter( el => {
+      return (!isNullOrEmpty(obj[el]) && !Array.isArray(obj[el])) || (Array.isArray(obj[el]) && obj[el].length);
+    }).map(key => {
+      return encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]);
+    }),
+  ).join('&');
+};

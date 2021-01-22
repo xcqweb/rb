@@ -214,10 +214,8 @@ export default {
       }
     },
     changeCommandModel(setSelectedKeys, selectedKeys, confirm, clearFilters) {
-      console.log(selectedKeys)
       if (!selectedKeys) {
         clearFilters()
-        // this.belongModel = {}
       }
       setSelectedKeys(this.belongModel && this.belongModel.key)
       confirm()

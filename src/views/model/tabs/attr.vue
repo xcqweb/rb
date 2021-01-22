@@ -88,7 +88,6 @@ export default {
           customRender: (data) => {
             const temp = isNaN(data) ? data.split('@@@') : data
             const isArray = Array.isArray(temp)
-            console.log(temp)
             return isArray ? `${attrTypeList[temp[0]]}/单位：${temp[1] || '-'}` : attrTypeList[temp]
           }
         },

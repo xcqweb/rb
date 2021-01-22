@@ -42,11 +42,19 @@ export default {
     },
     modelId() {
       return this.$route.query.id
-    }
+    },
+    comFrom() {
+      const {from} = this.$route.query
+      return from
+    },
   },
   methods: {
     back() {
-      this.$router.go(-1)
+      if (this.comFrom) {
+        this.$router.push(this.comFrom)
+      }else{
+        this.$router.go(-1)
+      }
     }
   }
 }
