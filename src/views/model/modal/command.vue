@@ -156,7 +156,7 @@ export default {
   },
   methods: {
     getCommandTemplate() {
-      this.$API.getModelCommandTemplateSelect().then( res => {
+      this.$API.getModelCommandTemplateSelect({}).then( res => {
         const reData = res.data
         const key = reData[0] && reData[0].id
         const label = reData[0] && reData[0].commandName

@@ -24,7 +24,7 @@
       :data-source="tableData"
       :loading='loading'
       class="platform-org-table"
-      :row-key="id"
+      row-key="id"
     >
       <span slot="deviceName" slot-scope="item" class="viewDetail" @click="view('/device/viewDevice',item.id, 'device',path)">{{item.deviceName}}</span>
       <span slot="modelName" slot-scope="item" class="viewDetail" @click="view('/model/viewModel',item.modelId)">{{item.modelName}}</span>

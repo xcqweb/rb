@@ -28,7 +28,7 @@
             :data-source="record.innerData"
             :pagination="false"
             :loading='innerLoading'
-            row-key="id"
+            row-key="alarmId"
             style="margin:10px 0;"
             class="innerTable"
           >

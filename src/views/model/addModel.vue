@@ -123,10 +123,8 @@ export default {
       return;
     },
     submit() {
-      console.log(this.model)
       this.form.validateFields((err,values) => {
         if(!err) {
-          console.log(err,values)
           const params = {modelAddParam: {ruleUnit: this.ruleUnit,...values},...this.model}
           this.loading = true
           this.$API.addModel(params).then( res => {

@@ -8,7 +8,7 @@
       <p-button class="reset" @click="reset" icon="reload" />
     </div>
     <p-table
-        rowKey="id"
+        rowKey="ts"
         @change="tableChange"
         :loading="loading"
         :pagination="pagination"

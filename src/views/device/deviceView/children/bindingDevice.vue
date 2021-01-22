@@ -5,7 +5,7 @@
     </div>
     <div class="tableCon">
       <p-table
-        rowKey="id"
+        rowKey="deviceId"
         @change="tableChange"
         :loading="loading"
         :pagination="false"

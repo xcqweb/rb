@@ -26,10 +26,6 @@ export default{
     return instance.get(`${baseUrl}/ruban-device/modelCommand/${params.id}`);
   },
   // 指令模板下拉项
-  getModelCommandById: () => {
-    return instance.get(`${baseUrl}/ruban-command-center/commandTemplate/select`);
-  },
-  // 指令模板下拉项
   getModelCommandTemplateSelect: ({ids}) => {
     return instance.get(`${baseUrl}/ruban-command-center/commandTemplate/select`,{params: {ids}});
   },
