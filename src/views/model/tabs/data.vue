@@ -70,6 +70,7 @@ function formualTransfrom({limit, firstVal,secondVal}) {
   const isBetween = limit === '<>' || limit === '><'
   return formualMap[limit] + (isBetween ? `${firstVal} ~ ${secondVal}` : firstVal)
 }
+let lastLoading = false
 export default {
   mixins: [modelMixins],
   components: {DataModal,Monitor,BtnTabs},
@@ -107,8 +108,18 @@ export default {
       return this.isDevice ? [
         {title: '参数标识',dataIndex: 'paramMark',ellipsis: true},
         {title: '参数名称',dataIndex: 'paramName',ellipsis: true},
-        {title: '最新上报数据',dataIndex: 'paramValue',ellipsis: true},
-        {title: '最近上报时间',dataIndex: 'reportTime',ellipsis: true},
+        {title: '最新上报数据',dataIndex: 'paramValue',ellipsis: true,
+        customRender: data => {
+          return lastLoading ? <p-spin>
+                  <p-icon slot="indicator" type="loading" style="font-size: 24px" spin />
+                </p-spin> : data
+        }},
+        {title: '最近上报时间',dataIndex: 'reportTime',ellipsis: true,
+        customRender: data => {
+          return lastLoading ? <p-spin>
+                  <p-icon slot="indicator" type="loading" style="font-size: 24px" spin />
+                </p-spin> : data
+        }},
       ] :[
         {title: '参数标识',dataIndex: 'paramMark',ellipsis: true},
         {title: '参数名称',dataIndex: 'paramName',ellipsis: true},
@@ -172,12 +183,16 @@ export default {
         deviceMark: this.deviceMark,
         deviceParams: data.map( item => item.paramMark)
       }]
+      lastLoading = true
       this.$API.getLastData(params).then(res => {
         const reData = res.data[0].deviceParams
         data.forEach( item => {
           const findItem = reData.find( el => el.paramMark === item.paramMark)
           findItem && this.setRealData(findItem, item)
         })
+        lastLoading = false
+      }).catch( () => {
+        lastLoading = false
       })
     },
     getTableData({searchKey = this.selectList[0].key,keyword} = {}){

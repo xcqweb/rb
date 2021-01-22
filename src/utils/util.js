@@ -309,3 +309,8 @@ export const toQueryString = (obj) => {
     }),
   ).join('&');
 };
+
+// 将一个数组转成QueryString
+export function dealArrayToString(data, key) {
+  return data.map( el => encodeURIComponent(key) + '=' + encodeURIComponent(el)).join('&')
+}

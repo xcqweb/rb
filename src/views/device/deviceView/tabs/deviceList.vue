@@ -8,6 +8,7 @@
         :api='$API.getModelList'
         v-model="selectModel"
         :dataKey="{value: 'id', label: 'modelName'}"
+        :extraData="{orderType: 1}"
         showAll
         @change="changeSelect"
         />

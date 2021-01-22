@@ -12,6 +12,7 @@
     <Infinity-select
       style="width:160px"
       :api='$API.getModelList'
+      :extraData="{orderType: 1}"
       v-model="belongModel"
       showAll
       :dataKey="{value: 'id', label: 'modelName'}"

@@ -24,6 +24,7 @@
 
 <script>
 import {debounce} from 'lodash'
+import {dealArrayToString} from '@/utils/util'
 export default {
   name: 'InfinitySelect',
   props: {
@@ -43,6 +44,12 @@ export default {
       type: String,
       default: '全部模型'
     }, //全部文字 例如 全部模型 全部设备
+    extraData: {
+      type: Object,
+      default: function() {
+        return {}
+      }
+    }
   },
   data() {
     return {
@@ -76,7 +83,9 @@ export default {
           limit: this.size,
           pageNo: this.pageIndex,
           keyword: this.keyword,
-          searchKey: 'modelName'
+          searchKey: 'modelName',
+          ids: Array.isArray(this.extraData.templateIds) ? this.extraData.templateIds.join(',') : undefined,
+          orderByType: this.extraData.orderType ? this.extraData.orderType : undefined
         }
         //判断是否加载完成
         if (this.$refs.select.open && this.pageTotal > 0 && this.pageTotal < (this.pageIndex - 1) * this.size) {

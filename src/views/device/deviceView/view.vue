@@ -22,10 +22,10 @@
       </p-tab-pane>
       <p-tab-pane key="command" tab="指令">
         <!-- 设备指令 -->
-        <Command search isDevice :deviceId='comDeviceId' :deviceName='deviceName' :modelId='modelId' v-if="isDevice" />
+        <Command search isDevice filter :deviceId='comDeviceId' :deviceName='deviceName' :modelId='modelId' v-if="isDevice" />
         <!-- 组合指令 -->
         <Collapse-list :deviceList='deviceList' v-else>
-          <Command slot-scope='{item}' search componsition isDevice :modelId='item.modelId' :deviceName='item.deviceName' />
+          <Command slot-scope='{item}' search filter componsition isDevice :modelId='item.modelId' :deviceName='item.deviceName' />
         </Collapse-list>
         <!-- 发送记录 -->
         <Send-record />

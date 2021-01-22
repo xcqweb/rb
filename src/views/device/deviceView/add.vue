@@ -23,6 +23,7 @@
           style="width:500px"
           :api='$API.getModelList'
           v-model="model.modelId"
+          :extraData="{orderType: 1}"
           :dataKey="{value: 'id', label: 'modelName'}"
         />
       </p-form-model-item>

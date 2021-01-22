@@ -8,7 +8,7 @@
       <p-collapse-panel v-for="(item,index) in protocolList" :key="index" :header="item.title">
         <div class="flex">
           <Label width='100' label='服务地址'>{{item.address}}<Copy :value='item.address' /></Label>
-          <Label width='80' label='端口号'>{{item.port}}<Copy :value='item.port' /></Label>
+          <Label width='80' label='端口号' v-if="item.port" >{{item.port}}<Copy :value='item.port'/></Label>
         </div>
         <p-divider />
         <Label width='100' label='数据上报Topic'>{{item.dataUploadTopic}}<Copy :value='item.dataUploadTopic' /></Label>

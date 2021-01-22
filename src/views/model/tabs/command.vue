@@ -24,6 +24,7 @@
           slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters }"
           style="width:160px"
           :api='$API.getModelCommandTemplateSelect'
+          :extraData='{templateIds}'
           v-model="belongModel"
           @change="changeCommandModel(setSelectedKeys, selectedKeys, confirm, clearFilters)"
           :dataKey="{value: 'id', label: 'commandName'}"
@@ -73,6 +74,7 @@ export default {
   },
   data() {
     return {
+      templateIds: [],
       belongModel: {},
       selectList: [
         {name:'指令名称',key: 'commandName'},
@@ -114,11 +116,18 @@ export default {
         this.innerLoading = false
       })
     },
+    // 获取模型指令模板id列表
+    getModelCommandTempIdList() {
+      this.$API.getModelCommandTempIdList({id: this.modelId}).then(res => {
+        this.templateIds = res.data
+      })
+    },
     getTableData({searchKey = this.selectList[0].key,keyword} = {}){
       if (!this.modelId) {
         console.error('模型id不存在！')
         return
       }
+      this.getModelCommandTempIdList();
       const param = {
         modelId: this.modelId,
         searchKey,

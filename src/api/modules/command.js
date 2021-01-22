@@ -30,8 +30,8 @@ export default{
     return instance.get(`${baseUrl}/ruban-command-center/commandTemplate/select`);
   },
   // 指令模板下拉项
-  getModelCommandTemplateSelect: () => {
-    return instance.get(`${baseUrl}/ruban-command-center/commandTemplate/select`);
+  getModelCommandTemplateSelect: ({ids}) => {
+    return instance.get(`${baseUrl}/ruban-command-center/commandTemplate/select`,{params: {ids}});
   },
   // 获取指令模板对应的属性
   getModelCommandAttrList: (params) => {
@@ -47,4 +47,10 @@ export default{
   getCommandSendRecordList: (params) => {
     return instance.get(`${baseUrl}/ruban-command-center/commandRecord/list`, {params});
   },
+
+  // 获取模型指令模板id列表
+  getModelCommandTempIdList: (params) => {
+    return instance.get(`${baseUrl}/ruban-device/modelCommand/commandTemplateList/${params.id}`);
+  },
 }
+

@@ -29,13 +29,13 @@ const err = (error) => {
 instance.interceptors.request.use(config => {
   //get请求统一加上时间戳 解决ie缓存问题
   if (config.method === 'get') {
-      if (config.params) {
-          if (!config.params.t) {
-              config.params.t = +new Date();
-          }
-      }else{
-          config.params  = { t: +new Date() };
-      }
+    if (config.params) {
+        if (!config.params.t) {
+          config.params.t = +new Date();
+        }
+    }else{
+      config.params  = { t: +new Date() };
+    }
   }
   const token = getToken()
   if (token) {
