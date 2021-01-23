@@ -8,7 +8,7 @@
       <p-button class="reset" @click="reset" icon="reload" />
     </div>
     <p-table
-        rowKey="id"
+        rowKey="alarmId"
         @change="tableChange"
         @expand="expand"
         :loading="loading"
@@ -24,7 +24,7 @@
             v-if="isShowExpand"
             slot="expandedRowRender"
             slot-scope="record"
-            :columns="paramList"
+            :columns="innerColumns"
             :data-source="record.innerData"
             :pagination="false"
             :loading='innerLoading'
@@ -64,8 +64,8 @@ export default {
       filtersList2: alarmSource,
       innerColumns: [
         {dataIndex: 'paramName',title: '参数',ellipsis: true},
-        {dataIndex: 'formula',title: '监控',ellipsis: true},
-        {dataIndex: 'paramValue',title: '数值',ellipsis: true},
+        {dataIndex: 'formulaView',title: '监控',ellipsis: true},
+        {dataIndex: 'val',title: '数值',ellipsis: true},
       ],
     }
   },
@@ -98,7 +98,6 @@ export default {
           filteredValue: filteredInfo1.alarmLevel || [],
           filters: $arrayItemToString(filtersList1),
           width:120,
-          customRender: data => alarmLevelList[data]
         },
         {
           title: '报警来源',
@@ -108,7 +107,6 @@ export default {
           filteredValue: filteredInfo1.alarmType || [],
           filters: $arrayItemToString(filtersList2),
           width:120,
-          customRender: data => alarmSourceList[data]
         },
         {title: '报警信息',dataIndex: 'alarmInfo',ellipsis: true},
         {title: '报警时间',dataIndex: 'startTs',ellipsis: true,customRender: date => $formatDate(date)},
@@ -122,9 +120,12 @@ export default {
   },
   mounted() {
     this.getTableData()
-    this.getAlarmCount()
+    // this.getAlarmCount()
   },
   methods: {
+    parse(data) {
+      return JSON.parse(data)
+    },
     changeTab({symbol}) {
       this.currentTab = symbol
       this.getTableData()
@@ -146,7 +147,7 @@ export default {
         alarmType: this.filteredInfo1.alarmType && this.filteredInfo1.alarmType[0],
         ...this.signCommon
       }
-      const param = this.isCurren ? {
+      const param = this.isCurrent ? {
         ...comParams,
         alarmStatus: 0,
       } : {
@@ -158,7 +159,11 @@ export default {
       this.loading = true;
       this.$API.getDeviceParamAlarmList(param).then( res =>{
         if ( res.code === 0 ){
-          this.tableData = res.data.records || [];
+          this.tableData = (res.data.records || [])
+          this.tableData.forEach( el => {
+            this.$set(el, 'innerData', JSON.parse(el.paramList))
+            console.log(el.innerData)
+          });
           this.pagination.total = res.data.total;
           this.setTotal(this.currentTab, this.pagination.total)
           this.loading = false;

@@ -24,7 +24,7 @@ export default {
       }}><span class="iconfont iconjiantouxiangzuoshangyitiao"></span></a>
     },
     expand(expanded, record) {
-      const id = record.id
+      const id = record.id || record.alarmId
       // if(this.expandedRowKeys.includes(id) && !expanded){
       //   this.expandedRowKeys = this.expandedRowKeys.filter( item => item !== id)
       // } else {
