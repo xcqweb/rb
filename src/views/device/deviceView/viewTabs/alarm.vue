@@ -113,7 +113,7 @@ export default {
       ]
       const smtap =  a => +new Date(a) 
       const arr3 = [
-        {title: '持续时间',ellipsis: true, customRender: ({startTs, endTs}) => formatDuration(smtap(endTs)  - smtap(startTs))},
+        {title: '持续时间',ellipsis: true, customRender: ({startTs, endTs}) => endTs ? formatDuration(smtap(endTs)  - smtap(startTs)) : ''},
       ]
       return isCurrent ? [...arr2,...arr3] : [...arr2,...arr1,...arr3]
     } 
