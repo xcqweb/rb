@@ -71,7 +71,7 @@ export default {
     } 
   },
   activated() {
-    this.$refs.search.onSearch()
+   // this.$refs.search.onSearch()
   },
   methods: {
     getTableData(){
