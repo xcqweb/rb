@@ -71,6 +71,8 @@ function formualTransfrom({limit, firstVal,secondVal}) {
   return formualMap[limit] + (isBetween ? `${firstVal} ~ ${secondVal}` : firstVal)
 }
 let lastLoading = false
+const INTERVALTIME = 3000 //拉去最后一笔数据频率
+let timer = null
 export default {
   mixins: [modelMixins],
   components: {DataModal,Monitor,BtnTabs},
@@ -86,6 +88,21 @@ export default {
       ],
       filtersList: this.filter ? paramType : [],
     };
+  },
+  watch: {
+    activeTabkey(val) {
+      if (val === 'data') {
+        this.setIntervalHanadler()
+      }else{
+        this.clearIntervalHanadler()
+      }
+    }
+  },
+  deactivated() {
+    this.clearIntervalHanadler()
+  },
+  beforeDestroy() {
+    this.clearIntervalHanadler()
   },
   computed: {
     ...mapState({
@@ -141,6 +158,16 @@ export default {
     } 
   },
   methods: {
+    setIntervalHanadler() {
+      this.clearIntervalHanadler()
+      timer = setInterval(() => {
+        !lastLoading && this.getLastData(this.tableData)
+      },INTERVALTIME)
+    },
+    clearIntervalHanadler() {
+      timer && clearInterval(timer)
+      timer = null
+    },
     //展开子列表
     expandhandler(modelParamId, del) {
       if (!modelParamId) {
@@ -177,6 +204,9 @@ export default {
     },
     //获取最后一笔数据
     getLastData(data = []) {
+      if (!data.length) {
+        return
+      }
       const params = [{
         tenantMark: this.tenantMark,
         deviceModelMark: this.modelMark,
@@ -210,9 +240,10 @@ export default {
       fun(param).then( res =>{
         if ( res.code === 0 ){
           this.tableData = res.data.records || [];
-          if (this.isDevice) {
+          if (this.isDevice) {//设备或组合里面才去请求
             //最后一笔数据
             this.getLastData(this.tableData)
+            this.setIntervalHanadler()
           }
           this.tableData.forEach( item => {
             this.$set(item, 'innerData', [])

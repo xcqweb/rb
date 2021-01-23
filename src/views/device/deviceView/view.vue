@@ -14,29 +14,77 @@
       </p-tab-pane>
       <p-tab-pane key="data" tab="数据" :disabled='tabDisabled'>
         <!-- 设备数据 -->
-        <Data search isDevice :deviceId='comDeviceId' :modelMark='modelMark' :deviceMark='deviceMark' v-if="isDevice" />
+        <Data
+          search
+          isDevice
+          :activeTabkey='activeKey'
+          :deviceId='comDeviceId'
+          :modelMark='modelMark'
+          :deviceMark='deviceMark'
+          v-if="isDevice"
+        />
         <!-- 组合数据 -->
         <Collapse-list :deviceList='deviceList' v-else>
-          <Data slot-scope='{item}' search componsition isDevice :deviceId='item.deviceId' :modelMark='item.modelMark' :deviceMark='item.deviceMark' />
+          <Data
+            slot-scope='{item}'
+            search 
+            componsition 
+            isDevice 
+            :activeTabkey='activeKey' 
+            :deviceId='item.deviceId' 
+            :modelMark='item.modelMark' 
+            :deviceMark='item.deviceMark' 
+          />
         </Collapse-list>
       </p-tab-pane>
       <p-tab-pane key="command" tab="指令" :disabled='tabDisabled'>
         <!-- 设备指令 -->
-        <Command search isDevice filter :deviceId='comDeviceId' :deviceName='deviceName' :modelId='modelId' v-if="isDevice" />
+        <Command 
+          search 
+          isDevice 
+          filter 
+          :deviceId='comDeviceId' 
+          :deviceName='deviceName' 
+          :modelId='modelId' 
+          v-if="isDevice" 
+        />
         <!-- 组合指令 -->
         <Collapse-list :deviceList='deviceList' v-else>
-          <Command slot-scope='{item}' search filter componsition isDevice :modelId='item.modelId' :deviceName='item.deviceName' />
+          <Command 
+            slot-scope='{item}' 
+            search 
+            filter 
+            componsition 
+            isDevice 
+            :modelId='item.modelId' 
+            :deviceName='item.deviceName' 
+          />
         </Collapse-list>
         <!-- 发送记录 -->
         <Send-record />
       </p-tab-pane>
       <p-tab-pane key="alarm" tab="报警" v-if="isDevice" :disabled='tabDisabled'>
-        <Alarm :deviceId='comDeviceId' :modelMark='modelMark' :deviceMark='deviceMark' />
+        <Alarm 
+          :deviceId='comDeviceId' 
+          :modelMark='modelMark' 
+          :deviceMark='deviceMark' 
+        />
       </p-tab-pane>
       <p-tab-pane key="log" tab="日志" :disabled='tabDisabled'>
-        <Log :isDevice='isDevice' :deviceId='comDeviceId' :modelMark='modelMark' :deviceMark='deviceMark' v-if="isDevice"/>
+        <Log 
+          :isDevice='isDevice' 
+          :deviceId='comDeviceId' 
+          :modelMark='modelMark' 
+          :deviceMark='deviceMark' 
+          v-if="isDevice"
+        />
         <Collapse-list :deviceList='deviceList' v-else>
-          <Log slot-scope='{item}' :deviceId='item.deviceId' :modelMark='item.modelMark' :deviceMark='item.deviceMark'/>
+          <Log 
+            slot-scope='{item}' 
+            :deviceId='item.deviceId' 
+            :modelMark='item.modelMark' 
+            :deviceMark='item.deviceMark'
+          />
         </Collapse-list>
       </p-tab-pane>
     </p-tabs>

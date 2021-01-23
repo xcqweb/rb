@@ -13,6 +13,7 @@ export default {
     modelId: String, //模型id
     deviceId: String, //设备id
     value: Array, //table数据（新增模型时降数据传递至父组件）
+    activeTabkey: String, //tab key
   },
   data() {
     return {

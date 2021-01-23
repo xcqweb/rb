@@ -30,7 +30,6 @@ Vue.use(Poros, {
   store
 })
 Vue.use(PorosUI)
-
 Vue.mixin({
   data() {
     return{

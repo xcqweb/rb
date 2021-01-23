@@ -12,7 +12,6 @@ const instance = axios.create({
 axios.defaults.baseURL = ''
 const err = (error) => {
   if (error.response) {
-    Vue.prototype.$message.destroy();
     const data = error.response.data
     if (data.status === 403) {
       Vue.prototype.$message.error(data.message);
@@ -57,7 +56,6 @@ instance.interceptors.response.use((response) => {
         logout()
         break;
       default:
-        Vue.prototype.$message.destroy();
         Vue.prototype.$message.error(data.msg || '服务端异常，请联系技术支持')
     }
   }
@@ -67,5 +65,4 @@ instance.interceptors.response.use((response) => {
     return Promise.reject();
   }
 }, err)
-
 export default instance;

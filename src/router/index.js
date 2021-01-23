@@ -10,8 +10,7 @@ import defaultRoutes from '@/router/defaultRoutes'
 // 解决 router.push 相同路由时报错问题
 const originRouterPush = VueRouter.prototype.push
 VueRouter.prototype.push = function () {
-  return originRouterPush.call(this, ...arguments)
-      .catch(() => {})
+  return originRouterPush.call(this, ...arguments).catch(() => {})
 }
 
 const { getToken } = auth

@@ -24,32 +24,36 @@
     </template>
     <!-- 设备概览中使用（带编辑） -->
     <template v-else>
-      <Label v-for="(item,index) in list" :label='item.attributeName' :key="item.id" class="mt10">
-        <Edit
-          v-model="item.attributeText"
-          :ref="item.id"
-          :time="item.attributeType === 1 && $formatDate"
-          normal
-          :error='item.error === item.id'
-          @submit="save(index)"
-          @cancel='cancel'
-        >
-          <!-- 文本 -->
-          <p-input v-model="item.attributeText" @change="validate(item.id)" v-if="item.attributeType === 0"/>
-          <!-- 日期 -->
-          <p-date-picker class="w100" v-model="item.attributeText" v-if="item.attributeType === 1"/>
-          <!-- 枚举 -->
-          <p-select class="w100" v-model="item.attributeText" @focus='focusFun(item)' v-if="item.attributeType === 3">
-            <p-select-option v-for="list in item.listData" :value='list.enumValue' :key='list.enumValue'>{{list.enumValue}}</p-select-option>
-          </p-select>
-          <!-- 数值 -->
-          <div class="flex w100" v-if="item.attributeType === 2">
-            <p-input class="f1 mr6" @change="validate(item.id)" v-model="item.attributeText"/>
-            <span>{{item.unit}}</span>
-          </div>
-        </Edit>
-        <p class="poros-form-explain" v-show="item.error === item.id">{{item.errorInfo}}</p>
-      </Label>
+      <template v-if="list.length">
+        <Label v-for="(item,index) in list" :label='item.attributeName' :key="item.id" class="mt10">
+          <Edit
+            v-model="item.attributeText"
+            :ref="item.id"
+            :time="item.attributeType === 1 && $formatDate"
+            normal
+            :error='item.error === item.id'
+            @submit="save(index)"
+            @cancel='cancel'
+          >
+            <!-- 文本 -->
+            <p-input v-model="item.attributeText" @change="validate(item.id)" v-if="item.attributeType === 0"/>
+            <!-- 日期 -->
+            <p-date-picker class="w100" v-model="item.attributeText" v-if="item.attributeType === 1"/>
+            <!-- 枚举 -->
+            <p-select class="w100" v-model="item.attributeText" @focus='focusFun(item)' v-if="item.attributeType === 3">
+              <p-select-option v-for="list in item.listData" :value='list.enumValue' :key='list.enumValue'>{{list.enumValue}}</p-select-option>
+            </p-select>
+            <!-- 数值 -->
+            <div class="flex w100" v-if="item.attributeType === 2">
+              <p-input class="f1 mr6" @change="validate(item.id)" v-model="item.attributeText"/>
+              <span>{{item.unit}}</span>
+            </div>
+          </Edit>
+          <p class="poros-form-explain" v-show="item.error === item.id">{{item.errorInfo}}</p>
+        </Label>
+      </template>
+      <Gt-no-data borderColor='transparent' emptyText='未找到与关键字相符的结果' v-if='!list.length && !loading' />
+      <p-spin v-if="loading" />
     </template>
   </div>
 </template>
@@ -64,6 +68,11 @@ export default {
     modelId: String,
     deviceId: String,
     error: Boolean, //错误校验
+  },
+  data() {
+    return {
+      loading: false
+    }
   },
   watch: {
     modelId(id) { //新增设备
@@ -84,6 +93,7 @@ export default {
     deviceId: {
       handler(id) { //设备详情 获取属性
         if (id) {
+          this.loading = true
           this.$API.getDeviceAttrList({deviceId: id}).then( res => {
             this.list = res.data.records
             this.list.forEach( item => {
@@ -92,6 +102,9 @@ export default {
               }
             })
             copyData = this.$deepCopy(this.list)
+            this.loading = false
+          }).catch( () => {
+            this.loading = false
           })
         }
       },
@@ -210,8 +223,9 @@ export default {
 
 <style lang="less" scoped>
   .attrInfo{
+    text-align: center;
     flex-wrap: no-wrap;
-    padding-top: 20px;
+    padding-top: 12px;
     .w100{
       width: 100%;
     }

@@ -41,7 +41,7 @@
     <!-- 设备组合 -->
     <template v-else>
       <Binding-device :deviceId='comDeviceId' overview v-model="deviceList" />
-      <page-title class="mt20">属性信息</page-title>
+      <page-title class="mt20 mb20">属性信息</page-title>
       <Collapse-list :deviceList='deviceList'>
         <tempalte slot-scope='{item}'>
           <Attr-info overview componsition :deviceId='item.deviceId' />

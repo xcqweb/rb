@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <div class="login__header">
-      <img class="login__logo" :src="logo">
+      <Svg-icon class="login__logo" type='logo' width='180' height='42'></Svg-icon>
     </div>
     <p-form-model class="login__form" ref="form" :model="form" :rules="rules" @keyup.enter.native="submit">
       <p-form-model-item v-if="errMsg">
@@ -35,7 +35,6 @@ const { setToken } = auth
 export default {
   data() {
     return {
-      logo: system.logo,
       form: {
         username: '',
         password: ''
@@ -85,8 +84,10 @@ export default {
   align-items: center;
 }
 .login__logo {
-  max-height: 50px;
+  // max-height: 50px;
   margin-right: 16px;
+  font-size: 80px;
+  color: #1740DC;
 }
 .login__form {
   width: 368px;
