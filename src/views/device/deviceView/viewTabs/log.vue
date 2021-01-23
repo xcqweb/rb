@@ -72,8 +72,8 @@ export default {
           filters: $arrayItemToString(filtersList1),
           width: 120,
         },
-        {title: '变更前',dataIndex: 'infoBefore',ellipsis: true},
-        {title: '变更后',dataIndex: 'infoAfter',ellipsis: true},
+        {title: '变更前',dataIndex: 'statusBefore',ellipsis: true},
+        {title: '变更后',dataIndex: 'statusAfter',ellipsis: true},
         {title: '变更时间',dataIndex: 'ts',ellipsis: true,customRender: date => $formatDate(date)}
       ]
       const arr2 = [
