@@ -3,7 +3,7 @@
     <Page-title v-if="isDevice">指令列表</Page-title>
     <div class="c_searchArea" :class="{fd:!addBtn}">
       <p-button @click="commandHandler" type="primary" v-if="addBtn">新增指令</p-button>
-      <Search :selectList='selectList' v-model="keyword" @search='onSearch' @reset="reset" v-if="search" />
+      <Search :selectList='selectList' v-model="keyword.keyword" @search='onSearch' @reset="reset" v-if="search" />
     </div>
     <div class="tableCon">
       <p-table
@@ -122,7 +122,8 @@ export default {
         this.templateIds = res.data
       })
     },
-    getTableData({searchKey = this.selectList[0].key,keyword} = {}){
+    getTableData(){
+      const {keyword,searchKey = this.selectList[0].key} = this.keyword.keyword
       if (!this.modelId) {
         console.error('模型id不存在！')
         return

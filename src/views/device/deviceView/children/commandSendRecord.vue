@@ -2,7 +2,7 @@
   <div class="model" title="模型列表">
     <div class="c_searchArea fd">
       <div class="c_right">
-        <Search @search="onSearch" :selectList='selectList' v-model="keyword" @reset="reset"/>
+        <Search @search="onSearch" :selectList='selectList' v-model="keyword.keyword" @reset="reset"/>
       </div>
     </div>
     <div class="tableCon">
@@ -87,7 +87,8 @@ export default {
     this.getTableData()
   },
   methods: {
-    getTableData({searchKey = this.selectList[0].key, keyword} = {}){
+    getTableData(){
+      const {keyword,searchKey = this.selectList[0].key} = this.keyword.keyword
       const isArray = Array.isArray(keyword)
       const param = {
         keyword: isArray ? undefined : keyword,

@@ -32,6 +32,6 @@ export default{
   },
   // 修改设备数据参数告警信息
   editDeviceParamAlarm: (params) => {
-    return instance.put(`${baseUrl}/ruban-device/deviceParamAlarm`, params);
+    return instance.put(`${baseUrl}/ruban-device/deviceParam/alarm`, params);
   },
 }

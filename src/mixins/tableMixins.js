@@ -10,7 +10,7 @@ export default {
       title: '',
       options: {},
       //
-      keyword: '',
+      keyword: {keyword: ''},
       loading: false,
       filteredInfo1: {},
       innerLoading: false,
@@ -27,6 +27,7 @@ export default {
   },
   methods: {
     reset(){
+      this.keyword = {keyword: ''}
       this.filteredInfo1 = {}
       this.expandedRowKeys = []
       this.pagination.pageSize = 10

@@ -2,7 +2,7 @@
   <div>
     <div class="c_searchArea" :class="{fd:!addBtn}">
       <p-button @click="attrHandler" type="primary" v-if="addBtn">新增属性</p-button>
-      <Search @search="onSearch" :selectList='selectList' v-model="keyword" @reset="reset" v-if="search"/>
+      <Search @search="onSearch" :selectList='selectList' v-model="keyword.keyword" @reset="reset" v-if="search"/>
     </div>
     <div class="tableCon">
       <p-table
@@ -140,7 +140,8 @@ export default {
         this.innerLoading = false
       })
     },
-    getTableData({searchKey = this.selectList[0].key,keyword} = {}){
+    getTableData(){
+      const {keyword,searchKey = this.selectList[0].key} = this.keyword.keyword
       const param = {
         modelId: this.modelId,
         searchKey,

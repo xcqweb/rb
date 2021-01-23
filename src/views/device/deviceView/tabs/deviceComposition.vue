@@ -3,7 +3,7 @@
     <div class="pb20 clearfix">
       <p-button type="primary" @click="addDevice" :disabled='disabledBtnAdd'>新增组合</p-button>
       <div class="fr flex">
-        <search v-model.trim="keyword" @search="getTableData" :selectList='selectList' @reset="reset" />
+        <search v-model="keyword.keyword" @search="getTableData" :selectList='selectList' @reset="reset" />
       </div>
     </div>
     <p-table
@@ -148,7 +148,8 @@ export default {
         this.innerLoading = false
       })
     },
-    getTableData({searchKey = this.selectList[0].key, keyword} = {}) {
+    getTableData() {
+      const {keyword,searchKey = this.selectList[0].key} = this.keyword.keyword
       if (!this.chooseNode.id) {
         return
       }

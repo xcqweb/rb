@@ -14,7 +14,7 @@
         />
       </Label>
       <div class="fr flex">
-        <Search v-model.trim="keyword" @search="getTableData" :selectList='selectList' @reset="reset" />
+        <Search v-model="keyword.keyword" @search="getTableData" :selectList='selectList' @reset="reset" />
       </div>
     </div>
     <p-table
@@ -158,7 +158,8 @@ export default {
         }
       })
     },
-    getTableData({searchKey = this.selectList[0].key, keyword} = {}){
+    getTableData(){
+      const {keyword,searchKey = this.selectList[0].key} = this.keyword.keyword
       if (!this.chooseNode.id) {
         return
       }

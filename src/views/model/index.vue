@@ -3,7 +3,7 @@
     <div class="c_searchArea">
       <p-button @click="addModel" type="primary">新增模型</p-button>
       <div class="c_right">
-        <Search @search="onSearch" :selectList='selectList' v-model="keyword" @reset="reset"/>
+        <Search ref='search' @search="onSearch" :selectList='selectList' v-model="keyword.keyword" @reset="reset"/>
       </div>
     </div>
     <div class="tableCon">
@@ -71,10 +71,12 @@ export default {
     } 
   },
   activated() {
-    this.getTableData()
+    this.$refs.search.onSearch()
   },
   methods: {
-    getTableData({searchKey = this.selectList[0].key, keyword} = {}){
+    getTableData(){
+      const {keyword,searchKey = this.selectList[0].key} = this.keyword.keyword
+      console.log(this.keyword)
       const isArray = Array.isArray(keyword)
       const param = {
         keyword: isArray ? undefined : keyword,

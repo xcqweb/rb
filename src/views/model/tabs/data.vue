@@ -2,7 +2,7 @@
   <div class="data">
     <div class="c_searchArea" :class="{'fd':!addBtn}">
       <p-button @click="paramHandler" type="primary" v-if="addBtn">添加参数</p-button>
-      <Search :selectList='selectList' @search='onSearch' v-model="keyword" @reset="reset" v-if="search" />
+      <Search :selectList='selectList' @search='onSearch' v-model="keyword.keyword" @reset="reset" v-if="search" />
     </div>
     <div class="tableCon">
       <p-table
@@ -127,15 +127,21 @@ export default {
         {title: '参数名称',dataIndex: 'paramName',ellipsis: true},
         {title: '最新上报数据',dataIndex: 'paramValue',ellipsis: true,
         customRender: data => {
-          return lastLoading ? <p-spin>
-                  <p-icon slot="indicator" type="loading" style="font-size: 24px" spin />
-                </p-spin> : data
+          return <div class='flex'>
+            {data}
+            {lastLoading && <p-spin class='ml16'>
+              <p-icon slot="indicator" type="loading" style="font-size: 18px" spin />
+            </p-spin>}
+          </div>
         }},
         {title: '最近上报时间',dataIndex: 'reportTime',ellipsis: true,
         customRender: data => {
-          return lastLoading ? <p-spin>
-                  <p-icon slot="indicator" type="loading" style="font-size: 24px" spin />
-                </p-spin> : data
+          return <div class='flex'>
+            {data}
+            {lastLoading && <p-spin class='ml16'>
+              <p-icon slot="indicator" type="loading" style="font-size: 18px" spin />
+            </p-spin>}
+          </div>
         }},
       ] :[
         {title: '参数标识',dataIndex: 'paramMark',ellipsis: true},
@@ -184,8 +190,13 @@ export default {
       this.innerLoading = true
       this.$API[this.isDevice ? 'getDeviceParamMonitorList' : 'getModelParamsAlarmList'](params).then( res => {
         this.tableData.forEach( item => {
-          if (item.id === modelParamId) {
-            this.$set(item, 'innerData',res.data.records)
+          if (item.id === modelParamId || item.modelParamId === modelParamId) {
+            this.$set(item, 'innerData',res.data.records.map( item => {
+              return {
+                ...item,
+                enabled: item.enabled || item.enable
+              }
+            }))
             if (del && !res.data.records.length) { //删除是如果子项为空 收起table
               this.expandedRowKeys = []
             }

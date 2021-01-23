@@ -24,7 +24,7 @@
             v-if="isShowExpand"
             slot="expandedRowRender"
             slot-scope="record"
-            :columns="innerColumns"
+            :columns="paramList"
             :data-source="record.innerData"
             :pagination="false"
             :loading='innerLoading'
@@ -161,8 +161,8 @@ export default {
           this.tableData = res.data.records || [];
           this.pagination.total = res.data.total;
           this.setTotal(this.currentTab, this.pagination.total)
+          this.loading = false;
         }
-        this.loading = false;
       }).catch( e =>{
         this.loading = false;
         console.log(e);

@@ -15,7 +15,7 @@ const empty = undefined
 export default {
   name: 'Search',
   props: {
-    value: [String, Number],
+    value: Object,
     selectList: { //搜索字段列表
       type: Array,
       default: function() {
@@ -46,11 +46,11 @@ export default {
   watch: {
     value(val) {
       if (val) {
-        this.keyword = val
+        this.keyword = val.keyword
       }
     },
     keyword(val) {
-      this.$emit('input', this.keyword)
+      this.$emit('input', {keyword: this.keyword, searchKey: this.selectType})
     }
   },
   created() {
