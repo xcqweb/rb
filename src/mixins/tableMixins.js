@@ -28,6 +28,8 @@ export default {
   methods: {
     reset(){
       this.keyword = {keyword: ''}
+      this.belongModel && (this.belongModel = {value: 'all',label: '全部'})
+      this.clearFilters && this.clearFilters()
       this.filteredInfo1 = {}
       this.expandedRowKeys = []
       this.pagination.pageSize = 10

@@ -11,7 +11,7 @@
   <Cycle-list class="list" ref="cycle-list" :offset='50' :size='size' :on-fetch="onFetch" slot="dropdownRender" v-if="flag">
     <template slot="item" slot-scope="{ data }">
       <slot :item='data'>
-      <div class="list_item" :class="{active: data.value === selectModel.key}" :id="data.value" @click="handleClick(data)" style="height:36px">
+      <div class="list_item" :class="{active: data.value === selectModel.value}" :id="data.value" @click="handleClick(data)" style="height:36px">
         {{data.label}}
       </div>
       </slot>
@@ -79,12 +79,17 @@ export default {
   methods: {
     onFetch() {
       return new Promise((resolve) => {
+        const idsExsit = Array.isArray(this.extraData.templateIds)
+        if (idsExsit && !this.extraData.templateIds.length) {
+          resolve(this.showAll && this.pageIndex === 1 ? [{value: 'all', label: this.allLabel || '全部'}] : [])
+          return
+        }
         const params = {
           limit: this.size,
           pageNo: this.pageIndex,
           keyword: this.keyword,
           searchKey: 'modelName',
-          ids: Array.isArray(this.extraData.templateIds) ? this.extraData.templateIds.join(',') : undefined,
+          ids: idsExsit ? this.extraData.templateIds.join(',') : undefined,
           orderByType: this.extraData.orderType ? this.extraData.orderType : undefined
         }
         //判断是否加载完成
@@ -92,7 +97,6 @@ export default {
           return
         }
         this.api(params).then( res => {
-          this.pageIndex++
           this.pageTotal = res.data.total
           const reData = this.dataKey ? (res.data.records || res.data).map( el => {
             return  {
@@ -100,13 +104,14 @@ export default {
               label: el[this.dataKey.label],
             }
           }) : (res.data.records || res.data)
-          resolve(this.showAll ? [{value: 'all', label: this.allLabel || '全部'},...reData] : reData)
+          resolve(this.showAll && this.pageIndex === 1 ? [{value: 'all', label: this.allLabel || '全部'},...reData] : reData)
+          this.pageIndex++
         })
       })
     },
     handleClick(item) {
       this.selectModel = {
-        key: item.value,
+        value: item.value,
         label: item.label,
       }
       this.$emit('input', this.selectModel || {})

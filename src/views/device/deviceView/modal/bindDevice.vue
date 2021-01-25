@@ -54,7 +54,7 @@ export default {
   data() {
     return {
       loadingTable: false,
-      belongModel: {label: '全部模型', key: 'all'},
+      belongModel: {label: '全部模型', value: 'all'},
       selectedRowKeys: [],
       deviceNetTypeList,
       deviceStatusTypeList,
@@ -116,7 +116,7 @@ export default {
         keyword: this.keyword,
         limit: this.pagination.pageSize,
         pageNo: this.pagination.current,
-        modelId: this.belongModel.key === 'all' ? '' : this.belongModel.key
+        modelId: this.belongModel.value === 'all' ? '' : this.belongModel.value
       }
       this.loadingTable = true;
       this.$API.getDeviceList(param).then( res =>{

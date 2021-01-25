@@ -77,6 +77,7 @@ export default {
   },
   data() {
     return {
+      clearFilters: null,
       templateIds: [],
       belongModel: {value: 'all',label: '全部'},
       selectList: [
@@ -231,6 +232,7 @@ export default {
       }
     },
     changeCommandModel(setSelectedKeys, selectedKeys, confirm, clearFilters) {
+      this.clearFilters = clearFilters
       if (!selectedKeys) {
         clearFilters()
       }

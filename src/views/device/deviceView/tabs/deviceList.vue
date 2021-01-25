@@ -68,7 +68,7 @@ export default {
       searchName: '',
       pageLoad: false,
       ///////
-      selectModel: {label: '全部模型', key: 'all'},
+      selectModel: {label: '全部模型', value: 'all'},
       filtersList1: deviceNetType,
       filtersList2: deviceStatusType,
       data: [],
@@ -140,7 +140,7 @@ export default {
       this.filteredInfo1 = {}
       this.pagination.pageSize = 10
       this.pagination.current = 1
-      this.selectModel = {label: '全部模型', key: 'all'};
+      this.selectModel = {label: '全部模型', value: 'all'};
       this.getTableData();
     },
     changeSelect(data) {
@@ -171,7 +171,7 @@ export default {
         pageNo: this.pagination.current,
         startTime: isArray ? this.$UTC(keyword[0]) : undefined,
         endTime: isArray ? this.$UTC(keyword[1]) : undefined,
-        modelId: this.selectModel.key === 'all' ? undefined : this.selectModel.key,
+        modelId: this.selectModel.value === 'all' ? undefined : this.selectModel.value,
         locationId: this.chooseNode.id,
         netStatus: this.filteredInfo1.netStatus && this.filteredInfo1.netStatus[0],
         status: this.filteredInfo1.status && this.filteredInfo1.status[0]

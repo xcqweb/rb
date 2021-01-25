@@ -4,7 +4,7 @@
       <p-select-option v-for="(item, index) in selectList" :value='item.key' :key='index'>{{item.name}}</p-select-option>
     </p-select>
     <p-range-picker v-if="extra" style="width: 160px;margin-right: 10px;" v-model="keyword"  @change="onSearch"/>
-    <p-input-search v-if="!extra"  allow-clear v-model="keyword" :placeholder="`请输入${comLabel}`" style="width: 160px;margin-right: 10px;" @search="onSearch" />
+    <p-input-search v-if="!extra"  allow-clear v-model.trim="keyword" :placeholder="`请输入${comLabel}`" style="width: 160px;margin-right: 10px;" @search="onSearch" />
     <p-button class="reset" v-debounce="reset" icon="reload" />
   </div>
 </template>
@@ -66,7 +66,7 @@ export default {
     reset(flag) {
       this.$emit('reset')
       this.keyword = empty
-      this.$emit('input', empty)
+      this.$emit('input', {keyeord: empty})
       !flag && (this.selectType = this.selectList[0] && this.selectList[0].key)
     },
     onSearch: debounce(function () {
