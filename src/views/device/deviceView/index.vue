@@ -61,7 +61,7 @@ export default {
       sessionStorage.setItem('device_list_view_tab',tab)
     },
     setTab() {
-      const tab = sessionStorage.device_view_tab
+      const tab = sessionStorage.device_list_view_tab
       tab ? (this.activeKey = tab) : (this.activeKey = 'deviceList')
       sessionStorage.setItem('device_list_view_tab',this.activeKey)
     },
