@@ -15,11 +15,11 @@ export default {
         return null
       }
       if (props.expanded) {
-        return <a class='expand-icon' style={{marginRight:8}} onClick={() => {
+        return <a class='expand-icon' style="margin-right:8px" onClick={() => {
           props.onExpand(props.record)
         }}><span class="iconfont iconic_jiantou"></span></a>
       }  
-      return <a class='expand-icon' style={{marginRight:'10px'}} onClick={() => {
+      return <a class='expand-icon' style="margin-right:10px" onClick={() => {
         props.onExpand(props.record)
       }}><span class="iconfont iconjiantouxiangzuoshangyitiao"></span></a>
     },

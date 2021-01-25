@@ -32,11 +32,11 @@ export default {
       }
       const isExpand = !this.add || props.record.innerData && props.record.innerData.length
       if (props.expanded) {
-        return <a class='expand-icon' style={{marginRight:8}} onClick={() => {
+        return <a class='expand-icon' style="margin-right:8px" onClick={() => {
           props.onExpand(props.record)
         }}><span class={isExpand ? "iconfont iconic_jiantou" : ''}></span></a>
       }  
-      return <a class='expand-icon' style={{marginRight:'10px'}} onClick={() => {
+      return <a class='expand-icon' style="margin-right:10px" onClick={() => {
         props.onExpand(props.record)
       }}><span class={isExpand ? "iconfont iconjiantouxiangzuoshangyitiao" : ''}></span></a>
     },

@@ -113,7 +113,7 @@ export default {
         return null
       }
       if (props.expanded) {
-        return <a class='expand-icon' style={{marginRight:'10px'}} onClick={() => {
+        return <a class='expand-icon'  style="margin-right:10px" onClick={() => {
           props.onExpand(props.record)
         }}><span class={isEmun ? 'iconfont iconic_jiantou' : ''}></span></a>
       }  
