@@ -29,10 +29,5 @@ export default {
     display: flex;
     align-items: flex-start;
     line-height: 32px;
-    .label_title{
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
   }
 </style>

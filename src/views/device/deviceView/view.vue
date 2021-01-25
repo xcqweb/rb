@@ -146,6 +146,12 @@ export default {
     const cacheTab = sessionStorage.getItem('device_view_tab')
     cacheTab ? (this.activeTab = cacheTab) : (this.activeTab = 'view')
   },
+  // deactivated() {
+  //   sessionStorage.setItem('device_view_tab','view')
+  // },
+  // beforeDestroy() {
+  //   sessionStorage.setItem('device_view_tab','view')
+  // },
   methods: {
     changeType(key) {
       sessionStorage.setItem('device_view_tab',key)

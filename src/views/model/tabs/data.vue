@@ -101,6 +101,9 @@ export default {
     },
     tenantMark() {
       this.isDevice && this.getLastData(this.tableData)
+    },
+    deviceMark() {
+      this.isDevice && this.getLastData(this.tableData)
     }
   },
   deactivated() {

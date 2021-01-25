@@ -49,6 +49,12 @@ export default {
     const cacheTab = sessionStorage.getItem('model_view_tab')
     cacheTab ? (this.activeTab = cacheTab) : (this.activeTab = 'Overview')
   },
+  // beforeDestroy() {
+  //   sessionStorage.setItem('model_view_tab','Overview')
+  // },
+  // deactivated() {
+  //   sessionStorage.setItem('model_view_tab','Overview')
+  // },
   methods: {
     changeType(key) {
       sessionStorage.setItem('model_view_tab',key)

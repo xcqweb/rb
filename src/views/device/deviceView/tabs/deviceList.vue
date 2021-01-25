@@ -144,6 +144,7 @@ export default {
       this.getTableData();
     },
     changeSelect(data) {
+      this.pagination.current = 1
       this.getTableData()
     },
     //////
