@@ -2,7 +2,7 @@
   <div class="label mr10">
     <div class="label_title" v-if="label" :class="classLabel" :style="{width: `${width}px`}">{{label + '：'}}</div>
     <slot name="label" v-else></slot>
-    <div :class="width ? 'f1' : 'poros-col-11'">
+    <div :class="width ? 'f1' : 'poros-col-11'" class="tl">
       <slot></slot>
     </div>
   </div>

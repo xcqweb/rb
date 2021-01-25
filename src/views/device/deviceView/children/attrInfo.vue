@@ -2,7 +2,8 @@
   <div class="attrInfo" :class="{'attrInfoComponsition': componsition}">
     <!-- 新增设备中使用 -->
     <template v-if="!overview">
-      <Label v-for="item in list" :label='item.attributeName' :key="item.id" class="mt10">
+      <Label v-for="item in list" :label="`${item.attributeName}(${item.attributeMark})` || `(${item.attributeMark})`" :key="item.id" class="mt10">
+        <!-- 手动上报属性禁止编辑 -->
         <template v-if="item.createOption === 0">
           <!-- 文本 -->
           <p-input v-model="item.attributeText" @change="validate(item.id)" v-if="item.attributeType === 0"/>
@@ -19,13 +20,14 @@
           </div>
           <p class="poros-form-explain" v-show="item.error === item.id">{{item.errorInfo}}</p>
         </template>
-        <span v-else>{{item.attributeText}} <span v-if="item.attributeType === 2">{{item.unit}}</span></span>
+        <span v-else>{{item.attributeType === 1 ? $formatDate(item.attributeText) : item.attributeText}} <span v-if="item.attributeType === 2">{{item.unit}}</span></span>
       </Label>
     </template>
     <!-- 设备概览中使用（带编辑） -->
     <template v-else>
       <template v-if="list.length">
-        <Label v-for="(item,index) in list" :label='item.attributeName' :key="item.id" class="mt10">
+        <Label v-for="(item,index) in list" :label='`${item.attributeName}(${item.attributeMark})` || `(${item.attributeMark})`' :key="item.id" class="mt10">
+          <!-- 手动上报属性禁止编辑 -->
           <template v-if="item.createOption === 0">
             <Edit
               v-model="item.attributeText"
@@ -52,7 +54,7 @@
             </Edit>
             <p class="poros-form-explain" v-show="item.error === item.id">{{item.errorInfo}}</p>
           </template>
-          <span v-else>{{item.attributeText}} <span v-if="item.attributeType === 2">{{item.unit}}</span></span>
+          <span v-else>{{item.attributeType === 1 ? $formatDate(item.attributeText) : item.attributeText}} <span v-if="item.attributeType === 2">{{item.unit}}</span></span>
         </Label>
       </template>
       <Gt-no-data borderColor='transparent' emptyText='未找到与关键字相符的结果' v-if='!list.length && !loading' />
@@ -80,7 +82,7 @@ export default {
   watch: {
     modelId(id) { //新增设备
       if (id) {
-        const params = {modelId: id,createOption: 0,size: 10000000}
+        const params = {modelId: id,size: 10000000}
         this.$API.getModelAttrList(params).then( res => {
           this.list = res.data.records
           this.list.forEach( item => {

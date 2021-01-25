@@ -209,7 +209,7 @@ export default {
     setRealData(dataItem, item) {
       const {paramValue, ts} = dataItem
       const {paramPrecision} = item
-      this.$set(item, 'paramValue', paramPrecision ? formatnumber(paramValue) : paramValue)
+      this.$set(item, 'paramValue', paramPrecision ? formatnumber(paramValue,paramPrecision) : formatnumber(paramValue))
       this.$set(item, 'reportTime', this.$formatDate(ts))
     },
     //获取最后一笔数据

@@ -101,7 +101,7 @@ export const clearSessLocal = (session, local) => {
 /*
 ** 保留两位小数
 */
-export const formatnumber = (value, num) => {
+export const formatnumber = (value, num = 0) => {
   let a = '';
   let b = 0;
   let c = 0;

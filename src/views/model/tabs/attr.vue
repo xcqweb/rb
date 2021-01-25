@@ -89,7 +89,7 @@ export default {
           customRender: (data) => {
             const temp = isNaN(data) ? data.split('@@@') : data
             const isArray = Array.isArray(temp)
-            return isArray ? `${attrTypeList[temp[0]]}/单位：${temp[1] || '-'}` : attrTypeList[temp]
+            return isArray ? `${attrTypeList[temp[0]]}/单位：${temp[1]}` : attrTypeList[temp]
           }
         },
         {
@@ -161,7 +161,7 @@ export default {
               this.$set(item, 'innerData', [])
             }
             if (item.attributeType === 2) {
-              this.$set(item, 'attributeType', `${item.attributeType}@@@${item.unit}`)
+              this.$set(item, 'attributeType', `${item.attributeType}@@@${item.unit ? item.unit : '-'}`)
             }
           })
           this.pagination.total = res.data.total;
