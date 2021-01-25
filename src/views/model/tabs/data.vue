@@ -387,8 +387,8 @@ export default {
         this.$message.success(message)
       }
     },
-    validFun(mark) {
-      const findItem = this.tableData.find( el => mark === el.paramMark)
+    validFun(mark,id) {
+      const findItem = id ? this.tableData.filter( item => item.id !== id).find( el => mark === el.paramMark) : this.tableData.find( el => mark === el.paramMark)
       return findItem
     },
     callback(res) {

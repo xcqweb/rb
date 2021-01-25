@@ -163,6 +163,7 @@ export default {
           let func;
           let message = '提交成功！'
           const {type} = this.options;
+          this.$message.destroy()
           if (type === 'add') {
             func = this.$API.addModelParamsAlarm
           } else if(type === 'edit') {

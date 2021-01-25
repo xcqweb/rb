@@ -121,6 +121,10 @@ export default {
     moreEdit() {
       const {type} = this.options
       return type === 'edit'
+    },
+    isAdd() {
+      const {type} = this.options
+      return type === 'first-add' || type === 'add'
     }
   },
   created() {
@@ -179,7 +183,7 @@ export default {
             if (this.valid()) {
               return
             }
-            if (!this.model.attributeName) {
+            if (!this.model.attributeName && this.isAdd) {
               this.model.attributeName = this.model.attributeMark
             }
             const emunList = this.$deepCopy(this.paramsValidateForm.emunList)
@@ -192,6 +196,7 @@ export default {
             let func
             let message = '提交成功！'
             const {type} = this.options
+            this.$message.destroy()
             if (type === 'add') {
               func = this.$API.addModelAttr
             } else if(type === 'edit') {
@@ -206,7 +211,7 @@ export default {
               this.cancel()
               return
             }else if(type === 'first-edit'){//新增模型时编辑
-              if (this.validFun(this.model.attributeMark)) {
+              if (this.validFun(this.model.attributeMark,this.model.id)) {
                 this.$message.error('属性标识不能重复！')
                 return
               }

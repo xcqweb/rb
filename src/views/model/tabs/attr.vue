@@ -225,8 +225,8 @@ export default {
         },
       });
     },
-    validFun(mark) {
-      const findItem = this.tableData.find( el => mark === el.attributeMark)
+    validFun(mark, id) {
+      const findItem = id ? this.tableData.filter( item => item.id !== id).find( el => mark === el.attributeMark) : this.tableData.find( el => mark === el.attributeMark)
       return findItem
     },
     callback(res) {

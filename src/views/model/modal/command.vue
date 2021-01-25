@@ -23,8 +23,8 @@
       <p-form-model-item label="指令名称" prop="commandName">
         <p-input v-model.trim="model.commandName" placeholder="请输入指令名称" />
       </p-form-model-item>
-      <p-form-model-item label="指令模板" prop="commandTemplateId">
-        <p-select v-model="model.commandTemplateId" labelInValue @change="getCommandAttrList">
+      <p-form-model-item label="指令模板" prop="commandTemplateIdObj">
+        <p-select v-model="model.commandTemplateIdObj" labelInValue @change="getCommandAttrList">
             <p-select-option v-for="item in commandTemplateList" :value='item.id' :key='item.id'>{{item.commandName}}</p-select-option>
           </p-select>
       </p-form-model-item>
@@ -143,7 +143,7 @@ export default {
         this.model = {...this.options}
         this.paramsValidateForm.varList.push(...(this.options.innerData && this.$deepCopy(this.options.innerData) || [{commandVarMark: '',commandVarValue: '',remark: ''}]))
         const {id,commandTemplateId} = this.options
-        this.model.commandTemplateId = {key: commandTemplateId ? commandTemplateId : this.commandTemplateList[0] && this.commandTemplateList[0].id}
+        this.model.commandTemplateIdObj = {key: commandTemplateId ? commandTemplateId : this.commandTemplateList[0] && this.commandTemplateList[0].id}
         if (this.moreEdit && !this.options.innerData.length) {
           this.$API.getModelCommandVarList({modelCommandId: id}).then( res => {
             this.paramsValidateForm.varList.push(...res.data.records.map( item => {
@@ -163,7 +163,7 @@ export default {
         const reData = res.data
         const key = reData[0] && reData[0].id
         const label = reData[0] && reData[0].commandName
-        this.model.commandTemplateId = {key}
+        this.model.commandTemplateIdObj = {key}
         this.getCommandAttrList({key,label})
         this.commandTemplateList.push(...reData)
       })
@@ -203,12 +203,13 @@ export default {
         this.$refs.paramsValidateForm.validate( valid2 => {
           if (valid && valid2) {
             const modelCommandVarAddParamList = this.$deepCopy(this.paramsValidateForm.varList)
-            this.model.commandTemplateId = this.model.commandTemplateId.key
+            this.model.commandTemplateId = this.model.commandTemplateIdObj.key
             const data = Object.assign({modelCommandVarAddParamList}, this.model)
             delete data.type
             let func
             let message = '提交成功！'
             const {type} = this.options
+            this.$message.destroy()
             if (type === 'add') {
               func = this.$API.addModelCommand
             } else if(type === 'edit') {
@@ -223,7 +224,7 @@ export default {
               this.cancel()
               return
             }else if(type === 'first-edit'){//新增模型时编辑
-              if (this.validFun(this.model.commandMark)) {
+              if (this.validFun(this.model.commandMark,this.model.id)) {
                 this.$message.error('指令标识不能重复！')
                 return
               }
