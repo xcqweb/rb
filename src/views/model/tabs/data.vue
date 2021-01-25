@@ -71,7 +71,7 @@ function formualTransfrom({limit, firstVal,secondVal}) {
   const isBetween = limit === '<>' || limit === '><'
   return formualMap[limit] + (isBetween ? `${firstVal} ~ ${secondVal}` : firstVal)
 }
-let lastLoading = false
+
 const INTERVALTIME = 5000 //拉去最后一笔数据频率5s
 let timer = null
 export default {
@@ -88,6 +88,7 @@ export default {
         {name:'参数标识',key: 'paramMark'},
       ],
       filtersList: this.filter ? paramType : [],
+      lastLoading: false
     };
   },
   watch: {
@@ -97,6 +98,9 @@ export default {
       }else{
         this.clearIntervalHanadler()
       }
+    },
+    tenantMark() {
+      this.isDevice && this.getLastData(this.tableData)
     }
   },
   deactivated() {
@@ -122,7 +126,7 @@ export default {
       return this.isDevice ? arr1 : [...arr1, ...arr2]
     },
     columns(){
-      let { filteredInfo1 } = this;
+      let { filteredInfo1,lastLoading } = this;
       return this.isDevice ? [
         {title: '参数标识',dataIndex: 'paramMark',ellipsis: true},
         {title: '参数名称',dataIndex: 'paramName',ellipsis: true},
@@ -168,7 +172,7 @@ export default {
     setIntervalHanadler() {
       this.clearIntervalHanadler()
       timer = setInterval(() => {
-        !lastLoading && this.getLastData(this.tableData, 'disabledLoading')
+        !this.lastLoading && this.getLastData(this.tableData, 'disabledLoading')
       },INTERVALTIME)
     },
     clearIntervalHanadler() {
@@ -214,7 +218,8 @@ export default {
     },
     //获取最后一笔数据
     getLastData(data = [],disabledLoading) {
-      if (!data.length) {
+      if (!data.length ||  !this.tenantMark || !this.deviceMark || !this.modelMark) {
+        console.error('标识不存在！')
         return
       }
       const params = [{
@@ -223,16 +228,16 @@ export default {
         deviceMark: this.deviceMark,
         deviceParams: data.map( item => item.paramMark)
       }]
-      !disabledLoading && (lastLoading = true)
+      !disabledLoading && (this.lastLoading = true)
       this.$API.getLastData(params).then(res => {
         const reData = res.data[0].deviceParams
         data.forEach( item => {
           const findItem = reData.find( el => el.paramMark === item.paramMark)
           findItem && this.setRealData(findItem, item)
         })
-        lastLoading = false
+        this.lastLoading = false
       }).catch( () => {
-        lastLoading = false
+        this.lastLoading = false
       })
     },
     getTableData({searchKey = this.selectList[0].key,keyword} = {}){

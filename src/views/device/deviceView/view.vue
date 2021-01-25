@@ -1,7 +1,7 @@
 <template>
   <page :content='deviceName' @back='back'>
-    <p-tabs v-model="activeKey">
-      <p-tab-pane key="view" tab="概览">
+    <p-tabs v-model="activeTab" @change="changeType">
+      <p-tab-pane key="view" tab="概览" forceRender>
         <Overview
           v-model="deviceList"
           :isDevice='isDevice'
@@ -17,7 +17,7 @@
         <Data
           search
           isDevice
-          :activeTabkey='activeKey'
+          :activeTabkey='activeTab'
           :deviceId='comDeviceId'
           :modelMark='modelMark'
           :deviceMark='deviceMark'
@@ -30,7 +30,7 @@
             search 
             componsition 
             isDevice 
-            :activeTabkey='activeKey' 
+            :activeTabkey='activeTab' 
             :deviceId='item.deviceId' 
             :modelMark='item.modelMark' 
             :deviceMark='item.deviceMark' 
@@ -111,7 +111,7 @@ export default {
   },
   data() {
     return{
-      activeKey: 'view',
+      activeTab: 'view',
       modelId: '',
       deviceName: '-',
       modelMark: '',
@@ -121,7 +121,7 @@ export default {
   },
   watch: {
     comType(val) {
-      this.activeKey = 'view'
+      this.activeTab = 'view'
     }
   },
   computed: {
@@ -142,7 +142,14 @@ export default {
       return this.$route.query.id
     }
   },
+  created() {
+    const cacheTab = sessionStorage.getItem('device_view_tab')
+    cacheTab ? (this.activeTab = cacheTab) : (this.activeTab = 'view')
+  },
   methods: {
+    changeType(key) {
+      sessionStorage.setItem('device_view_tab',key)
+    },
     back() {
       this.$router.go(-1)
     }

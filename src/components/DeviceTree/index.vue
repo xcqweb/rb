@@ -29,7 +29,7 @@
       <span class="tree-name">{{ item.locationName }}</span>
       <div class="tree-operator" v-if="showOperator">
         <p-dropdown :trigger="['hover']" >
-          <i class="iconfont iconellipsis" style="padding:0 12px" @click.prevent.stop/>
+          <i class="iconfont iconellipsis" style="padding: 4px 6px" @click.prevent.stop/>
           <p-menu slot="overlay">
             <p-menu-item @click="operatorTree(1, item)" v-if='item.level < MAXLEVEL'>新增节点</p-menu-item>
             <p-menu-item @click="operatorTree(2, item)" v-if="item.locationType === 0">重命名</p-menu-item>
@@ -499,9 +499,9 @@ export default {
       position: relative;
       .poros-tree-title{
         display: flex;
+        justify-content: space-between;
         .tree-name{
           display: inline-block;
-          max-width: calc(100% - 86px);
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -513,8 +513,6 @@ export default {
           margin-left: 3px;
         }
         .tree-operator{
-          position: absolute;
-          right: 6px;
           transform: translateY(2px);
           visibility: hidden;
           padding-right: 0;

@@ -96,7 +96,10 @@ export default {
   watch: {
     filteredInfo1(val) {
       this.cacheFilter[this.currentTab] = val.changeType
-    }
+    },
+    tenantMark(val) {
+      this.getTableData()
+    },
   },
   methods: {
     changeTab({symbol}) {

@@ -122,26 +122,35 @@ export default {
       return isCurrent ? [...arr2,...arr3] : [...arr2,...arr1,...arr4]
     } 
   },
-  mounted() {
-    this.getTableData()
-    this.getAlarmCount()
+  watch: {
+    tenantMark(val) {
+      this.getTableData()
+      this.getAlarmCount()
+    },
   },
   methods: {
-    parse(data) {
-      return JSON.parse(data)
-    },
     changeTab({symbol}) {
       this.currentTab = symbol
       this.getTableData()
     },
+    validMark() {
+      if (!this.tenantMark || !this.deviceMark || !this.modelMark) {
+        console.error('标识不存在！')
+        return true
+      } else{
+        return false
+      }
+    },
     getAlarmCount() {
+      if (this.validMark()) {
+        return
+      }
       this.$API.getAlarmLogCount({...this.signCommon,alarmStatus: 1}).then( res => {
         this.tabs[1].extra = res.data
       })
     },
     getTableData(){
-      if (!this.tenantMark || !this.deviceMark || !this.modelMark) {
-        console.error('标识不存在！')
+      if (this.validMark()) {
         return
       }
       const comParams = {

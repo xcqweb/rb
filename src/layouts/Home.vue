@@ -61,7 +61,7 @@
     </p-layout-header>
 
     <div class="content-wrap">
-      <p-sider-menu :collapsed="false" />
+      <p-sider-menu ref='slider' :collapsed="false" />
 
       <p-layout-content class="layout-content">
         <p-router-tabs scroll/>
@@ -158,6 +158,9 @@
       // 获取登录用户信息
       this.$store.dispatch('requireUserInfo')
       this.$store.dispatch('requestSysUid')
+      this.$nextTick( () => {
+        this.$store.commit('setBarInstance',this.$refs.slider.$el)
+      })
     },
     watch: {
       systemName (val) {
