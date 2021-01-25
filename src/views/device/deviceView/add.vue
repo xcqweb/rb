@@ -123,7 +123,7 @@ export default {
           const {name,modelId,remark} = this.model
           let params = this.isDevice ? {
             deviceName: name,
-            modelId: modelId.key,
+            modelId: modelId.value,
             remark,
             locationId: this.locationId,
             deviceAttributeAddParamList: this.$refs.componentRef.comList

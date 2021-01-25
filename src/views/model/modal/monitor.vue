@@ -130,7 +130,7 @@ export default {
   created() {
     this.$watch('visible', (val) => {
       if (val) {
-        this.model = {alarmLevelId: '1',limit: '==',firstVal: '',secondVal: '', ...this.options}
+        this.model = {alarmLevelId: '1',limit: '==',firstVal: '',secondVal: '',remark: '', ...this.options}
         const {firstVal,secondVal} = this.model
         this.model.firstVal = firstVal ? (firstVal + '').trim() : ''
         this.model.secondVal = secondVal ? (secondVal + '').trim() : ''
