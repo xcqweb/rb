@@ -41,7 +41,7 @@
 import tableMixins from '@/mixins/tableMixins'
 import tableExpandMixins from '@/mixins/table-expand'
 import BtnTabs from '../children/btnTabs'
-import {alarmSource,alarmLevel,alarmSourceList,alarmLevelList} from '@/utils/baseData'
+import {alarmSourceTextList,alarmLevelTextList,alarmSourceList,alarmLevelList} from '@/utils/baseData'
 import {mapState} from 'vuex'
 import {formatDuration} from '@/utils/format'
 export default {
@@ -60,10 +60,10 @@ export default {
       ],
       currentTab: 'current',
       time: [],
-      filtersList1: alarmLevel,
-      filtersList2: alarmSource,
+      filtersList1: alarmLevelTextList,
+      filtersList2: alarmSourceTextList,
       innerColumns: [
-        {dataIndex: 'paramName',title: '参数',ellipsis: true},
+        {title: '参数',ellipsis: true,customRender: ({paramName,paramMark}) => paramName ? `${paramName(paramMark)}` : `(${paramMark})`},
         {dataIndex: 'formulaView',title: '监控',ellipsis: true},
         {dataIndex: 'val',title: '数值',ellipsis: true},
       ],
@@ -111,16 +111,20 @@ export default {
         {title: '报警信息',dataIndex: 'alarmInfo',ellipsis: true},
         {title: '报警时间',dataIndex: 'startTs',ellipsis: true,customRender: date => $formatDate(date)},
       ]
-      const smtap =  a => +new Date(a) 
+      const smtap =  a => a ? +new Date(a) : +new Date()
+      console.log(smtap())
       const arr3 = [
+        {title: '持续时间',ellipsis: true, customRender: ({startTs, endTs}) => formatDuration(smtap()  - smtap(startTs))},
+      ]
+      const arr4 = [
         {title: '持续时间',ellipsis: true, customRender: ({startTs, endTs}) => endTs ? formatDuration(smtap(endTs)  - smtap(startTs)) : ''},
       ]
-      return isCurrent ? [...arr2,...arr3] : [...arr2,...arr1,...arr3]
+      return isCurrent ? [...arr2,...arr3] : [...arr2,...arr1,...arr4]
     } 
   },
   mounted() {
     this.getTableData()
-    // this.getAlarmCount()
+    this.getAlarmCount()
   },
   methods: {
     parse(data) {
@@ -162,7 +166,6 @@ export default {
           this.tableData = (res.data.records || [])
           this.tableData.forEach( el => {
             this.$set(el, 'innerData', JSON.parse(el.paramList))
-            console.log(el.innerData)
           });
           this.pagination.total = res.data.total;
           this.setTotal(this.currentTab, this.pagination.total)

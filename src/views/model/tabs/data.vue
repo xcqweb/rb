@@ -71,7 +71,7 @@ function formualTransfrom({limit, firstVal,secondVal}) {
   return formualMap[limit] + (isBetween ? `${firstVal} ~ ${secondVal}` : firstVal)
 }
 let lastLoading = false
-const INTERVALTIME = 3000 //拉去最后一笔数据频率
+const INTERVALTIME = 5000 //拉去最后一笔数据频率5s
 let timer = null
 export default {
   mixins: [modelMixins],
@@ -167,7 +167,7 @@ export default {
     setIntervalHanadler() {
       this.clearIntervalHanadler()
       timer = setInterval(() => {
-        !lastLoading && this.getLastData(this.tableData)
+        !lastLoading && this.getLastData(this.tableData, 'disabledLoading')
       },INTERVALTIME)
     },
     clearIntervalHanadler() {
@@ -187,7 +187,6 @@ export default {
         ...this.paramsInner,
         modelParamId
       }
-      this.innerLoading = true
       this.$API[this.isDevice ? 'getDeviceParamMonitorList' : 'getModelParamsAlarmList'](params).then( res => {
         this.tableData.forEach( item => {
           if (item.id === modelParamId || item.modelParamId === modelParamId) {
@@ -202,9 +201,8 @@ export default {
             }
           }
         })
-        this.innerLoading = false
       }).catch(() => {
-        this.innerLoading = false
+        // 
       })
     },
     setRealData(dataItem, item) {
@@ -214,7 +212,7 @@ export default {
       this.$set(item, 'reportTime', this.$formatDate(ts))
     },
     //获取最后一笔数据
-    getLastData(data = []) {
+    getLastData(data = [],disabledLoading) {
       if (!data.length) {
         return
       }
@@ -224,7 +222,7 @@ export default {
         deviceMark: this.deviceMark,
         deviceParams: data.map( item => item.paramMark)
       }]
-      lastLoading = true
+      !disabledLoading && (lastLoading = true)
       this.$API.getLastData(params).then(res => {
         const reData = res.data[0].deviceParams
         data.forEach( item => {

@@ -10,7 +10,7 @@ const getYearDays = function() {
   return isLeap ? 366 : 365;
 }
 //时长换算成中文
-export const formatDuration = function(duration = 5666666) {
+export const formatDuration = function(duration = +new Date()) {
   const time = moment.duration(duration)
   const y = time.years() || ''
   const m = time.months() || ''
@@ -19,5 +19,5 @@ export const formatDuration = function(duration = 5666666) {
   const h = time.hours() || ''
   const mi = time.minutes() || ''
   const s = time.seconds() || ''
-  return `${y && y + '年'}${m && m + '月'}${w && w + '周'}${d && d + '天'}${h && h + '小时'}${mi && mi + '分'}${s && s + '秒'}`
+  return `${y && y + '年'}${m && m + '月'}${w && w + '周'}${d && d + '天'}${h && h + '小时'}${mi && mi + '分'}${(s ? s : 0) + '秒'}`
 }

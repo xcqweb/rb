@@ -33,7 +33,7 @@
     <template v-if="isDevice">
       <Link-config class="mt10" :deviceId='comDeviceId'>
         <Label label='设备认证'><p-switch v-model="model.authEnabled" :disabled='loading' @change="save" /></Label>
-        <Label label='设备密钥' v-show="!!model.authEnabled">{{model.token}}<Copy :value='model.token' /></Label>
+        <Label class="mt6" label='设备密钥' v-show="!!model.authEnabled">{{model.token}}<Copy :value='model.token' /></Label>
       </Link-config>
       <page-title class="mt20">属性信息</page-title>
       <Attr-info overview :deviceId='comDeviceId' />

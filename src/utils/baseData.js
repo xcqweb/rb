@@ -50,6 +50,10 @@ export const alarmSource = [
   {text: '参数监控',value: 0},
   {text: '设备联动',value: 1},
 ]
+export const alarmSourceTextList = [
+  {text: '参数告警',value: '参数告警'},
+  {text: '设备联动',value: '设备联动'},
+]
 export const alarmSourceList = ['参数监控','设备联动']
 
 //报警等级
@@ -57,6 +61,11 @@ export const alarmLevel = [
   {text: '注意',value: 0},
   {text: '告警',value: 1},
   {text: '危险',value: 2},
+]
+export const alarmLevelTextList = [
+  {text: '注意',value: '注意'},
+  {text: '告警',value: '告警'},
+  {text: '危险',value: '危险'},
 ]
 export const alarmLevelList = ['注意','告警','危险']
 
