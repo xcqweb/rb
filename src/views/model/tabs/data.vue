@@ -53,6 +53,7 @@
       :options="options"
       :title="title"
       @callback="callback"
+      :validFun='validFun'
       ref='modal'
     />
   </div>
@@ -385,6 +386,10 @@ export default {
       }else{
         this.$message.success(message)
       }
+    },
+    validFun(mark) {
+      const findItem = this.tableData.find( el => mark === el.paramMark)
+      return findItem
     },
     callback(res) {
       const {type,modal, ...data} = res

@@ -17,39 +17,42 @@
             <p-input @change="validate(item.id)" v-model="item.attributeText" class="f1 mr6"/>
             <span>{{item.unit}}</span>
           </div>
+          <p class="poros-form-explain" v-show="item.error === item.id">{{item.errorInfo}}</p>
         </template>
         <span v-else>{{item.attributeText}} <span v-if="item.attributeType === 2">{{item.unit}}</span></span>
-        <p class="poros-form-explain" v-show="item.error === item.id">{{item.errorInfo}}</p>
       </Label>
     </template>
     <!-- 设备概览中使用（带编辑） -->
     <template v-else>
       <template v-if="list.length">
         <Label v-for="(item,index) in list" :label='item.attributeName' :key="item.id" class="mt10">
-          <Edit
-            v-model="item.attributeText"
-            :ref="item.id"
-            :time="item.attributeType === 1 && $formatDate"
-            normal
-            :error='item.error === item.id'
-            @submit="save(index)"
-            @cancel='cancel'
-          >
-            <!-- 文本 -->
-            <p-input v-model="item.attributeText" @change="validate(item.id)" v-if="item.attributeType === 0"/>
-            <!-- 日期 -->
-            <p-date-picker class="w100" v-model="item.attributeText" v-if="item.attributeType === 1"/>
-            <!-- 枚举 -->
-            <p-select class="w100" v-model="item.attributeText" @focus='focusFun(item)' v-if="item.attributeType === 3">
-              <p-select-option v-for="list in item.listData" :value='list.enumValue' :key='list.enumValue'>{{list.enumValue}}</p-select-option>
-            </p-select>
-            <!-- 数值 -->
-            <div class="flex w100" v-if="item.attributeType === 2">
-              <p-input class="f1 mr6" @change="validate(item.id)" v-model="item.attributeText"/>
-              <span>{{item.unit}}</span>
-            </div>
-          </Edit>
-          <p class="poros-form-explain" v-show="item.error === item.id">{{item.errorInfo}}</p>
+          <template v-if="item.createOption === 0">
+            <Edit
+              v-model="item.attributeText"
+              :ref="item.id"
+              :time="item.attributeType === 1 && $formatDate"
+              normal
+              :error='item.error === item.id'
+              @submit="save(index)"
+              @cancel='cancel'
+            >
+              <!-- 文本 -->
+              <p-input v-model="item.attributeText" @change="validate(item.id)" v-if="item.attributeType === 0"/>
+              <!-- 日期 -->
+              <p-date-picker class="w100" v-model="item.attributeText" v-if="item.attributeType === 1"/>
+              <!-- 枚举 -->
+              <p-select class="w100" v-model="item.attributeText" @focus='focusFun(item)' v-if="item.attributeType === 3">
+                <p-select-option v-for="list in item.listData" :value='list.enumValue' :key='list.enumValue'>{{list.enumValue}}</p-select-option>
+              </p-select>
+              <!-- 数值 -->
+              <div class="flex w100" v-if="item.attributeType === 2">
+                <p-input class="f1 mr6" @change="validate(item.id)" v-model="item.attributeText"/>
+                <span>{{item.unit}}</span>
+              </div>
+            </Edit>
+            <p class="poros-form-explain" v-show="item.error === item.id">{{item.errorInfo}}</p>
+          </template>
+          <span v-else>{{item.attributeText}} <span v-if="item.attributeType === 2">{{item.unit}}</span></span>
         </Label>
       </template>
       <Gt-no-data borderColor='transparent' emptyText='未找到与关键字相符的结果' v-if='!list.length && !loading' />

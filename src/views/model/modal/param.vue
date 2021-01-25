@@ -48,6 +48,9 @@ import pattern from '@/utils/pattern'
 import {paramType, useOption} from '@/utils/baseData'
 export default {
   mixins: [modalMixins],
+  props: {
+    validFun: Function
+  },
   data() {
     return {
       paramType,
@@ -102,7 +105,6 @@ export default {
     confirm() {
       this.$refs.form.validate(valid => {
         if (valid) {
-          this.loading = true
           if (this.model.checkedList.length > 1) {
             this.model.used = 2
           }else{
@@ -125,17 +127,25 @@ export default {
           } else if(type === 'edit') {
             func = this.$API.editModelParams
           } else if(type === 'first-add'){//新增模型时添加
+            if (this.validFun(this.model.paramMark)) {
+              this.$message.error('参数标识不能重复！')
+              return
+            }
             this.$message.success(message)
             this.$emit('callback', {type,modal: 'param', ...data,id: this.uuid()})
             this.cancel()
             return
           }else if(type === 'first-edit'){//新增模型时编辑
+            if (this.validFun(this.model.paramMark)) {
+              this.$message.error('参数标识不能重复！')
+              return
+            }
             this.$message.success(message)
             this.$emit('callback', {type,modal: 'param', ...data})
             this.cancel()
             return
           }
-          this.cancel()
+          this.loading = true
           func(data).then(res => {
             this.cancel()
             this.$message.success(message)

@@ -104,6 +104,9 @@ import pattern from '@/utils/pattern'
 
 export default {
   mixins: [modalMixins],
+  props: {
+    validFun: Function
+  },
   data() {
     return {
       pattern,
@@ -140,7 +143,7 @@ export default {
         this.model = {...this.options}
         this.paramsValidateForm.varList.push(...(this.options.innerData && this.$deepCopy(this.options.innerData) || [{commandVarMark: '',commandVarValue: '',remark: ''}]))
         const {id,commandTemplateId} = this.options
-        this.model.commandTemplateId = {key:this.model.commandTemplateId}
+        this.model.commandTemplateId = {key: commandTemplateId ? commandTemplateId : this.commandTemplateList[0] && this.commandTemplateList[0].id}
         if (this.moreEdit && !this.options.innerData.length) {
           this.$API.getModelCommandVarList({modelCommandId: id}).then( res => {
             this.paramsValidateForm.varList.push(...res.data.records.map( item => {
@@ -199,7 +202,6 @@ export default {
       this.$refs.form.validate(valid => {
         this.$refs.paramsValidateForm.validate( valid2 => {
           if (valid && valid2) {
-            this.loading = true
             const modelCommandVarAddParamList = this.$deepCopy(this.paramsValidateForm.varList)
             this.model.commandTemplateId = this.model.commandTemplateId.key
             const data = Object.assign({modelCommandVarAddParamList}, this.model)
@@ -212,16 +214,25 @@ export default {
             } else if(type === 'edit') {
               func = this.$API.editModelCommand
             }else if(type === 'first-add'){//新增模型时添加
+              if (this.validFun(this.model.commandMark)) {
+                this.$message.error('指令标识不能重复！')
+                return
+              }
               this.$message.success(message)
               this.$emit('callback', {type, ...data,id: this.uuid(),innerData: modelCommandVarAddParamList})
               this.cancel()
               return
             }else if(type === 'first-edit'){//新增模型时编辑
+              if (this.validFun(this.model.commandMark)) {
+                this.$message.error('指令标识不能重复！')
+                return
+              }
               this.$message.success(message)
               this.$emit('callback', {type, ...data, innerData: modelCommandVarAddParamList})
               this.cancel()
               return
             }
+            this.loading = true
             func(data).then(res => {
               this.cancel()
               this.$message.success(message)

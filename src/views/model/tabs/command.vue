@@ -24,8 +24,10 @@
           slot-scope="{ setSelectedKeys, selectedKeys, confirm, clearFilters }"
           style="width:160px"
           :api='$API.getModelCommandTemplateSelect'
+          showAll
           :extraData='{templateIds}'
           v-model="belongModel"
+          allLabel='全部'
           @change="changeCommandModel(setSelectedKeys, selectedKeys, confirm, clearFilters)"
           :dataKey="{value: 'id', label: 'commandName'}"
         />
@@ -57,6 +59,7 @@
       :options="options"
       :title="title"
       @callback="callback"
+      :validFun='validFun'
       ref='modal'
     />
   </div>
@@ -75,7 +78,7 @@ export default {
   data() {
     return {
       templateIds: [],
-      belongModel: {},
+      belongModel: {value: 'all',label: '全部'},
       selectList: [
         {name:'指令名称',key: 'commandName'},
         {name:'指令标识',key: 'commandMark'},
@@ -210,6 +213,10 @@ export default {
         },
       });
     },
+    validFun(mark) {
+      const findItem = this.tableData.find( el => mark === el.commandMark)
+      return findItem
+    },
     callback(res) {
       const {type, ...data} = res
       if(type === 'first-add') {
@@ -227,7 +234,7 @@ export default {
       if (!selectedKeys) {
         clearFilters()
       }
-      setSelectedKeys(this.belongModel && this.belongModel.key)
+      setSelectedKeys(this.belongModel && this.belongModel.value)
       confirm()
     }
   }

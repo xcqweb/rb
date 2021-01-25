@@ -79,6 +79,9 @@ import {getType,attrType} from '@/utils/baseData'
 import {validateRepeat} from '@/utils/util'
 export default {
   mixins: [modalMixins],
+  props: {
+    validFun: Function
+  },
   data() {
     return {
       pattern,
@@ -176,7 +179,6 @@ export default {
             if (this.valid()) {
               return
             }
-            this.loading = true
             if (!this.model.attributeName) {
               this.model.attributeName = this.model.attributeMark
             }
@@ -195,16 +197,25 @@ export default {
             } else if(type === 'edit') {
               func = this.$API.editModelAttr
             }else if(type === 'first-add'){//新增模型时添加
+              if (this.validFun(this.model.attributeMark)) {
+                this.$message.error('属性标识不能重复！')
+                return
+              }
               this.$message.success(message)
               this.$emit('callback', {type, ...data,id: this.uuid()})
               this.cancel()
               return
             }else if(type === 'first-edit'){//新增模型时编辑
+              if (this.validFun(this.model.attributeMark)) {
+                this.$message.error('属性标识不能重复！')
+                return
+              }
               this.$message.success(message)
               this.$emit('callback', {type, ...data})
               this.cancel()
               return
             }
+            this.loading = true
             func(data).then(res => {
               this.cancel()
               this.$message.success(message)
