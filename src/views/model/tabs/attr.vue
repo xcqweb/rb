@@ -230,7 +230,7 @@ export default {
         if (data.attributeType === 3) {
           this.expandedRowKeys = [data.id]
         }
-        this.tableData.push(data)
+        this.tableData.unshift(data)
         this.$emit('input', this.tableData)
       }else if (type === 'first-edit'){
         const $index = this.tableData.findIndex( item => item.id === data.id)

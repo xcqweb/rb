@@ -392,7 +392,7 @@ export default {
         if(type === 'first-add') {
           data.innerData = []
           data.alarmAddParamList = []
-          this.tableData.push(data)
+          this.tableData.unshift(data)
           this.$emit('input', this.tableData)
         }else if (type === 'first-edit'){
           const $index = this.tableData.findIndex( item => item.id === data.id)
@@ -408,8 +408,8 @@ export default {
           this.expandedRowKeys = [data.paramId]
           this.tableData.forEach( item => {
             if (data.paramId === item.id) {
-              item.innerData.push(data)
-              item.alarmAddParamList.push(data)
+              item.innerData.unshift(data)
+              item.alarmAddParamList.unshift(data)
             }
           })
           this.$emit('input', this.tableData)

@@ -96,7 +96,7 @@ export default {
           func(data).then(res => {
             this.cancel()
             this.$message.success(message)
-            const idObj = this.options.isEdit ? {} : {id: res.data.id,level: res.data.level}
+            const idObj = this.options.isEdit ? {} : {id: res.data.id,level: res.data.level,locationNamePath: res.data.locationNamePath}
             this.$emit('callback', {...data, ...idObj, p_isLeaf: this.options.selectedItem.isLeaf}, this.options.isEdit ? 1 : 0)
           }).catch(() => {
             this.loading = false

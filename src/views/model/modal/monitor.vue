@@ -64,7 +64,7 @@ export default {
         firstVal: this.extraType ? [
           {required: true,message: '请输入阈值'},
           {type: 'string',max: 25,message: '输入长度限制为25个字符'},
-          {message: '输入字符仅支持字母、数字（整数和小数）或下划线“_”',pattern: pattern.nameReg},
+          {message: '输入字符仅支持字母、数字（整数和小数）或下划线“_”',pattern: pattern.name6Reg},
           {
             validator: (rule, value, callback) => {
               if (!isNaN(value) && value.length > 9) {

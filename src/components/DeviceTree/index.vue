@@ -201,7 +201,7 @@ export default {
     /*
     type 0 新增 1 编辑 2 删除 3 移动
     */
-    treeOperator({locationName, parentId, parentName, id, p_isLeaf, level}, type) {
+    treeOperator({locationName,locationNamePath, parentId, parentName, id, p_isLeaf, level}, type) {
       const that = this;
       function loop(trees) {
         for (const [index, tree] of trees.entries()) {
@@ -211,6 +211,7 @@ export default {
               parentId,
               parentName,
               locationName,
+              locationNamePath,
               id,
               level,
               isLeaf: true,
