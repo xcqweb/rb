@@ -153,6 +153,9 @@ export default {
     },
     comDeviceId() {
       return this.$route.query.id
+    },
+    comDeviceName() {
+      return this.$route.query.deviceName
     }
   },
   created() {
@@ -166,6 +169,7 @@ export default {
       sessionStorage.setItem('device_view_id',this.comDeviceId)
       cacheTab ? (this.activeTab = cacheTab) : (this.activeTab = 'view')
     }
+    this.comDeviceName && (this.deviceName = this.comDeviceName)
   },
   methods: {
     changeType(key) {

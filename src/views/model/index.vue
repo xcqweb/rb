@@ -16,7 +16,7 @@
         :columns="columns"
         :data-source="tableData">
         <template slot="modelName" slot-scope="record">
-          <span class="viewDetail" :title="record.modelName" @click="viewDetailClick(record)">{{record.modelName}}</span>
+          <span class="viewDetail" :title="record.modelName" @click="viewClick(record)">{{record.modelName}}</span>
         </template>
         <template slot="operation" slot-scope="record">
           <span  class="operateBtn" @click="viewClick(record)">查看</span>
@@ -105,16 +105,13 @@ export default {
         path : '/model/addModel',
       }); 
     },
-    viewDetailClick({id}){
+    viewClick({id,modelName,registerDeviceNum}){
       this.$router.push({
         path : '/model/viewModel',
-        query: {id}
-      }); 
-    },
-    viewClick({id}){
-      this.$router.push({
-        path : '/model/viewModel',
-        query: {id},
+        query: {
+          id,
+          modelName,
+        },
       }); 
     },
     delClick({modelName, id}){

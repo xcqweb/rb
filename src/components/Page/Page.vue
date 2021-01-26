@@ -23,7 +23,9 @@
             <span :title="content">{{ content }}</span>
           </slot>
         </div>
-        <div v-if="extraRightText" class="gt-page-header-extra-right ellipsis">{{extraRightText}}</div>
+        <div class="gt-page-header-extra-right ellipsis">
+          <slot name="extraRightText">{{extraRightText}}</slot>
+        </div>
       </div>
       <div class="gt-page-content" v-resize="onResize" @scroll="onScroll">
         <slot :width="width" :height="height" />

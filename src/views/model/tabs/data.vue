@@ -65,7 +65,7 @@ import DataModal from '../modal/param'
 import Monitor from '../modal/monitor'
 import BtnTabs from '../../device/deviceView/children/btnTabs'
 import { mapState } from 'vuex'
-import {paramType, paramTypeList,formualMap,useOption} from '@/utils/baseData'
+import {paramType,paramTypeList,formualMap,useOption,paramTypeNumList} from '@/utils/baseData'
 import {analysisFormula,formatnumber} from '@/utils/util'
 function formualTransfrom({limit, firstVal,secondVal}) {
   const isBetween = limit === '<>' || limit === '><'
@@ -214,9 +214,9 @@ export default {
       })
     },
     setRealData(dataItem, item) {
-      const {paramValue, ts} = dataItem
-      const {paramPrecision} = item
-      this.$set(item, 'paramValue', paramPrecision ? formatnumber(paramValue,paramPrecision) : formatnumber(paramValue))
+      const {paramValue,ts} = dataItem
+      const {paramPrecision,paramType} = item
+      this.$set(item, 'paramValue', paramTypeNumList.includes(paramType) ? paramPrecision ? formatnumber(paramValue,paramPrecision) : formatnumber(paramValue) : paramValue)
       this.$set(item, 'reportTime', this.$formatDate(ts))
     },
     //获取最后一笔数据

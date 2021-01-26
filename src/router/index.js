@@ -70,6 +70,7 @@ const router = new VueRouter({
 })
 
 router.beforeEach(async function(to, from, next) {
+  store.commit('clearToken')
   nprogress.start()
   if(to.meta.hasOwnProperty('auth') && !to.meta.auth) {
     next()

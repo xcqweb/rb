@@ -2,7 +2,7 @@
   <div class="label mr10">
     <div class="label_title" :title="label" v-if="label" :class="classLabel" :style="{width: `${width}px`}">{{label + '：'}}</div>
     <slot class="label_title" name="label" v-else></slot>
-    <div :class="width ? 'f1' : 'poros-col-11'" class="tl">
+    <div :class="width ? 'f1' : 'poros-col-11'" class="tl ml6">
       <slot></slot>
     </div>
   </div>
@@ -31,6 +31,9 @@ export default {
     line-height: 32px;
     .label_title{
       text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 </style>

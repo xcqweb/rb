@@ -16,7 +16,7 @@
       </div>
       </slot>
     </template>
-    <p-divider slot="noMore">到底啦</p-divider>
+    <p-divider slot="noMore">我是有底线的</p-divider>
   </Cycle-list>
 </p-select>
   

@@ -42,7 +42,6 @@ let dataCopy = {}
 export default {
   props: {
     modelId: String,
-    registerDeviceNum: Number,
     modelName: String,
     loading: Boolean
   },
@@ -65,7 +64,6 @@ export default {
       this.$API.getModelById({id: this.modelId}).then(res => {
         this.model = res.data
         dataCopy = this.$deepCopy(this.model)
-        this.$emit('update:registerDeviceNum', res.data.registerDeviceNum)
         this.$emit('update:modelName', res.data.modelName)
         this.$emit('update:loading', false)
       }).catch(() => {

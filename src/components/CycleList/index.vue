@@ -117,8 +117,7 @@ const isUndef = function(o) {
         return this.loadings.length
       },
       showNoMore() {
-        console.log(this.$refs['gt-recycle-list'] && this.$refs['gt-recycle-list'].clientHeight)
-        return this.items.length / 7
+        return this.items.length > 7
       }
     },
     created() {

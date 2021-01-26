@@ -51,7 +51,7 @@ export const alarmSource = [
   {text: '设备联动',value: 1},
 ]
 export const alarmSourceTextList = [
-  {text: '参数告警',value: '参数告警'},
+  {text: '参数监控',value: '参数监控'},
   {text: '设备联动',value: '设备联动'},
 ]
 export const alarmSourceList = ['参数监控','设备联动']
@@ -59,15 +59,15 @@ export const alarmSourceList = ['参数监控','设备联动']
 //报警等级
 export const alarmLevel = [
   {text: '注意',value: 0},
-  {text: '告警',value: 1},
+  {text: '警告',value: 1},
   {text: '危险',value: 2},
 ]
 export const alarmLevelTextList = [
   {text: '注意',value: '注意'},
-  {text: '告警',value: '告警'},
+  {text: '警告',value: '警告'},
   {text: '危险',value: '危险'},
 ]
-export const alarmLevelList = ['注意','告警','危险']
+export const alarmLevelList = ['注意','警告','危险']
 
 //日志类型
 export const logType = [
@@ -116,6 +116,7 @@ export const paramType = [
   {text: '布尔型',value: 5},
 ]
 export const paramTypeList = ['字符','浮点型','日期','32位整型','双精度浮点型','布尔型']
+export const paramTypeNumList = [1,3,4]
 
 //设备网络
 export const deviceNetType = [

@@ -1,16 +1,16 @@
 <template>
-  <page :content='modelName' @back='back' :extraRightText='extraRightText'>
+  <page :content='modelName' @back='back'>
+    <div slot="extraRightText">
+      <p v-if="loading">注册设备数：<p-spin><p-icon class="f12" slot="indicator" type="loading" spin /></p-spin></p>
+      <p v-else>{{`注册设备数：${registerDeviceNum}`}}</p>
+    </div>
     <p-tabs @change="changeType" v-model="activeTab">
-      <p-tab-pane v-for="item in tabList" :key="item.key" :disabled='loading' :forceRender="item.key === 'Overview'">
-        <span slot="tab">{{item.tab}}
-          <p-spin v-show="comLoading(item.key)"><p-icon class="f12" slot="indicator" type="loading" spin /></p-spin>
-        </span>
+      <p-tab-pane v-for="item in tabList" :key="item.key" :tab='item.tab' :forceRender="item.key === 'Overview'">
         <component
           class="mr20"
           :is="item.key"
           :modelId='modelId'
           :loading.sync='loading'
-          :registerDeviceNum.sync='registerDeviceNum'
           :modelName.sync='modelName'
           search
           addBtn
@@ -50,6 +50,12 @@ export default {
     modelId() {
       return this.$route.query.id
     },
+    comModelName() {
+      return this.$route.query.modelName
+    },
+    // comDeviceNum() {
+    //   return this.$route.query.deviceNum
+    // }
   },
   created() {
     const cacheTab = sessionStorage.getItem('model_view_tab')
@@ -62,13 +68,11 @@ export default {
       sessionStorage.setItem('model_view_id',this.modelId)
       cacheTab ? (this.activeTab = cacheTab) : (this.activeTab = 'Overview')
     }
+    this.comModelName && (this.modelName = this.comModelName)
   },
   methods: {
     changeType(key) {
       sessionStorage.setItem('model_view_tab',key)
-    },
-    comLoading(tab) {
-      return this.loading && this.activeTab === tab
     },
     back() {
       this.$router.go(-1)

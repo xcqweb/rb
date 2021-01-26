@@ -5,6 +5,7 @@ import Vue from 'vue';
 import axios from 'axios'
 import { getToken } from '@/utils/auth'
 import { logout } from '@/utils/auth'
+import store from '../store'
 // 创建 axios 实例
 const instance = axios.create({
   timeout: 6000 // 请求超时时间
@@ -24,7 +25,7 @@ const err = (error) => {
   }
   return Promise.reject(error)
 }
-
+const CancelToken = axios.CancelToken
 instance.interceptors.request.use(config => {
   //get请求统一加上时间戳 解决ie缓存问题
   if (config.method === 'get') {
@@ -36,6 +37,11 @@ instance.interceptors.request.use(config => {
       config.params  = { t: +new Date() };
     }
   }
+  config.cancelToken = new CancelToken((cancel)=>{//此处设置，便于在切换路由时候，请求还未完成，就取消请求
+    store.commit('pushToken', {
+        cancelToken: cancel,
+    });
+  });
   const token = getToken()
   if (token) {
     config.headers['Authorization'] = token // 让每个请求携带自定义 token 请根据实际情况自行修改
