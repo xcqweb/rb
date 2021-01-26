@@ -111,7 +111,8 @@ export const formatnumber = (value, num = 0) => {
   c = a.length;
   if (num === 0) {
     if (b !== -1) {
-      a = a.substring(0, b);
+      // a = a.substring(0, b);
+      a = Number(a).toFixed(0) //四舍五入
     }
   } else {//如果没有小数点
     if (b === -1) {
@@ -128,7 +129,6 @@ export const formatnumber = (value, num = 0) => {
   }
   return a;
 }
-
 /**
  * [通过参数名获取url中的参数值]
  * @param  {[string]} queryName [参数名]

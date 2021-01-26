@@ -1,11 +1,15 @@
 <template>
   <page :content='modelName' @back='back' :extraRightText='extraRightText'>
     <p-tabs @change="changeType" v-model="activeTab">
-      <p-tab-pane v-for="item in tabList" :key="item.key" :tab="item.tab">
+      <p-tab-pane v-for="item in tabList" :key="item.key" :disabled='loading' :forceRender="item.key === 'Overview'">
+        <span slot="tab">{{item.tab}}
+          <p-spin v-show="comLoading(item.key)"><p-icon class="f12" slot="indicator" type="loading" spin /></p-spin>
+        </span>
         <component
           class="mr20"
           :is="item.key"
           :modelId='modelId'
+          :loading.sync='loading'
           :registerDeviceNum.sync='registerDeviceNum'
           :modelName.sync='modelName'
           search
@@ -30,6 +34,7 @@ export default {
       registerDeviceNum: 0,
       modelName: '-',
       activeTab: 'Overview',
+      loading: false,
       tabList: [
         {tab: '概览',key: 'Overview'},
         {tab: '属性',key: 'Attr'},
@@ -58,15 +63,12 @@ export default {
       cacheTab ? (this.activeTab = cacheTab) : (this.activeTab = 'Overview')
     }
   },
-  // beforeDestroy() {
-  //   sessionStorage.setItem('model_view_tab','Overview')
-  // },
-  // deactivated() {
-  //   sessionStorage.setItem('model_view_tab','Overview')
-  // },
   methods: {
     changeType(key) {
       sessionStorage.setItem('model_view_tab',key)
+    },
+    comLoading(tab) {
+      return this.loading && this.activeTab === tab
     },
     back() {
       this.$router.go(-1)
