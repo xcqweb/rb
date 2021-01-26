@@ -22,6 +22,7 @@
 </template>
 
 <script>
+//协议枚举
 const titleMap = {
   'httpDto': 'HTTP协议',
   'mqttDto': 'MQTT协议'

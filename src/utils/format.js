@@ -1,10 +1,10 @@
 /**
- * 格式化相关的
+ * 格式化时间相关的
  */
-import moment, { months } from 'moment'
+import moment from 'moment'
 
 //获取一年的天数
-const getYearDays = function() {
+export const getYearDays = function() {
   let y = new Date().getFullYear()
   let isLeap = ((0 === y % 4) && (0 === y % 100) || (0 === y % 400))
   return isLeap ? 366 : 365;

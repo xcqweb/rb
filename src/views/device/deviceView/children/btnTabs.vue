@@ -12,6 +12,7 @@
 <script>
 import {isNullOrEmpty} from '@/utils/util'
 export default {
+  name: 'BtnTabs',
   props: {
     tabs: Array,
   },

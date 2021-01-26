@@ -9,6 +9,7 @@
     @cancel="cancel"
     @ok="confirm"
   >
+    <!-- 虚拟列表分页加载列表回收 -->
     <Infinity-select
       style="width:160px"
       :api='$API.getModelList'

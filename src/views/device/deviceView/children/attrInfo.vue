@@ -80,7 +80,7 @@ export default {
     }
   },
   watch: {
-    modelId(id) { //新增设备
+    modelId(id) { //新增设备获取属性
       if (id) {
         const params = {modelId: id,createOption: 0,size: 10000000}
         this.$API.getModelAttrList(params).then( res => {
@@ -133,6 +133,7 @@ export default {
     filterList() {
       return this.list.filter( el => el.attributeType === 0 || el.attributeType === 2)
     },
+    //数值和文本框校验
     comRules() {
       const ruleMap = {}
       this.list.forEach( el => {
@@ -149,6 +150,7 @@ export default {
               ]
           }
           ruleMap[id] = rule[attributeType]
+          //将属性id作为属性值唯一的key
           this.model[id] = attributeText
         }
       })

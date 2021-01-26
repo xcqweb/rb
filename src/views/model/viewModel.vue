@@ -44,18 +44,12 @@ export default {
     }
   },
   computed: {
-    extraRightText() {
-      return `注册设备数：${this.registerDeviceNum || '0'}`
-    },
     modelId() {
       return this.$route.query.id
     },
     comModelName() {
       return this.$route.query.modelName
     },
-    // comDeviceNum() {
-    //   return this.$route.query.deviceNum
-    // }
   },
   created() {
     const cacheTab = sessionStorage.getItem('model_view_tab')

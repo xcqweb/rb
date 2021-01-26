@@ -132,6 +132,7 @@ export default {
           } else if(type === 'edit') {
             func = this.$API.editModelParams
           } else if(type === 'first-add'){//新增模型时添加
+            //校验标识唯一
             if (this.validFun(this.model.paramMark)) {
               this.$message.error('参数标识不能重复！')
               return

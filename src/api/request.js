@@ -19,7 +19,7 @@ const err = (error) => {
     }
     if (data.status === 401) {
       logout();
-    } else { // 404 No message available
+    } else {
       Vue.prototype.$message.error(data.msg || data.message || '服务端异常，请联系技术支持')
     }
   }

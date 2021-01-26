@@ -86,6 +86,7 @@ export default {
     }
   },
   computed: {
+    //选中位置节点后才可以进行新增操作
     disabledBtnAdd() {
       return !this.chooseNode.id
     },

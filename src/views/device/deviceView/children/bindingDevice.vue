@@ -124,8 +124,9 @@ export default {
         },
       });
     },
+    //弹窗回调
     callback(dataList,checkedList) {
-      if (this.overview) {
+      if (this.overview) {//预览组合设备
         const params = {
           deviceCombinationId: this.deviceId,
           deviceIdList: checkedList,
@@ -134,7 +135,7 @@ export default {
           this.$message.success('操作成功！');
           this.getTableData();
         })
-      }else{
+      }else{//新增组合设备
         this.tableData.push(...dataList)
         this.checkedList = checkedList
       }

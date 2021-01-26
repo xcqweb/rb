@@ -100,17 +100,12 @@ export default {
       });
     },
     addModel(){
-      this.$router.push({
-        path : '/model/addModel',
-      }); 
+      this.$router.push('/model/addModel'); 
     },
-    viewClick({id,modelName,registerDeviceNum}){
+    viewClick({id,modelName}){
       this.$router.push({
         path : '/model/viewModel',
-        query: {
-          id,
-          modelName,
-        },
+        query: {id,modelName},
       }); 
     },
     delClick({modelName, id}){
