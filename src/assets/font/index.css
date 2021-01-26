@@ -1,6 +1,13 @@
-@font-face {font-family: "ruban";
+@font-face {
+  font-family: "ruban";
+  font-style: normal;
   src: url("Normal.otf");
+  font-display: swap;
+
 }
-@font-face {font-family: "ruban-bold";
+@font-face {
+  font-family: "ruban-bold";
+  font-style: normal;
   src: url("Medium.otf");
+  font-display: swap;
 }

@@ -71,8 +71,8 @@ export const alarmLevelList = ['注意','告警','危险']
 
 //日志类型
 export const logType = [
-  {text: '网络',value: '网络'},
-  {text: '状态',value: '状态'},
+  {text: '网络状态',value: '网络状态'},
+  {text: '设备状态',value: '设备状态'},
 ]
 
 //操作类型

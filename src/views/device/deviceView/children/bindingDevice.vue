@@ -1,5 +1,5 @@
 <template>
-  <div class="mt20">
+  <div class="bindDevice mt20">
     <div class="c_searchArea">
       <p-button @click="bind" type="primary" :disabled='showAddBind'>绑定设备</p-button>
     </div>
@@ -145,15 +145,3 @@ export default {
   }
 };
 </script>
-
-<style lang="less">
-.model{
-  .routePageTitle{
-    font-size: @f-big;
-    line-height: 1;
-    padding: 13px 20px;
-    line-height:22px;
-    border-bottom: 1px solid @c-bg-1;
-  }
-}
-</style>

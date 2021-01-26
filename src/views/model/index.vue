@@ -148,15 +148,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.model{
-  .routePageTitle{
-    font-size: @f-big;
-    line-height: 1;
-    padding: 13px 20px;
-    line-height:22px;
-    border-bottom: 1px solid @c-bg-1;
-  }
-}
 /deep/ .gt-page-content{
   overflow: hidden;
 }

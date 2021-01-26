@@ -112,7 +112,6 @@ export default {
         {title: '报警时间',dataIndex: 'startTs',ellipsis: true,customRender: date => $formatDate(date)},
       ]
       const smtap =  a => a ? +new Date(a) : +new Date()
-      console.log(smtap())
       const arr3 = [
         {title: '持续时间',ellipsis: true, customRender: ({startTs, endTs}) => formatDuration(smtap()  - smtap(startTs))},
       ]

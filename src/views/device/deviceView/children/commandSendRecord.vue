@@ -1,5 +1,5 @@
 <template>
-  <div class="model" title="模型列表">
+  <div class="sendRecord">
     <div class="c_searchArea fd">
       <div class="c_right">
         <Search @search="onSearch" :selectList='selectList' v-model="keyword.keyword" @reset="reset"/>
@@ -124,15 +124,8 @@ export default {
 };
 </script>
 
-<style lang="less">
-.model{
+<style lang="less" scoped>
+.sendRecord{
   margin-top: 12px;
-  .routePageTitle{
-    font-size: @f-big;
-    line-height: 1;
-    padding: 13px 20px;
-    line-height:22px;
-    border-bottom: 1px solid @c-bg-1;
-  }
 }
 </style>

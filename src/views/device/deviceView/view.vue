@@ -1,7 +1,10 @@
 <template>
   <page :content='deviceName' @back='back'>
     <p-tabs v-model="activeTab" @change="changeType">
-      <p-tab-pane key="view" tab="概览" forceRender>
+      <p-tab-pane key="view" forceRender :disabled='tabDisabled'>
+        <span slot="tab">概览
+          <p-spin v-show="comLoading('view')"><p-icon class="f12" slot="indicator" type="loading" spin /></p-spin>
+        </span>
         <Overview
           class="mr20"
           v-model="deviceList"
@@ -13,7 +16,10 @@
           :label='comLabel'
         />
       </p-tab-pane>
-      <p-tab-pane key="data" tab="数据" :disabled='tabDisabled'>
+      <p-tab-pane key="data" :disabled='tabDisabled'>
+        <span slot="tab">数据
+          <p-spin v-show="comLoading('data')"><p-icon class="f12" slot="indicator" type="loading" spin /></p-spin>
+        </span>
         <!-- 设备数据 -->
         <Data
           class="mr20"
@@ -39,7 +45,10 @@
           />
         </Collapse-list>
       </p-tab-pane>
-      <p-tab-pane key="command" tab="指令" :disabled='tabDisabled'>
+      <p-tab-pane key="command" :disabled='tabDisabled'>
+        <span slot="tab">指令
+          <p-spin v-show="comLoading('command')"><p-icon class="f12" slot="indicator" type="loading" spin /></p-spin>
+        </span>
         <!-- 设备指令 -->
         <Command 
           class="mr20"
@@ -66,7 +75,10 @@
         <!-- 发送记录 -->
         <Send-record class="mr20" />
       </p-tab-pane>
-      <p-tab-pane key="alarm" tab="报警" v-if="isDevice" :disabled='tabDisabled'>
+      <p-tab-pane key="alarm" v-if="isDevice" :disabled='tabDisabled'>
+        <span slot="tab">报警
+          <p-spin v-show="comLoading('alarm')"><p-icon class="f12" slot="indicator" type="loading" spin /></p-spin>
+        </span>
         <Alarm 
           class="mr20"
           :deviceId='comDeviceId' 
@@ -74,7 +86,10 @@
           :deviceMark='deviceMark' 
         />
       </p-tab-pane>
-      <p-tab-pane key="log" tab="日志" :disabled='tabDisabled'>
+      <p-tab-pane key="log" :disabled='tabDisabled'>
+        <span slot="tab">日志
+          <p-spin v-show="comLoading('log')"><p-icon class="f12" slot="indicator" type="loading" spin /></p-spin>
+        </span>
         <Log 
           class="mr20"
           :isDevice='isDevice' 
@@ -83,9 +98,7 @@
           :deviceMarkProps='deviceMark' 
           v-if="isDevice"
         />
-        <!-- <Collapse-list :deviceList='deviceList' v-else> -->
-          <Log class="mr20" v-else :deviceList='deviceList'/>
-        <!-- </Collapse-list> -->
+        <Log class="mr20" :deviceList='deviceList' v-else/>
       </p-tab-pane>
     </p-tabs>
   </page>
@@ -160,6 +173,9 @@ export default {
     },
     back() {
       this.$router.go(-1)
+    },
+    comLoading(tab) {
+      return this.tabDisabled && this.activeTab === tab
     }
   }
 }
@@ -167,16 +183,17 @@ export default {
 <style lang="less" scoped>
 /deep/ .gt-page-content{
   padding-right: 0;
+  overflow: hidden;
 }
 /deep/ .poros-tabs{
   &>.poros-tabs-content{
     &>.poros-tabs-tabpane{
-      height: calc(100vh - 228px);
+      height: calc(100vh - 226px);
       overflow: auto;
     }
   }
 }
 /deep/.poros-table-pagination{
-  margin-bottom: 0;
+  margin-bottom: 2px;
 }
 </style>

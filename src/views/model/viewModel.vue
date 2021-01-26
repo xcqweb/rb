@@ -88,6 +88,6 @@ export default {
   }
 }
 /deep/.poros-table-pagination{
-  margin-bottom: 0;
+  margin-bottom: 2px;
 }
 </style>
