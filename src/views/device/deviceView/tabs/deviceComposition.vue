@@ -7,6 +7,7 @@
       </div>
     </div>
     <p-table
+      :scroll="{y: 'calc(100vh - 310px)'}"
       @change="tableChange"
       @expand="expand"
       :pagination="pagination"

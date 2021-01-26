@@ -106,7 +106,7 @@ export const formatnumber = (value, num = 0) => {
   let b = 0;
   let c = 0;
   let i = 0;
-  a = value.toString();
+  a =  value ? value.toString() : '';
   b = a.indexOf('.');
   c = a.length;
   if (num === 0) {

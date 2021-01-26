@@ -8,6 +8,7 @@
     </div>
     <div class="tableCon">
       <p-table
+        :scroll="{y: 'calc(100vh - 252px)'}"
         rowKey="id"
         @change="tableChange"
         :loading="loading"
@@ -146,7 +147,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .model{
   .routePageTitle{
     font-size: @f-big;
@@ -155,5 +156,8 @@ export default {
     line-height:22px;
     border-bottom: 1px solid @c-bg-1;
   }
+}
+/deep/ .gt-page-content{
+  overflow: hidden;
 }
 </style>

@@ -3,6 +3,7 @@
     <p-tabs v-model="activeTab" @change="changeType">
       <p-tab-pane key="view" tab="概览" forceRender>
         <Overview
+          class="mr20"
           v-model="deviceList"
           :isDevice='isDevice'
           :modelId.sync='modelId'
@@ -15,6 +16,7 @@
       <p-tab-pane key="data" tab="数据" :disabled='tabDisabled'>
         <!-- 设备数据 -->
         <Data
+          class="mr20"
           search
           isDevice
           :activeTabkey='activeTab'
@@ -24,7 +26,7 @@
           v-if="isDevice"
         />
         <!-- 组合数据 -->
-        <Collapse-list :deviceList='deviceList' v-else>
+        <Collapse-list class="mr20" :deviceList='deviceList' v-else>
           <Data
             slot-scope='{item}'
             search 
@@ -40,6 +42,7 @@
       <p-tab-pane key="command" tab="指令" :disabled='tabDisabled'>
         <!-- 设备指令 -->
         <Command 
+          class="mr20"
           search 
           isDevice 
           filter 
@@ -49,7 +52,7 @@
           v-if="isDevice" 
         />
         <!-- 组合指令 -->
-        <Collapse-list :deviceList='deviceList' v-else>
+        <Collapse-list class="mr20" :deviceList='deviceList' v-else>
           <Command 
             slot-scope='{item}' 
             search 
@@ -61,10 +64,11 @@
           />
         </Collapse-list>
         <!-- 发送记录 -->
-        <Send-record />
+        <Send-record class="mr20" />
       </p-tab-pane>
       <p-tab-pane key="alarm" tab="报警" v-if="isDevice" :disabled='tabDisabled'>
         <Alarm 
+          class="mr20"
           :deviceId='comDeviceId' 
           :modelMark='modelMark' 
           :deviceMark='deviceMark' 
@@ -72,20 +76,16 @@
       </p-tab-pane>
       <p-tab-pane key="log" tab="日志" :disabled='tabDisabled'>
         <Log 
+          class="mr20"
           :isDevice='isDevice' 
-          :deviceId='comDeviceId' 
-          :modelMark='modelMark' 
-          :deviceMark='deviceMark' 
+          :deviceIdProps='comDeviceId' 
+          :modelMarkProps='modelMark' 
+          :deviceMarkProps='deviceMark' 
           v-if="isDevice"
         />
-        <Collapse-list :deviceList='deviceList' v-else>
-          <Log 
-            slot-scope='{item}' 
-            :deviceId='item.deviceId' 
-            :modelMark='item.modelMark' 
-            :deviceMark='item.deviceMark'
-          />
-        </Collapse-list>
+        <!-- <Collapse-list :deviceList='deviceList' v-else> -->
+          <Log class="mr20" v-else :deviceList='deviceList'/>
+        <!-- </Collapse-list> -->
       </p-tab-pane>
     </p-tabs>
   </page>
@@ -144,14 +144,16 @@ export default {
   },
   created() {
     const cacheTab = sessionStorage.getItem('device_view_tab')
-    cacheTab ? (this.activeTab = cacheTab) : (this.activeTab = 'view')
+    const cacheDeviceId = sessionStorage.getItem('device_view_id')
+    if (cacheDeviceId && this.comDeviceId !== cacheDeviceId) {
+      this.activeTab = 'view'
+      sessionStorage.setItem('device_view_tab','view')
+      sessionStorage.setItem('device_view_id',this.comDeviceId)
+    }else{
+      sessionStorage.setItem('device_view_id',this.comDeviceId)
+      cacheTab ? (this.activeTab = cacheTab) : (this.activeTab = 'view')
+    }
   },
-  // deactivated() {
-  //   sessionStorage.setItem('device_view_tab','view')
-  // },
-  // beforeDestroy() {
-  //   sessionStorage.setItem('device_view_tab','view')
-  // },
   methods: {
     changeType(key) {
       sessionStorage.setItem('device_view_tab',key)
@@ -162,3 +164,19 @@ export default {
   }
 }
 </script>
+<style lang="less" scoped>
+/deep/ .gt-page-content{
+  padding-right: 0;
+}
+/deep/ .poros-tabs{
+  &>.poros-tabs-content{
+    &>.poros-tabs-tabpane{
+      height: calc(100vh - 228px);
+      overflow: auto;
+    }
+  }
+}
+/deep/.poros-table-pagination{
+  margin-bottom: 0;
+}
+</style>

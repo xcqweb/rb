@@ -29,5 +29,8 @@ export default {
     display: flex;
     align-items: flex-start;
     line-height: 32px;
+    .label_title{
+      text-align: left;
+    }
   }
 </style>

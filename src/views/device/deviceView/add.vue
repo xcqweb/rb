@@ -8,7 +8,7 @@
       ref="form"
       :model="model"
       :rules="rules"
-      :label-col="{span: 2}"
+      :label-col="{span: 3}"
       :wrapper-col="{span: 13}"
       label-align="left"
     >

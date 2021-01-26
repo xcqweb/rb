@@ -127,6 +127,10 @@ export default {
       this.getTableData()
       this.getAlarmCount()
     },
+    deviceMark() {
+      this.getTableData()
+      this.getAlarmCount()
+    }
   },
   methods: {
     changeTab({symbol}) {

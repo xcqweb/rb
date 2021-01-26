@@ -3,6 +3,7 @@
     <p-tabs @change="changeType" v-model="activeTab">
       <p-tab-pane v-for="item in tabList" :key="item.key" :tab="item.tab">
         <component
+          class="mr20"
           :is="item.key"
           :modelId='modelId'
           :registerDeviceNum.sync='registerDeviceNum'
@@ -47,7 +48,15 @@ export default {
   },
   created() {
     const cacheTab = sessionStorage.getItem('model_view_tab')
-    cacheTab ? (this.activeTab = cacheTab) : (this.activeTab = 'Overview')
+    const cacheModelId = sessionStorage.getItem('model_view_id')
+    if (cacheModelId && this.modelId !== cacheModelId) {
+      this.activeTab = 'Overview'
+      sessionStorage.setItem('model_view_tab','Overview')
+      sessionStorage.setItem('model_view_id',this.modelId)
+    }else{
+      sessionStorage.setItem('model_view_id',this.modelId)
+      cacheTab ? (this.activeTab = cacheTab) : (this.activeTab = 'Overview')
+    }
   },
   // beforeDestroy() {
   //   sessionStorage.setItem('model_view_tab','Overview')
@@ -65,3 +74,20 @@ export default {
   }
 }
 </script>
+
+<style lang="less" scoped>
+/deep/ .gt-page-content{
+  padding-right: 0;
+}
+/deep/ .poros-tabs{
+  &>.poros-tabs-content{
+    &>.poros-tabs-tabpane{
+      height: calc(100vh - 228px);
+      overflow: auto;
+    }
+  }
+}
+/deep/.poros-table-pagination{
+  margin-bottom: 0;
+}
+</style>

@@ -2,10 +2,10 @@
   <page @back='back' content='新增模型' backText="返回列表">
     <page-title>基本信息</page-title>
     <p-form
-      class="mt20 ml20"
+      class="mt20"
       :form="form" 
       label-align="left" 
-      :label-col="{ span: 2 }" 
+      :label-col="{ span: 3 }" 
       :wrapper-col="{ span: 11 }"
     >
       <p-form-item label="模型名称">
@@ -148,3 +148,9 @@ export default {
   }
 }
 </script>
+
+<style lang="less" scoped>
+  .gt-page-content .poros-tabs{
+    min-height: auto;
+  }
+</style>

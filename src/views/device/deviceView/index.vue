@@ -2,7 +2,7 @@
   <page title="设备视图">
     <div class="platform-org">
       <!--左侧系统-->
-      <div class="left-tree fl pb20">
+      <div class="left-tree fl">
         <div class="dragLine" :style="{left: `${comWidth - 12}px`}">
           <p-icon type="pause" style="color: #040C2C" v-drag="dragBack" />
         </div>
@@ -152,7 +152,11 @@ export default {
   &-right {
     height: 100%;
     margin-left: 160px;
+    overflow: hidden;
   }
 }
 
+/deep/ .gt-page-content{
+  overflow: hidden;
+}
 </style>

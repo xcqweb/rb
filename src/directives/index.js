@@ -56,7 +56,7 @@ Vue.directive("resize", {
 const calcTableHeight = (ele, binding, vnode) => {
   let elTop = ele.getBoundingClientRect().top; // 表格上方高度
   let paginationHeight = 0; // 页码高度
-  const paginationNode =  ele.querySelector('.ant-pagination');
+  const paginationNode =  ele.querySelector('.poros-pagination');
   if ( paginationNode ){
     paginationHeight = paginationNode.offsetHeight + 32;
   }
@@ -70,6 +70,7 @@ const calcTableHeight = (ele, binding, vnode) => {
   const defaultHeight = 10; // 底部默认间距
   const h = window.innerHeight - elTop - offset - paginationHeight - defaultHeight;
   vnode.context.tableHeight = h - 40;
+  console.log(vnode.context.tableHeight)
 }
 
 Vue.directive('tableHeight',{

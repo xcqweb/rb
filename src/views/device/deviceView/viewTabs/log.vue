@@ -5,6 +5,9 @@
       <Label label='记录时间' width='60' class="ml20 f1" v-show="!isCurrent">
         <p-range-picker @change="getTableData" v-show="!isCurrent" v-model="time" show-time class="ml20"></p-range-picker>
       </Label>
+      <p-select class="w160 ml20" v-model="deviceIdData" v-show="isCurrent && !isDevice">
+        <p-select-option v-for="item in deviceList" :key="item.deviceId" :value='item.deviceId'>{{item.deviceName}}</p-select-option>
+      </p-select>
       <p-button class="reset" @click="reset" icon="reload" />
     </div>
     <p-table
@@ -28,12 +31,21 @@ export default {
   mixins: [tableMixins],
   props: {
     isDevice: Boolean,
-    modelId: String,
-    deviceMark: String, //设备标识
-    modelMark: String, //模型标识
+    deviceIdProps: '',
+    deviceMarkProps: '',
+    modelMarkProps: '',
+    deviceList: {
+      type: Array,
+      default: function() {
+        return []
+      }
+    }
   },
   data() {
     return {
+      deviceIdData: '',
+      deviceMarkData: '',
+      modelMarkData: '',
       tabs: [
         {title: '状态变更',symbol: 'status'},
         {title: '信息变更',symbol: 'info'},
@@ -100,14 +112,32 @@ export default {
     tenantMark(val) {
       this.getTableData()
     },
+    deviceMarkProps() {
+      this.getTableData()
+    },
+    deviceList(val) {
+      this.setSelectInit(val)
+    }
   },
   methods: {
+    setSelectInit(data) {
+      if (data[0]) {
+        const {deviceId, deviceMark, modelMark} = data[0]
+        this.deviceIdData = deviceId
+        this.deviceMarkData = deviceMark
+        this.modelMarkData = modelMark
+      }
+    },
     changeTab({symbol}) {
       this.currentTab = symbol
       this.getTableData()
     },
     getTableData(){
-      if (!this.tenantMark || !this.deviceMark || !this.modelMark) {
+      const {deviceMarkData, modelMarkData} = this
+      const {deviceMarkProps, modelMarkProps} = this
+      const deviceMark = this.isDevice ? deviceMarkProps : deviceMarkData
+      const modelMark = this.isDevice ? modelMarkProps : modelMarkData
+      if (!this.tenantMark || !deviceMark || !modelMark) {
         console.error('标识不存在！')
         return
       }
@@ -116,8 +146,8 @@ export default {
         pageNo: this.pagination.current,
         changeType: this.comChangeType,
         tenantMark: this.tenantMark,
-        deviceMark: this.deviceMark,
-        deviceModelMark: this.modelMark
+        deviceMark: deviceMark,
+        deviceModelMark: modelMark
       }
       const param = this.isCurren ? {
         ...comParams,
@@ -149,6 +179,7 @@ export default {
     },
     reset() {
       this.time = []
+      this.setSelectInit(this.deviceList)
       this.filteredInfo1 = {}
       this.filteredInfo2 = {}
       this.getTableData()
