@@ -12,6 +12,7 @@
           :modelId='modelId'
           :loading.sync='loading'
           :modelName.sync='modelName'
+          :registerDeviceNum.sync='registerDeviceNum'
           search
           addBtn
           filter
