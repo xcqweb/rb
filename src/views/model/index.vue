@@ -72,12 +72,11 @@ export default {
     } 
   },
   activated() {
-   this.getTableData()
+    this.getTableData()
   },
   methods: {
     getTableData(){
       const {keyword,searchKey = this.selectList[0].key} = this.keyword.keyword
-      console.log(this.keyword)
       const isArray = Array.isArray(keyword)
       const param = {
         keyword: isArray ? undefined : keyword,

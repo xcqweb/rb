@@ -16,7 +16,6 @@
         <template slot="name" slot-scope="record">
           <span class="viewDetail" :title="record">{{record}}</span>
         </template>
-        <span slot="sendTime" slot-scope="sendTime">{{$formatDate(sendTime)}}</span>
         <span slot="receiveTime" slot-scope="receiveTime">{{$formatDate(receiveTime)}}</span>
         <span class="operateBtn" slot="operation" slot-scope="record" @click="viewClick(record)">查看报文</span>
       </p-table>
@@ -53,7 +52,7 @@ export default {
       return [
         ...commandColumns.slice(0,3),
         {title: '发送对象',dataIndex: 'name',scopedSlots: { customRender: 'name' }},
-        {title: '发送时间',dataIndex: 'sendTime',ellipsis: true,scopedSlots: { customRender: 'sendTime' }},
+        {title: '发送时间',dataIndex: 'sendTime',ellipsis: true,customRender: date => this.$formatDate(date)},
         {
           title: '发送状态',
           ellipsis: true,

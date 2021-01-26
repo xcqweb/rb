@@ -20,6 +20,7 @@
   <p-table
     class="mt10"
     rowKey="id"
+    :scroll="{y: 'calc(100vh - 370px)'}"
     :row-selection="comSelection"
     @change="tableChange"
     :loading="loadingTable"
@@ -48,7 +49,7 @@ import {
 export default {
   mixins: [modalMixins,tableMixins],
   props: {
-    selectedDevceIds: Array,
+    selectedDevceIds: Array, //已选中的设备id
     overview: Boolean
   },
   data() {
@@ -63,6 +64,7 @@ export default {
     }
   },
   computed: {
+    //禁用已选中的设备
     comSelection() {
       return { 
         selectedRowKeys: this.selectedRowKeys,
@@ -97,11 +99,18 @@ export default {
   methods: {
     cancel() {
       this.selectedRowKeys = []
+      this.belongModel = {label: '全部模型', value: 'all'}
+      this.pagination.pageSize = 10
+      this.pagination.current = 1
     },
     confirm() {
       this.selectedRowKeys = this.selectedRowKeys.filter( id => !this.selectedDevceIds.includes(id))
       if (!this.selectedRowKeys.length) {
         this.$message.error('请选择设备！')
+        return
+      }
+      if (this.selectDeviceList.length + this.selectedDevceIds.length) {
+        this.$message.error('最多支持绑定20个设备！')
         return
       }
       this.$emit('callback', this.selectDeviceList, this.selectedRowKeys)
@@ -121,6 +130,7 @@ export default {
       this.loadingTable = true;
       this.$API.getDeviceList(param).then( res =>{
         if ( res.code === 0 ){
+          this.selectedRowKeys = []
           this.tableData = res.data.records || [];
           this.pagination.total = res.data.total;
         }
