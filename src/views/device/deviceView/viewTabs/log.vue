@@ -31,9 +31,10 @@ export default {
   mixins: [tableMixins],
   props: {
     isDevice: Boolean,
-    deviceIdProps: '',
-    deviceMarkProps: '',
-    modelMarkProps: '',
+    deviceIdProps: String,
+    deviceMarkProps: String,
+    modelMarkProps: String,
+    activeTab: String,
     deviceList: {
       type: Array,
       default: function() {
@@ -115,9 +116,14 @@ export default {
     deviceMarkProps() {
       this.getTableData()
     },
-    deviceList(val) {
-      this.setSelectInit(val)
-    }
+    deviceList: {
+      handler(val) {
+        if (!this.deviceIdData && this.activeTab === 'log') {
+          this.setSelectInit(this.deviceList)
+        }
+      },
+      immediate: true
+    },
   },
   methods: {
     setSelectInit(data) {

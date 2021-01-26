@@ -82,7 +82,7 @@ export default {
   watch: {
     modelId(id) { //新增设备
       if (id) {
-        const params = {modelId: id,size: 10000000}
+        const params = {modelId: id,createOption: 0,size: 10000000}
         this.$API.getModelAttrList(params).then( res => {
           this.list = res.data.records
           this.list.forEach( item => {

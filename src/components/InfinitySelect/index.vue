@@ -94,6 +94,7 @@ export default {
         }
         //判断是否加载完成
         if (this.$refs.select.open && this.pageTotal > 0 && this.pageTotal < (this.pageIndex - 1) * this.size) {
+          resolve([])
           return
         }
         this.api(params).then( res => {

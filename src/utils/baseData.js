@@ -128,9 +128,10 @@ export const deviceNetTypeList = ['在线','离线','未激活']
 //设备状态Array
 export const deviceStatusType = [
   {text: '正常',value: 0},
-  {text: '离线',value: 1},
+  {text: '故障',value: 1},
+  {text: '未激活',value: 2},
 ]
-export const deviceStatusTypeList = ['正常','离线']
+export const deviceStatusTypeList = ['正常','故障','未激活']
 
 //发送状态
 export const sendType = [
@@ -158,5 +159,5 @@ export const rateTypeList = ['秒','分钟','小时','天']
 export const useOption = ['存储', '显示', '显示、存储']
 
 export const netStatusClass =  ['online','offline', 'noActive']
-export const statusClass =  ['normal','offline_text']
+export const statusClass =  ['normal','fault', 'noActive_text']
 

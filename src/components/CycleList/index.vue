@@ -1,5 +1,5 @@
 <template>
-  <div class="gt-recycle-list" :style="{maxHeight: `${maxHeight}px`}">
+  <div ref="gt-recycle-list" class="gt-recycle-list" :style="{maxHeight: `${maxHeight}px`}">
     <div class="gt-recycle-list-main">
       <div class="gt-recycle-list-items" :style="{height: heights + 'px'}">
         <div
@@ -117,7 +117,8 @@ const isUndef = function(o) {
         return this.loadings.length
       },
       showNoMore() {
-        return (this.items.length / this.size) > 1
+        console.log(this.$refs['gt-recycle-list'] && this.$refs['gt-recycle-list'].clientHeight)
+        return this.items.length / 7
       }
     },
     created() {
