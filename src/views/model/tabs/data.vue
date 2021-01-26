@@ -120,7 +120,7 @@ export default {
     innerColumns() {
       const that = this
       const arr1 = [
-        {dataIndex: 'alarmLevelId',title: '报警等级',ellipsis: true,customRender: data => that.alarmLevelList[data]},
+        {dataIndex: 'alarmLevel',title: '报警等级',ellipsis: true},
         {title: '报警阈值',ellipsis: true,dataIndex: 'formulaView'},
         {dataIndex: 'remark',title: '报警信息',ellipsis: true},
         {title: '是否启用',ellipsis: true,scopedSlots: { customRender: 'switch' }},
