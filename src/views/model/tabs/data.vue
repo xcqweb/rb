@@ -213,11 +213,23 @@ export default {
         // 
       })
     },
+    /**
+     * {text: '字符',value: 0},
+      {text: '浮点型',value: 1},
+      {text: '日期',value: 2},
+      {text: '32位整型',value: 3},
+      {text: '双精度浮点型',value: 4},
+      {text: '布尔型',value: 5},
+     */
     setRealData(dataItem, item) {
       const {paramValue,ts} = dataItem
       const {paramPrecision,paramType} = item
-      this.$set(item, 'paramValue', paramTypeNumList.includes(paramType) ? paramPrecision ? formatnumber(paramValue,paramPrecision) : formatnumber(paramValue) : paramValue)
-      this.$set(item, 'reportTime', this.$formatDate(ts))
+      const isNum = paramTypeNumList.includes(paramType)
+      const numVal = paramPrecision ? formatnumber(paramValue,paramPrecision) : formatnumber(paramValue)
+      if (isNum && !isNaN(paramValue) || !isNum) { //过滤参数是数值上报是数据不是数值的值
+        this.$set(item, 'paramValue', isNum ? numVal : paramValue)
+        this.$set(item, 'reportTime', this.$formatDate(ts))
+      }
     },
     //获取最后一笔数据
     getLastData(data = [],disabledLoading) {
