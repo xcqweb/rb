@@ -117,6 +117,7 @@ export default {
           }else{ //新增时
             const $index = that.tableData.findIndex( item => item.id === row.id)
             that.tableData.splice($index, 1)
+            that.$message.success('操作成功！');
           }
         },
         onCancel() {

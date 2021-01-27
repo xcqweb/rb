@@ -110,7 +110,7 @@ export default {
         this.$message.error('请选择设备！')
         return
       }
-      if (this.selectDeviceList.length + this.selectedDevceIds.length) {
+      if (this.selectDeviceList.length + this.selectedDevceIds.length > 20) {
         this.$message.error('最多支持绑定20个设备！')
         return
       }
