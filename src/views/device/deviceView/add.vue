@@ -119,7 +119,7 @@ export default {
     submit() {
       this.$refs.form.validate((valid) => {
         if(valid && !this.error) {
-          let fun = this.isDevice ? this.$API.addDevice : this.$API.addComposition
+          let fun = this.$API[this.isDevice ? 'addDevice' : 'addComposition']
           const {name,modelId,remark} = this.model
           let params = this.isDevice ? {
             deviceName: name,

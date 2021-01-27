@@ -5,7 +5,7 @@
       <Label label='记录时间' width='60' class="ml20 f1" v-show="!isCurrent">
         <p-range-picker @change="getTableData" v-show="!isCurrent" v-model="time" show-time class="ml20"></p-range-picker>
       </Label>
-      <p-select class="w160 ml20" v-model="deviceIdData" v-show="isCurrent && !isDevice">
+      <p-select class="w160 ml20" v-model="deviceIdData" @change="changeDevice" v-show="isCurrent && !isDevice">
         <p-select-option v-for="item in deviceList" :key="item.deviceId" :value='item.deviceId'>{{item.deviceName}}</p-select-option>
       </p-select>
       <p-button class="reset" @click="reset" icon="reload" />
@@ -56,7 +56,6 @@ export default {
       filteredInfo2: {},
       filtersList1: logType,
       filtersList2: operatorType,
-      cacheFilter: {}
     }
   },
   computed: {
@@ -104,9 +103,6 @@ export default {
     } 
   },
   watch: {
-    filteredInfo1(val) {
-      this.cacheFilter[this.currentTab] = val.changeType
-    },
     tenantMark(val) {
       this.getTableData()
     },
@@ -123,6 +119,16 @@ export default {
     },
   },
   methods: {
+    changeDevice(deviceId) {
+      const findItem = this.deviceList.find( el => el.deviceId === deviceId)
+      if (findItem) {
+        const {deviceId, deviceMark, modelMark} = findItem
+        this.deviceIdData = deviceId
+        this.deviceMarkData = deviceMark
+        this.modelMarkData = modelMark
+        this.getTableData()
+      }
+    },
     setSelectInit(data) {
       if (data[0]) {
         const {deviceId, deviceMark, modelMark} = data[0]
@@ -194,6 +200,7 @@ export default {
 <style lang="less" scoped>
 .flex{
   position: relative;
+  padding-top: 1px;
   .reset{
     position: absolute;
     right: 0;

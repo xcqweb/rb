@@ -174,7 +174,7 @@ export default {
         return
       }
       //设备/组合 详情
-      let fun = this.isDevice ? this.$API.getDeviceDetailById : this.$API.getCompositionDetailById
+      let fun = this.$API[this.isDevice ? 'getDeviceDetailById' : 'getCompositionDetailById']
       fun({id: this.comDeviceId}).then( res => {
         const reData = res.data
         this.model = reData
