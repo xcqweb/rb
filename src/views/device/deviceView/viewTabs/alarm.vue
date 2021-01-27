@@ -2,7 +2,7 @@
   <div>
     <div class="flex mb16">
       <Btn-tabs :tabs='tabs' @change="changeTab"></Btn-tabs>
-      <Label label='报警时间' class="ml20 f1" v-show="!isCurrent">
+      <Label label='报警时间' width='66' class="ml20 f1" v-show="!isCurrent">
         <p-range-picker v-model="time" @change="getTableData" show-time></p-range-picker>
       </Label>
       <p-button class="reset" @click="reset" icon="reload" />
@@ -131,6 +131,9 @@ export default {
       this.getAlarmCount()
     }
   },
+  mounted() {
+    this.getAlarmCount()
+  },
   methods: {
     changeTab({symbol}) {
       this.currentTab = symbol
@@ -148,8 +151,8 @@ export default {
       if (this.validMark()) {
         return
       }
-      this.$API.getAlarmLogCount({...this.signCommon,alarmStatus: 1}).then( res => {
-        this.tabs[1].extra = res.data
+      this.$API.getDeviceParamAlarmList({...this.signCommon,alarmStatus: 1}).then( res => {
+        this.tabs[1].extra = res.data.total
       })
     },
     getTableData(){

@@ -72,9 +72,6 @@ export default {
     },
     columns(){
       let {$formatDate, $arrayItemToString, filteredInfo1,filteredInfo2, filtersList1, filtersList2, isCurrent} = this;
-      const arr = [
-        {title: '设备',dataIndex: 'deviceName',ellipsis: true},
-      ] 
       const arr1 = [
         {
           title: '类型',
@@ -103,7 +100,7 @@ export default {
         {title: '操作内容',dataIndex: 'changeInfo',ellipsis: true},
         {title: '操作时间',dataIndex: 'ts',ellipsis: true,customRender: date => $formatDate(date)},
       ]
-      return isCurrent ? this.isDevice ? arr1 : [...arr,...arr1] : arr2
+      return isCurrent ? arr1 : arr2
     } 
   },
   watch: {

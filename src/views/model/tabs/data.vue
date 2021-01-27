@@ -134,23 +134,21 @@ export default {
         {title: '参数标识',dataIndex: 'paramMark',ellipsis: true},
         {title: '参数名称',dataIndex: 'paramName',ellipsis: true},
         {title: '最新上报数据',dataIndex: 'paramValue',ellipsis: true,
-        customRender: data => {
-          return <div class='flex'>
+        customRender: data => <div class='flex'>
             {data}
             {lastLoading && <p-spin class='ml16'>
               <p-icon slot="indicator" type="loading" style="font-size: 18px" spin />
             </p-spin>}
           </div>
-        }},
+        },
         {title: '最近上报时间',dataIndex: 'reportTime',ellipsis: true,
-        customRender: data => {
-          return <div class='flex'>
+        customRender: data => <div class='flex'>
             {data}
             {lastLoading && <p-spin class='ml16'>
               <p-icon slot="indicator" type="loading" style="font-size: 18px" spin />
             </p-spin>}
           </div>
-        }},
+        },
       ] :[
         {title: '参数标识',dataIndex: 'paramMark',ellipsis: true},
         {title: '参数名称',dataIndex: 'paramName',ellipsis: true},
@@ -460,6 +458,9 @@ export default {
 
 <style lang="less" scoped>
 .data{
+  .c_searchArea{
+    padding-top: 1px;
+  }
   /deep/.tableCon{
     .noExpand {
       .expand-icon{
