@@ -68,7 +68,6 @@ const router = new VueRouter({
   base: isDev ? '/' : system.baseUrl,
   routes
 })
-
 router.beforeEach(async function(to, from, next) {
   store.commit('clearToken')
   nprogress.start()

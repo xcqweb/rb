@@ -75,7 +75,8 @@ export default {
     deviceName: String, //设备名称
     deviceMark: String, //设备标识
     modelMark: String, //模型标识
-    loadingDetail: Boolean
+    loadingDetail: Boolean,
+    composeDeviceMark: String, //组合设备标识
   },
   data() {
     return{
@@ -188,6 +189,8 @@ export default {
           this.$emit('update:modelMark', reData.modelMark)
           this.$emit('update:deviceMark', reData.deviceMark)
           this.$emit('update:loadingDetail',false)
+        }else{//组合
+          this.$emit('update:composeDeviceMark',reData.deviceMark)
         }
       })
     }

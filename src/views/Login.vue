@@ -68,6 +68,7 @@ export default {
         message: '欢迎',
         description: `${timeFix()}，欢迎回来`
       })
+      localStorage.setItem('login', +new Date())
     }
   }
 }

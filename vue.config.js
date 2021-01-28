@@ -4,7 +4,6 @@ const CompressionPlugin = require('compression-webpack-plugin')
 const system = require('./src/config/system')
 const modifyVars = require('./src/config/theme')
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
-
 function resolve (dir) {
   return path.join(__dirname, dir)
 }

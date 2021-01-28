@@ -13,6 +13,7 @@
           :deviceName.sync='deviceName'
           :deviceMark.sync='deviceMark'
           :modelMark.sync='modelMark'
+          :composeDeviceMark='composeDeviceMark'
           :loadingDetail.sync='loadingDetail'
           :label='comLabel'
         />
@@ -97,6 +98,7 @@
           :deviceIdProps='comDeviceId' 
           :modelMarkProps='modelMark' 
           :deviceMarkProps='deviceMark'
+          :composeDeviceMark='composeDeviceMark'
           v-if="isDevice"
         />
         <Log class="mr20" :activeTab='activeTab' :deviceList='deviceList' v-else/>
@@ -130,6 +132,7 @@ export default {
       deviceName: '-',
       modelMark: '',
       deviceMark: '',
+      composeDeviceMark: '',
       deviceList: [], //设备列表
       loadingDetail: false
     }

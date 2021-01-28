@@ -51,6 +51,7 @@ export default {
         const isDev = process.env.NODE_ENV === 'development'
         if(isDev) {
           router.push('/login')
+          localStorage.setItem('loginOut', +new Date())
         } else {
           window.location.reload()
         }

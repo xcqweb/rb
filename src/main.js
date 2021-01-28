@@ -15,6 +15,27 @@ import "@/assets/font/index.css";
 import '@/utils/prototype'
 import '@/directives'
 import reg from '@/utils/pattern'
+
+//多页签退出登录同步
+(function() {
+  window.addEventListener('storage', function(event) {
+    const isDev = process.env.NODE_ENV === 'development'
+    if (event.key === 'loginOut') {
+      if(isDev) {
+        router.replace('/login')
+      } else {
+        window.location.reload()
+      }
+    }else if (event.key === 'login') {
+      if(isDev) {
+        router.replace('/')
+      } else {
+        window.location.reload()
+      }
+    }
+  });
+})();
+
 /*** 判断mac系统(含iphone手机) ***/
 const isMac = /macintosh|mac os x/i.test(navigator.userAgent);
 const bodyEle = document.querySelector('body')

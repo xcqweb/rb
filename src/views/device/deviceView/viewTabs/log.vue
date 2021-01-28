@@ -34,6 +34,7 @@ export default {
     deviceIdProps: String,
     deviceMarkProps: String,
     modelMarkProps: String,
+    composeDeviceMark: String,
     activeTab: String,
     deviceList: {
       type: Array,
@@ -111,12 +112,13 @@ export default {
     },
     deviceList: {
       handler(val) {
-        if (!this.deviceIdData && this.activeTab === 'log') {
-          this.setSelectInit(this.deviceList)
-        }
+        this.setSelectInit(this.deviceList)
       },
       immediate: true
     },
+  },
+  mounted() {
+
   },
   methods: {
     changeDevice(deviceId) {
@@ -135,6 +137,10 @@ export default {
         this.deviceIdData = deviceId
         this.deviceMarkData = deviceMark
         this.modelMarkData = modelMark
+      }else{
+        this.deviceIdData = ''
+        this.deviceMarkData = ''
+        this.modelMarkData = ''
       }
     },
     changeTab({symbol}) {
@@ -162,8 +168,8 @@ export default {
         deviceModelMark: modelMark
       } : {
         ...comParams,
-        deviceMark: deviceMark,
-        deviceModelMark: modelMark,
+        deviceMark: this.composeDeviceMark,
+        deviceModelMark: this.tenantMark,
         startTs: this.$UTC(this.time[0]),
         endTs: this.$UTC(this.time[1]),
       }
