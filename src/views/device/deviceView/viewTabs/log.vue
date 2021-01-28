@@ -155,13 +155,15 @@ export default {
         pageNo: this.pagination.current,
         changeType: this.comChangeType,
         tenantMark: this.tenantMark,
-        deviceMark: deviceMark,
-        deviceModelMark: modelMark
       }
       const param = this.isCurren ? {
         ...comParams,
+        deviceMark: deviceMark,
+        deviceModelMark: modelMark
       } : {
         ...comParams,
+        deviceMark: deviceMark,
+        deviceModelMark: modelMark,
         startTs: this.$UTC(this.time[0]),
         endTs: this.$UTC(this.time[1]),
       }
@@ -198,9 +200,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.flex{
+/deep/ .flex{
   position: relative;
-  padding-top: 1px;
+  padding-top: 2px;
   .reset{
     position: absolute;
     right: 0;

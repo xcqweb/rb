@@ -68,7 +68,7 @@ export default {
     //禁用已选中的设备
     comSelection() {
       return { 
-        selectedRowKeys: this.selectedRowKeys,
+        selectedRowKeys: this.selectedRowKeys.length && this.selectedRowKeys || this.selectedDevceIds,
         onChange: this.onSelectChange,
         getCheckboxProps: record => ({
           props: {
@@ -86,12 +86,13 @@ export default {
   },
   watch: {
     belongModel(val) {
+      this.pagination.current = 1
       this.getTableData()
     },
     visible(val) {
       if (val) {
-        this.getTableData()
         this.selectedRowKeys = this.selectedDevceIds
+        this.getTableData()
       }else{
         this.cancel()
       }
