@@ -162,9 +162,9 @@ export default {
         changeType: this.comChangeType,
         tenantMark: this.tenantMark,
       }
-      const param = this.isCurren ? {
+      const param = this.isCurrent ? {
         ...comParams,
-        deviceMark: deviceMark,
+        deviceMark,
         deviceModelMark: modelMark
       } : {
         ...comParams,

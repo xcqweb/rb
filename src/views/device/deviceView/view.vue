@@ -13,7 +13,7 @@
           :deviceName.sync='deviceName'
           :deviceMark.sync='deviceMark'
           :modelMark.sync='modelMark'
-          :composeDeviceMark='composeDeviceMark'
+          :composeDeviceMark.sync='composeDeviceMark'
           :loadingDetail.sync='loadingDetail'
           :label='comLabel'
         />
