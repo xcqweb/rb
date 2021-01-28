@@ -227,7 +227,7 @@ export default {
       const isNum = paramTypeNumList.includes(paramType)
       const numVal = paramPrecision ? formatnumber(paramValue,paramPrecision) : formatnumber(paramValue)
       if (isNum && !isNaN(paramValue) || !isNum) { //过滤参数是数值上报是数据不是数值的值
-        this.$set(item, 'paramValue', isNum ? numVal : paramValue)
+        this.$set(item, 'paramValue', isNum ? numVal : paramValue + '')
         this.$set(item, 'reportTime', this.$formatDate(ts))
       }
     },
