@@ -63,7 +63,7 @@ export default {
       filtersList1: alarmLevelTextList,
       filtersList2: alarmSourceTextList,
       innerColumns: [
-        {title: '参数',ellipsis: true,customRender: ({paramName,paramMark}) => paramName ? `${paramName(paramMark)}` : `(${paramMark})`},
+        {title: '参数',ellipsis: true,customRender: ({paramName,paramMark}) => paramName ? `${paramName}(${paramMark})` : `(${paramMark})`},
         {dataIndex: 'formulaView',title: '监控',ellipsis: true},
         {dataIndex: 'val',title: '数值',ellipsis: true},
       ],
