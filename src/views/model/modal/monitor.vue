@@ -111,12 +111,17 @@ export default {
     formula() {
       const {limit,paramMark,paramType,firstVal,secondVal} = this.model
       const isString = !paramTypeNumList.includes(paramType)
+      const isBoolean = paramType === 5
       if (limit === '<>') {
         return `${paramMark}<${firstVal}||${paramMark}>${secondVal}`
       }else if(limit === '><'){
         return `${paramMark}>${firstVal}&&${paramMark}<${secondVal}`
       }else{
-        return `${paramMark}${limit}${isString ? `'${firstVal}'` : firstVal}`
+        let val
+        if (isBoolean) {
+          val = (firstVal === 'true' || firstVal === 'false') ? firstVal : `'${firstVal}'`
+        }
+        return `${paramMark}${limit}${isString ? (isBoolean ? val : `'${firstVal}'`) : firstVal}`
       }
     },
     formulaView() {
