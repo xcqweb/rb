@@ -8,7 +8,7 @@
   @dropdownVisibleChange='dropdownVisibleChange'
   placeholder='请选择'
 >
-  <Cycle-list class="list" ref="cycle-list" :offset='50' :size='size' :on-fetch="onFetch" slot="dropdownRender" v-if="flag">
+  <Cycle-list class="list" ref="cycle-list" :showAll='showAll' :offset='20' :size='comSize' :on-fetch="onFetch" slot="dropdownRender" v-if="flag">
     <template slot="item" slot-scope="{ data }">
       <slot :item='data'>
       <div class="list_item" :class="{active: data.value === selectModel.value}" :id="data.value" @click="handleClick(data)" style="height:36px">
@@ -38,7 +38,7 @@ export default {
     },
     size: {
       type: Number,
-      default: 20
+      default: 10
     },
     allLabel: {
       type: String,
@@ -66,6 +66,9 @@ export default {
     },
     selectName() {
       return this.value && this.value.label
+    },
+    comSize() {
+      return this.showAll ? this.size + 1 : this.size
     }
   },
   watch: {

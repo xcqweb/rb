@@ -37,7 +37,7 @@
             class="innerTable"
           >
           <template slot="switch" slot-scope="record1">
-            <p-switch v-model="record1.enabled" @click.native="switchClick(record1)">启用</p-switch>
+            <p-switch v-model="record1.enabled" :loading='record1.loading' :disabled='record1.disabled' @click.native="switchClick(record1)">启用</p-switch>
           </template>
           <template slot="alarmOperator" slot-scope="record1">
             <span class="operateBtn" @click="monitorHandler(record1, 'edit',record)" v-show="!record1.enabled">编辑</span>
@@ -193,6 +193,7 @@ export default {
         ...this.paramsInner,
         modelParamId
       }
+      this.innerLoading = true
       this.$API[this.isDevice ? 'getDeviceParamMonitorList' : 'getModelParamsAlarmList'](params).then( res => {
         this.tableData.forEach( item => {
           if (item.id === modelParamId || item.modelParamId === modelParamId) {
@@ -207,8 +208,9 @@ export default {
             }
           }
         })
+        this.innerLoading = false
       }).catch(() => {
-        // 
+        this.innerLoading = false 
       })
     },
     /**
@@ -317,22 +319,27 @@ export default {
           this.options = {...item, type: 'first-edit'}
           this.options.paramId = pItem.id
           this.options.paramMark = pItem.paramMark
+          this.options.paramType = pItem.paramType
         }else{
           this.options = {...item,...analysisFormula(item.formulaView), type: 'edit'}
           this.options.modelParamId = pItem.id
           this.options.paramId = pItem.id
           this.options.paramMark = pItem.paramMark
+          this.options.paramType = pItem.paramType
         }
       }else{
         this.title = '添加监控'
         if (this.add) {
           this.options.type = 'first-add'
           this.options.paramId = item.id
+          this.options.paramMark = item.paramMark
+          this.options.paramType = item.paramType
         }else{
           this.options.type = 'add'
           this.options.paramId = item.id
           this.options.modelParamId = item.id
           this.options.paramMark = item.paramMark
+          this.options.paramType = item.paramType
         }
       }
       
@@ -394,11 +401,28 @@ export default {
     },
     switchClick(item) {
       this.$set(item, 'enabled', item.enabled ? 1 : 0)
+      if (item.loading || item.disabled) {
+        return
+      }
+      this.$set(item, 'loading', true)
+      this.$set(item, 'disabled', true)
       let message = !!item.enabled  ? '启用成功！' : '禁用成功！'
       if (!this.add) {
         this.$API[this.isDevice ? 'editDeviceParamAlarm' : 'editModelParamsAlarm'](this.isDevice ? {enabled: item.enabled,id: item.deviceParamId} : item).then(res => {
           this.$message.success(message)
+          this.$set(item, 'loading', false)
+          let timer = setTimeout( () => {
+            clearTimeout(timer)
+            timer = null
+            this.$set(item, 'disabled', false)
+          },3000)
         }).catch(() => {
+          this.$set(item, 'loading', false)
+          let timer = setTimeout( () => {
+            clearTimeout(timer)
+            timer = null
+            this.$set(item, 'disabled', false)
+          },3000)
           this.$set(item, 'enabled', !item.enabled)
         })
       }else{

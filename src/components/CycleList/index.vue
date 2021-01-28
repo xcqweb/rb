@@ -104,6 +104,10 @@ const isUndef = function(o) {
       maxHeight: { //滚动容器最大高度
         type: Number,
         default: 252
+      },
+      showAll: { //全部
+        type: Boolean,
+        default: false
       }
     },
     computed: {
@@ -164,7 +168,8 @@ const isUndef = function(o) {
           } else {
             this.setList(index, res)
             this.loadItemsByIndex(index)
-            if (res.length < this.size) {
+            const tempSize = (this.showAll && index !== 0) ? this.size - 1 : this.size
+            if (res.length < tempSize) {
               this.stopScroll(index)
             }
           }

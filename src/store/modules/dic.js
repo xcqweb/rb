@@ -15,7 +15,7 @@ export default{
         res.data.records.forEach( item => {
           state.alarmLevelList.push({
             text: item.alarmLevel,
-            value: item.id + ''
+            value: item.id
           })
           state.alarmLevelMap[item.id] = item.alarmLevel
         })

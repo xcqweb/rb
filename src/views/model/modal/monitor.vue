@@ -48,7 +48,7 @@
 import modalMixins from '@/mixins/modal'
 import pattern from '@/utils/pattern'
 import {mapState} from 'vuex'
-import {formualList,formualMap} from '@/utils/baseData'
+import {formualList,formualMap,paramTypeNumList} from '@/utils/baseData'
 export default {
   mixins: [modalMixins],
   data() {
@@ -109,13 +109,14 @@ export default {
       return type === 'edit'
     },
     formula() {
-      const {limit,paramMark,firstVal,secondVal} = this.model
+      const {limit,paramMark,paramType,firstVal,secondVal} = this.model
+      const isString = !paramTypeNumList.includes(paramType)
       if (limit === '<>') {
         return `${paramMark}<${firstVal}||${paramMark}>${secondVal}`
       }else if(limit === '><'){
         return `${paramMark}>${firstVal}&&${paramMark}<${secondVal}`
       }else{
-        return `${paramMark}${limit}${firstVal}`
+        return `${paramMark}${limit}${isString ? `'${firstVal}'` : firstVal}`
       }
     },
     formulaView() {
@@ -130,7 +131,7 @@ export default {
   created() {
     this.$watch('visible', (val) => {
       if (val) {
-        this.model = {alarmLevelId: '1',limit: '==',firstVal: '',secondVal: '',remark: '', ...this.options}
+        this.model = {alarmLevelId: 1,limit: '==',firstVal: '',secondVal: '',remark: '', ...this.options}
         const {firstVal,secondVal} = this.model
         this.model.firstVal = firstVal ? (firstVal + '').trim() : ''
         this.model.secondVal = secondVal ? (secondVal + '').trim() : ''
