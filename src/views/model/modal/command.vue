@@ -189,7 +189,7 @@ export default {
       if (!this.paramsValidateForm.varList.length) {
         this.paramsValidateForm.varList = [this.moreEdit ? {modelCommandId: this.options.id} : {}]
       }
-      this.$refs.paramsValidateForm.validate()
+      this.$refs.paramsValidateForm.clearValidate()
     },
     cancel() {
       this.loading = false

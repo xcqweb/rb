@@ -141,14 +141,14 @@ export default {
   },
   methods: {
     blurFun(key) {
-      if (!isNaN(this.model[key])) {
+      if (this.model[key] && !isNaN(this.model[key])) {
         this.model[key] = Number(this.model[key]) + ''
       }
     },
     changeLimit() {
       this.model.firstVal = ''
       this.model.secondVal = ''
-      this.$refs.form.resetFields()
+      this.$refs.form.clearValidate()
     },
     cancel() {
       this.loading = false

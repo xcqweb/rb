@@ -152,7 +152,7 @@ export default {
       if (!this.paramsValidateForm.emunList.length) {
         this.paramsValidateForm.emunList = [{enumKey: '',enumValue: ''}]
       }
-      this.$refs.paramsValidateForm.validate()
+      this.$refs.paramsValidateForm.clearValidate()
     },
     cancel() {
       this.loading = false
