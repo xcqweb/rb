@@ -131,6 +131,7 @@ export default {
   created() {
     this.$watch('visible', (val) => {
       if (val) {
+        this.$store.commit('getAlarmLevelList')
         this.model = {alarmLevelId: 1,limit: '==',firstVal: '',secondVal: '',remark: '', ...this.options}
         const {firstVal,secondVal} = this.model
         this.model.firstVal = firstVal ? (firstVal + '').trim() : ''

@@ -13,6 +13,7 @@
           :deviceName.sync='deviceName'
           :deviceMark.sync='deviceMark'
           :modelMark.sync='modelMark'
+          :loadingDetail.sync='loadingDetail'
           :label='comLabel'
         />
       </p-tab-pane>
@@ -130,6 +131,7 @@ export default {
       modelMark: '',
       deviceMark: '',
       deviceList: [], //设备列表
+      loadingDetail: false
     }
   },
   watch: {
@@ -139,7 +141,7 @@ export default {
   },
   computed: {
     tabDisabled() {
-      return this.isDevice ? !this.modelId : false
+      return this.loadingDetail
     },
     comType() {
       const {type} = this.$route.query

@@ -75,6 +75,7 @@ export default {
     deviceName: String, //设备名称
     deviceMark: String, //设备标识
     modelMark: String, //模型标识
+    loadingDetail: Boolean
   },
   data() {
     return{
@@ -175,15 +176,18 @@ export default {
       }
       //设备/组合 详情
       let fun = this.$API[this.isDevice ? 'getDeviceDetailById' : 'getCompositionDetailById']
+      this.$emit('update:loadingDetail',true)
       fun({id: this.comDeviceId}).then( res => {
         const reData = res.data
         this.model = reData
         dataCopy = this.$deepCopy(this.model)
         this.$emit('update:modelId', reData.modelId)
         this.$emit('update:deviceName', reData.deviceName || reData.name)
+        this.$emit('update:loadingDetail',false)
         if (this.isDevice) {
           this.$emit('update:modelMark', reData.modelMark)
           this.$emit('update:deviceMark', reData.deviceMark)
+          this.$emit('update:loadingDetail',false)
         }
       })
     }
