@@ -150,8 +150,8 @@ export default {
     getTableData(){
       const {deviceMarkData, modelMarkData} = this
       const {deviceMarkProps, modelMarkProps} = this
-      const deviceMark = this.isDevice ? deviceMarkProps : deviceMarkData
-      const modelMark = this.isDevice ? modelMarkProps : modelMarkData
+      const deviceMark = this.isDevice ? deviceMarkProps : this.isCurrent ? deviceMarkData : this.composeDeviceMark
+      const modelMark = this.isDevice ? modelMarkProps : this.isCurrent ? modelMarkData : this.tenantMark
       if (!this.tenantMark || !deviceMark || !modelMark) {
         console.error('标识不存在！')
         return
@@ -161,15 +161,13 @@ export default {
         pageNo: this.pagination.current,
         changeType: this.comChangeType,
         tenantMark: this.tenantMark,
+        deviceMark,
+        deviceModelMark: modelMark
       }
       const param = this.isCurrent ? {
         ...comParams,
-        deviceMark,
-        deviceModelMark: modelMark
       } : {
         ...comParams,
-        deviceMark: this.composeDeviceMark,
-        deviceModelMark: this.tenantMark,
         startTs: this.$UTC(this.time[0]),
         endTs: this.$UTC(this.time[1]),
       }
