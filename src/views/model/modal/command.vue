@@ -183,6 +183,7 @@ export default {
     },
     addVar() {
       this.paramsValidateForm.varList.unshift(this.moreEdit ? {modelCommandId: this.options.id} : {})
+      this.$refs.paramsValidateForm.clearValidate()
     },
     delVar(index) {
       this.paramsValidateForm.varList.splice(index, 1)

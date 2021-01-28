@@ -98,10 +98,9 @@
           :deviceIdProps='comDeviceId' 
           :modelMarkProps='modelMark' 
           :deviceMarkProps='deviceMark'
-          :composeDeviceMark='composeDeviceMark'
           v-if="isDevice"
         />
-        <Log class="mr20" :activeTab='activeTab' :deviceList='deviceList' v-else/>
+        <Log class="mr20" :composeDeviceMark='composeDeviceMark' :activeTab='activeTab' :deviceList='deviceList' v-else/>
       </p-tab-pane>
     </p-tabs>
   </page>

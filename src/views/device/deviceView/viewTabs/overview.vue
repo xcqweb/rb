@@ -190,7 +190,7 @@ export default {
           this.$emit('update:deviceMark', reData.deviceMark)
           this.$emit('update:loadingDetail',false)
         }else{//组合
-          this.$emit('update:composeDeviceMark',reData.deviceMark)
+          this.$emit('update:composeDeviceMark',reData.mark)
         }
       })
     }

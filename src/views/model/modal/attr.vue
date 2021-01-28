@@ -146,6 +146,7 @@ export default {
     },
     addEmun() {
       this.paramsValidateForm.emunList.push({enumKey: '',enumValue: ''})
+      this.$refs.paramsValidateForm.clearValidate()
     },
     delEmun(index) {
       this.paramsValidateForm.emunList.splice(index,1)
