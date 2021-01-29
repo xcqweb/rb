@@ -180,10 +180,13 @@ export default {
       this.options.modelId = this.$route.query.id
       if (type === 'edit') {
         this.title = '编辑属性'
+        const temp = this.$deepCopy(item)
+        temp.attributeType = isNaN(temp.attributeType) ? +temp.attributeType.split('@@@')[0] : temp.attributeType
         if (this.add) {
-          this.options = {...item, type: 'first-edit'}
+          this.options = {...temp, type: 'first-edit'}
         }else{
-          this.options = {...item, type: 'edit'}
+          
+          this.options = {...temp, type: 'edit'}
         }
       }else{
         this.title = '新增属性'
@@ -234,6 +237,9 @@ export default {
       if(type === 'first-add') {
         if (data.attributeType === 3) {
           this.expandedRowKeys = [data.id]
+        }
+        if (data.attributeType === 2) {
+          this.$set(data, 'attributeType', `${data.attributeType}@@@${data.unit ? data.unit : '-'}`)
         }
         this.tableData.unshift(data)
         this.$emit('input', this.tableData)

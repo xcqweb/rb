@@ -79,6 +79,7 @@ export default {
 <style lang="less" scoped>
 /deep/ .gt-page-content{
   padding-right: 0;
+  overflow: hidden;
 }
 /deep/ .poros-tabs{
   &>.poros-tabs-content{

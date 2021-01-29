@@ -31,7 +31,7 @@ export default {
     },
     emunList: Array,
     error: Boolean, //是否输入报错 报错禁止提交
-    fix: String, //字符后面是否带其他参数值
+    fix: String, //字符后面是否带其他参数值 例如：单位
   },
   data() {
     return {
@@ -46,7 +46,7 @@ export default {
       return this.width ? `${this.width}px` : '100%'
     },
     comVal() {
-      const emunVal = this.emunList ? this.emunList[value] : this.value
+      const emunVal = this.emunList ? this.emunList[this.value] : this.value
       const timeVal = (this.time ? this.time(this.value, this.format) : emunVal) || ''
       return this.fix ? (timeVal ? `${timeVal}(${this.fix})` : '') : timeVal
     }
