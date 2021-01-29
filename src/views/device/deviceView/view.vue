@@ -85,7 +85,8 @@
           class="mr20"
           :deviceId='comDeviceId' 
           :modelMark='modelMark' 
-          :deviceMark='deviceMark' 
+          :deviceMark='deviceMark'
+          :activeTabkey='activeTab' 
         />
       </p-tab-pane>
       <p-tab-pane key="log" :disabled='tabDisabled'>
@@ -98,9 +99,10 @@
           :deviceIdProps='comDeviceId' 
           :modelMarkProps='modelMark' 
           :deviceMarkProps='deviceMark'
+          :activeTabkey='activeTab' 
           v-if="isDevice"
         />
-        <Log class="mr20" :composeDeviceMark='composeDeviceMark' :activeTab='activeTab' :deviceList='deviceList' v-else/>
+        <Log class="mr20" :composeDeviceMark='composeDeviceMark' :activeTabkey='activeTab' :deviceList='deviceList' v-else/>
       </p-tab-pane>
     </p-tabs>
   </page>

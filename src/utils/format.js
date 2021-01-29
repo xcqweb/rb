@@ -21,6 +21,5 @@ export const formatDuration = function(duration = +new Date()) {
   const ms = time.milliseconds() || ''
   const s = time.seconds() || ''
   const msANDs = ms > 0 ? s + 1 : s
-  console.log(s,time.milliseconds())
   return `${y && y + '年'}${m && m + '月'}${w && w + '周'}${d && d + '天'}${h && h + '小时'}${mi && mi + '分'}${msANDs + '秒'}`
 }

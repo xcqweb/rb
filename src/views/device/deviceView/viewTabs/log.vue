@@ -35,7 +35,7 @@ export default {
     deviceMarkProps: String,
     modelMarkProps: String,
     composeDeviceMark: String,
-    activeTab: String,
+    activeTabkey: String,
     deviceList: {
       type: Array,
       default: function() {
@@ -116,6 +116,11 @@ export default {
       },
       immediate: true
     },
+    activeTabkey(key) {
+      if (key === 'log') {
+        this.getTableData()
+      }
+    }
   },
   mounted() {
 

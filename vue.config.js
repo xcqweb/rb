@@ -3,7 +3,8 @@ const webpack = require('webpack')
 const CompressionPlugin = require('compression-webpack-plugin')
 const system = require('./src/config/system')
 const modifyVars = require('./src/config/theme')
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin') 
+const fs = require('fs')
 function resolve (dir) {
   return path.join(__dirname, dir)
 }
@@ -54,6 +55,12 @@ module.exports = {
       .end()
 
     if (!isDev) {
+      const data = JSON.stringify({"版本构建时间" : new Date().toLocaleString()});
+        //版本文件
+        fs.writeFile('./public/version.json', data, function(err){
+            if (err) console.log('写入失败');
+            else console.log('写入成功');
+        })
       // 开启gzip
       config.plugin('compressionPlugin')
         .use(new CompressionPlugin({

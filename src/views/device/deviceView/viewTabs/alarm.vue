@@ -52,6 +52,7 @@ export default {
     modelId: String,
     deviceMark: String, //设备标识
     modelMark: String, //模型标识
+    activeTabkey: String
   },
   data() {
     return {
@@ -59,6 +60,8 @@ export default {
         {title: '当前报警',symbol: 'current', extra: 0},
         {title: '历史报警',symbol: 'history', extra: 0},
       ],
+      now: +new Date(), //当前时间戳
+      timer: null,
       currentTab: 'current',
       time: [],
       filtersList1: alarmLevelTextList,
@@ -86,7 +89,7 @@ export default {
       return signCommon
     },
     columns(){
-      let {$formatDate, $arrayItemToString, filteredInfo1, filtersList1, filtersList2, isCurrent} = this;
+      let {$formatDate, $arrayItemToString, filteredInfo1, filtersList1, filtersList2, isCurrent, now} = this;
       const arr1 = [
         {title: '结束时间',dataIndex: 'endTs',ellipsis: true,customRender: date => $formatDate(date)}
       ]
@@ -112,7 +115,7 @@ export default {
         {title: '报警信息',dataIndex: 'alarmInfo',ellipsis: true},
         {title: '报警时间',dataIndex: 'startTs',ellipsis: true,customRender: date => $formatDate(date)},
       ]
-      const smtap =  a => a ? +new Date(a) : +new Date()
+      const smtap =  a => a ? +new Date(a) : now
       const arr3 = [
         {title: '持续时间',ellipsis: true, customRender: ({startTs, endTs}) => formatDuration(smtap()  - smtap(startTs))},
       ]
@@ -130,15 +133,41 @@ export default {
     deviceMark() {
       this.getTableData()
       this.getAlarmCount()
+    },
+    activeTabkey(key) {
+      if (key === 'alarm') {
+        this.getTableData()
+      }else{
+        this.clearTimer()
+      }
     }
   },
   mounted() {
     this.getAlarmCount()
   },
+  beforeDestroy() {
+    this.clearTimer()
+  },
+  deactivated() {
+    this.clearTimer()
+  },
   methods: {
+    updateNowDate(init) {
+      if (this.timer) {
+        return
+      }
+      this.timer = setInterval( () => {
+        this.now = +new Date()
+      },1000)
+    },
+    clearTimer() {
+      clearInterval(this.timer)
+      this.timer = null
+    },
     changeTab({symbol}) {
       this.currentTab = symbol
       this.getTableData()
+      !this.isCurrent && this.clearTimer()
     },
     validMark() {
       if (!this.tenantMark || !this.deviceMark || !this.modelMark) {
@@ -183,6 +212,8 @@ export default {
           this.tableData.forEach( el => {
             this.$set(el, 'innerData', JSON.parse(el.paramList))
           });
+          
+          this.isCurrent && this.tableData.length && this.updateNowDate()
           this.pagination.total = res.data.total;
           this.setTotal(this.currentTab, this.pagination.total)
           this.loading = false;

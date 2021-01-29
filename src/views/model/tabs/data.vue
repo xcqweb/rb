@@ -94,7 +94,7 @@ export default {
   watch: {
     activeTabkey(val) {
       if (val === 'data') {
-        this.setIntervalHanadler()
+        this.getTableData()
       }else{
         this.clearIntervalHanadler()
       }
