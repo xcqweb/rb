@@ -7,7 +7,7 @@
       <p-button class="edit_close" @click="cancel" icon="close" />
     </template>
     <template v-else>
-      {{time ? time(value, format) : emunList ? emunList[value] : value}}
+      {{comVal}}
       <slot v-if="!normal"></slot>
       <p-tooltip placement="top" title="编辑">
         <p-icon class="edit_icon" type='edit' @click="edit" />
@@ -31,6 +31,7 @@ export default {
     },
     emunList: Array,
     error: Boolean, //是否输入报错 报错禁止提交
+    fix: String, //字符后面是否带其他参数值
   },
   data() {
     return {
@@ -43,6 +44,11 @@ export default {
   computed: {
     comWidth() {
       return this.width ? `${this.width}px` : '100%'
+    },
+    comVal() {
+      const emunVal = this.emunList ? this.emunList[value] : this.value
+      const timeVal = (this.time ? this.time(this.value, this.format) : emunVal) || ''
+      return this.fix ? (timeVal ? `${timeVal}(${this.fix})` : '') : timeVal
     }
   },
   watch: {

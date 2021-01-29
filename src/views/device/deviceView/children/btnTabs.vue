@@ -29,7 +29,7 @@ export default {
     },
     comExtra(extra) {
       const num = !isNaN(extra) && Number(extra) || 0
-      return num > 99 ? '+99' : num
+      return num > 99 ? '99+' : num
     }
   },
 }

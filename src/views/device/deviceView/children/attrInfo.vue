@@ -33,6 +33,7 @@
               v-model="item.attributeText"
               :ref="item.id"
               :time="item.attributeType === 1 && $formatDate"
+              :fix="item.unit"
               normal
               :error='item.error === item.id'
               @submit="save(index)"

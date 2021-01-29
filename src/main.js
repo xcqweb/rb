@@ -59,6 +59,7 @@ Vue.mixin({
     }
   }
 })
+console.table({'版本号': VERSION,'版本时间': BUILD_TIME})
 new Vue({
   router,
   store,

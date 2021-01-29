@@ -3,11 +3,26 @@ import moment from 'moment'
 import 'moment/locale/zh-cn'
 import API from '@/api' 
 moment.locale('zh-cn')
+const clearFix = a => +(a + '').replace(/(\d{3})$/, '000')
 // 时间
 // Vue.prototype.$moment = moment;
 // 常用格式化时间
-Vue.prototype.$formatDate = (timestamp, fmt = 'YYYY-MM-DD HH:mm:ss') => {
-  return timestamp ? moment(timestamp).format(fmt): '';
+Vue.prototype.$formatDate = (timestamp, separator = '-') => {
+  if (!timestamp){
+    return timestamp;
+  }
+  const time = clearFix(+new Date(timestamp))
+  const timeEl = new Date(time);
+  const year = timeEl.getFullYear();
+  const month = timeEl.getMonth() + 1;
+  const day = timeEl.getDate();
+  const hours = timeEl.getHours();
+  const minute = timeEl.getMinutes();
+  const cmSecond = timeEl.getMilliseconds();
+  const second = timeEl.getSeconds();
+  const addNum = (num) => num > 9 ? num : '0' + num;
+  return `${year}${separator}${addNum(month)}${separator}${addNum(day)} ${addNum(hours)}:${addNum(minute)}:${addNum(second)}`;
+     
 };
 //转成utc 2021-01-14T07:07:14.000Z
 Vue.prototype.$UTC = (timestamp,separator='-') => {

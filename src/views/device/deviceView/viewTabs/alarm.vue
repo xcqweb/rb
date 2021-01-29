@@ -115,7 +115,9 @@ export default {
         {title: '报警信息',dataIndex: 'alarmInfo',ellipsis: true},
         {title: '报警时间',dataIndex: 'startTs',ellipsis: true,customRender: date => $formatDate(date)},
       ]
-      const smtap =  a => a ? +new Date(a) : now
+      const clearFix = a => +(a + '').replace(/(\d{3})$/, '000')
+      const smtap =  a => a ? clearFix(+new Date(a)) : clearFix(now)
+      
       const arr3 = [
         {title: '持续时间',ellipsis: true, customRender: ({startTs, endTs}) => formatDuration(smtap()  - smtap(startTs))},
       ]
