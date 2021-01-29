@@ -106,6 +106,17 @@ export default {
       ]
     } 
   },
+  watch: {
+    value(val) {
+      const temp = Array.isArray(val) ? this.$deepCopy(val) : []
+      temp.forEach( el => {
+        if (el.attributeType === 2) {
+          this.$set(el, 'attributeType', `${el.attributeType}@@@${el.unit ? el.unit : '-'}`)
+        }
+      })
+      this.tableData = temp
+    }
+  },
   methods: {
     customExpandIcon(props) {
       const isEmun = props.record.attributeType === 3
@@ -232,6 +243,13 @@ export default {
       const findItem = id ? this.tableData.filter( item => item.id !== id).find( el => mark === el.attributeMark) : this.tableData.find( el => mark === el.attributeMark)
       return findItem
     },
+    emitData() {
+      const dataList = this.$deepCopy(this.tableData)
+      dataList.forEach( el => {
+        el.attributeType = isNaN(el.attributeType) ? +el.attributeType.split('@@@')[0] : el.attributeType
+      })
+      this.$emit('input', dataList)
+    },
     callback(res) {
       const {type, ...data} = res
       if(type === 'first-add') {
@@ -242,11 +260,11 @@ export default {
           this.$set(data, 'attributeType', `${data.attributeType}@@@${data.unit ? data.unit : '-'}`)
         }
         this.tableData.unshift(data)
-        this.$emit('input', this.tableData)
+        this.emitData()
       }else if (type === 'first-edit'){
         const $index = this.tableData.findIndex( item => item.id === data.id)
         this.$set(this.tableData, $index, {...data})
-        this.$emit('input', this.tableData)
+        this.emitData()
       }else{
         this.getTableData();
       }
