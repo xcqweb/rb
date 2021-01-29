@@ -2,49 +2,50 @@
 
 <template>
   <div class="device-tree">
-    <p-tree
-      v-if="treeData && treeData.length"
-      :treeData="treeData"
-      :load-data="onLoadData"
-      :expandedKeys.sync='expandedKeys'
-      :defaultSelectedKeys='defaultSelectedKeys'
-      :loadedKeys='loadedKeys'
-      :show-icon='showIcon'
-      :show-line='showLine'
-      :checkStrictly='checkStrictly'
-      :checkable='checkable'
-      :selectable='selectable'
-      :multiple='multiple'
-      :replaceFields='replaceFields'
-      @select='selectTree'
-      @expand='expand'
-      @load='load'
-      class="tree-wrap"
-    > 
-    <template slot="switcherIcon">
-      <span class="floder_add_des iconfont"></span>
-    </template>
-    <template slot="custom" slot-scope="item">
-      <!-- <span :style="{margin:'2px 4px 0 0'}" class="iconfont iconwenjianjiawenjian"></span> -->
-      <span class="tree-name">{{ item.locationName }}</span>
-      <div class="tree-operator" v-if="showOperator">
-        <p-dropdown :trigger="['hover']" >
-          <i class="iconfont iconellipsis" style="padding: 4px 6px" @click.prevent.stop/>
-          <p-menu slot="overlay">
-            <p-menu-item @click="operatorTree(1, item)" v-if='item.level < MAXLEVEL'>新增节点</p-menu-item>
-            <p-menu-item @click="operatorTree(2, item)" v-if="item.locationType === 0">重命名</p-menu-item>
-            <p-menu-item @click="operatorTree(3, item)" v-if="item.locationType === 0">删除节点</p-menu-item>
-            <p-menu-item @click="operatorTree(4, item)" v-if="item.locationType === 0">移动节点</p-menu-item>
-          </p-menu>
-        </p-dropdown>
-      </div>
-    </template>
-  </p-tree>
-  <gt-no-data v-if="!treeData || !treeData.length" borderColor='#fff'/>
+    <p-spin :spinning="loading">
+      <p-tree
+        v-if="treeData && treeData.length"
+        :treeData="treeData"
+        :load-data="onLoadData"
+        :expandedKeys.sync='expandedKeys'
+        :defaultSelectedKeys='defaultSelectedKeys'
+        :loadedKeys='loadedKeys'
+        :show-icon='showIcon'
+        :show-line='showLine'
+        :checkStrictly='checkStrictly'
+        :checkable='checkable'
+        :selectable='selectable'
+        :multiple='multiple'
+        :replaceFields='replaceFields'
+        @select='selectTree'
+        @expand='expand'
+        @load='load'
+        class="tree-wrap"
+      > 
+      <template slot="switcherIcon">
+        <span class="floder_add_des iconfont"></span>
+      </template>
+      <template slot="custom" slot-scope="item">
+        <span class="tree-name">{{ item.locationName }}</span>
+        <div class="tree-operator" v-if="showOperator">
+          <p-dropdown :trigger="['hover']" >
+            <i class="iconfont iconellipsis" style="padding: 4px 6px" @click.prevent.stop/>
+            <p-menu slot="overlay">
+              <p-menu-item @click="operatorTree(1, item)" v-if='item.level < MAXLEVEL'>新增节点</p-menu-item>
+              <p-menu-item @click="operatorTree(2, item)" v-if="item.locationType === 0">重命名</p-menu-item>
+              <p-menu-item @click="operatorTree(3, item)" v-if="item.locationType === 0">删除节点</p-menu-item>
+              <p-menu-item @click="operatorTree(4, item)" v-if="item.locationType === 0">移动节点</p-menu-item>
+            </p-menu>
+          </p-dropdown>
+        </div>
+      </template>
+    </p-tree>
+    <gt-no-data v-if="!treeData || !treeData.length" borderColor='#fff'/>
+  </p-spin>
   <!-- 弹窗 -->
   <component
-    :is="componentId"
     v-model="visible"
+    :is="componentId"
     :options="options"
     :title="title"
     @callback="treeOperator"
@@ -102,7 +103,8 @@ export default {
       defaultSelectedKeys: [],
       moveNode: [],
       //禁用的节点id
-      disabledNodeIds: []
+      disabledNodeIds: [],
+      loading: false
     }
   },
   computed: {
@@ -145,6 +147,7 @@ export default {
       this.loadedKeys = []
       this.expandedKeys = []
       this.disabledNodeIds = this.moveNodeId ? [this.moveNodeId] : []
+      this.loading = true
       this.getLocation({}).then( ({data}) => {
         this.treeData = this.tran(data)
         const {id, hasChild} = data[0]
@@ -156,7 +159,10 @@ export default {
         }
         this.expandedKeys = [id]
         this.stroageNameSpace && sessionStorage.setItem(this.cacheDataKey[2], JSON.stringify(this.expandedKeys))
-      }).catch( () => {/** */})
+        this.loading = false
+      }).catch( () => {
+        this.loading = false
+      })
     },
     tran(data) {
       return data.map( item => {

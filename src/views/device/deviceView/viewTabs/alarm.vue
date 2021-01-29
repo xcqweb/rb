@@ -44,6 +44,7 @@ import BtnTabs from '../children/btnTabs'
 import {alarmSourceTextList,alarmLevelTextList,alarmSourceList,alarmLevelList} from '@/utils/baseData'
 import {mapState} from 'vuex'
 import {formatDuration} from '@/utils/format'
+import {isType} from '@/utils/util'
 export default {
   components: {BtnTabs},
   mixins: [tableMixins,tableExpandMixins],
@@ -65,7 +66,7 @@ export default {
       innerColumns: [
         {title: '参数',ellipsis: true,customRender: ({paramName,paramMark}) => paramName ? `${paramName}(${paramMark})` : `(${paramMark})`},
         {dataIndex: 'formulaView',title: '监控',ellipsis: true},
-        {dataIndex: 'val',title: '数值',ellipsis: true},
+        {dataIndex: 'val',title: '数值',ellipsis: true,customRender: val => isType(val, 'null') ? '' : val + ''},
       ],
     }
   },
