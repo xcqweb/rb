@@ -45,6 +45,9 @@ import {alarmSourceTextList,alarmLevelTextList,alarmSourceList,alarmLevelList} f
 import {mapState} from 'vuex'
 import {formatDuration} from '@/utils/format'
 import {isType} from '@/utils/util'
+let timer = null
+let timer2 = null
+
 export default {
   components: {BtnTabs},
   mixins: [tableMixins,tableExpandMixins],
@@ -62,7 +65,6 @@ export default {
         {title: '历史报警',symbol: 'history', extra: 0},
       ],
       now: 0, //当前时间戳
-      timer: null,
       currentTab: 'current',
       time: [],
       filtersList1: alarmLevelTextList,
@@ -145,16 +147,24 @@ export default {
   },
   methods: {
     updateNowDate(init) {
-      if (this.timer) {
+      if (timer || timer2) {
         return
       }
-      this.timer = setInterval( () => {
-        this.now = +new Date()
-      },1000)
+      timer = setInterval( () => {
+        this.getTableData('noLoading')
+        this.getAlarmCount()
+      },5000)
+      if (this.tableData.length) {
+        timer2 = setInterval( () => {
+          this.now = +new Date()
+        },1000)
+      }
     },
     clearTimer() {
-      clearInterval(this.timer)
-      this.timer = null
+      clearInterval(timer)
+      clearInterval(timer2)
+      timer = null
+      timer2 = null
     },
     changeTab({symbol}) {
       this.currentTab = symbol
@@ -178,7 +188,7 @@ export default {
         this.tabs[1].extra = res.data.total
       })
     },
-    getTableData(){
+    getTableData(noLoading){
       if (this.validMark()) {
         return
       }
@@ -198,7 +208,7 @@ export default {
         startTs: this.$UTC(this.time[0]),
         endTs: this.$UTC(this.time[1]),
       }
-      this.loading = true;
+      !noLoading && (this.loading = true);
       this.$API.getDeviceParamAlarmList(param).then( res =>{
         if ( res.code === 0 ){
           this.tableData = (res.data.records || [])
@@ -206,7 +216,7 @@ export default {
             this.$set(el, 'innerData', JSON.parse(el.paramList))
           });
           
-          this.isCurrent && this.tableData.length && this.updateNowDate()
+          this.isCurrent && this.updateNowDate()
           this.pagination.total = res.data.total;
           this.setTotal(this.currentTab, this.pagination.total)
           this.loading = false;

@@ -73,6 +73,7 @@ function formualTransfrom({limit, firstVal,secondVal}) {
 }
 
 const INTERVALTIME = 5000 //拉去最后一笔数据频率5s
+const INTERVALTIMELIST = 5000 //列表数据频率5s
 let timer = null
 export default {
   mixins: [modelMixins],
@@ -167,15 +168,15 @@ export default {
     setIntervalHanadler() {
       this.clearIntervalHanadler()
       timer = setInterval(() => {
-        !this.lastLoading && this.getLastData(this.tableData, 'disabledLoading')
-      },INTERVALTIME)
+        this.getTableData('getInterval') //轮询拉取
+      },INTERVALTIMELIST)
     },
     clearIntervalHanadler() {
       timer && clearInterval(timer)
       timer = null
     },
     //展开子列表
-    expandhandler(modelParamId, del) {
+    expandhandler(modelParamId, del, disabledLoading) {
       if (!modelParamId) {
         return
       }
@@ -187,7 +188,7 @@ export default {
         ...this.paramsInner,
         modelParamId
       }
-      this.innerLoading = true
+      !disabledLoading && (this.innerLoading = true)
       this.$API[this.isDevice ? 'getDeviceParamMonitorList' : 'getModelParamsAlarmList'](params).then( res => {
         this.tableData.forEach( item => {
           if (item.id === modelParamId || item.modelParamId === modelParamId) {
@@ -251,7 +252,8 @@ export default {
         this.lastLoading = false
       })
     },
-    getTableData({searchKey = this.selectList[0].key,keyword} = {}){
+    getTableData(getInterval){
+      const {keyword,searchKey = this.selectList[0].key} = this.keyword.keyword
       const param = {
         modelId: this.modelId,
         searchKey,
@@ -261,21 +263,49 @@ export default {
         paramType: this.filteredInfo1.paramType && this.filteredInfo1.paramType[0],
         deviceId: this.isDevice ? this.deviceId : undefined
       }
-      this.loading = true;
+      !getInterval && (this.loading = true);
       let fun = this.$API[this.isDevice ? 'getDeviceParamList' : 'getModelParamsList']
       fun(param).then( res =>{
         if ( res.code === 0 ){
-          this.tableData = res.data.records || [];
+          const reData = res.data.records
+          if (getInterval) {
+            //解决拉取数据时显示空的问题
+            const valList = this.tableData.map(({paramValue,reportTime}) => {
+              return {
+                paramValue,
+                reportTime
+              }
+            })
+            this.tableData = reData.map( (el,index) => {
+              return {
+                ...el,
+                ...valList[index]
+              }
+            })
+            for (let b of reData) {
+               for (let a of this.tableData) {
+                if (a.paramMark === b.paramMark) {
+                  this.$set(a, 'paramPrecision', b.paramPrecision)
+                  this.$set(a, 'paramName', b.paramName)
+                  this.$set(a, 'paramType', b.paramType)
+                  continue;
+                }
+              }
+            }
+          }else{
+            this.tableData = reData || [];
+            this.tableData.forEach( item => {
+              this.$set(item, 'innerData', [])
+            })
+          }
+          
           if (this.isDevice) {//设备或组合里面才去请求
             //最后一笔数据
-            this.getLastData(this.tableData)
+            this.getLastData(this.tableData,getInterval)
             this.setIntervalHanadler()
           }
-          this.tableData.forEach( item => {
-            this.$set(item, 'innerData', [])
-          })
           //加载已展开的子列表
-          this.expandhandler(this.expandedRowKeys[0])
+          this.expandhandler(this.expandedRowKeys[0],undefined,'disabledLoading')
           this.pagination.total = res.data.total;
         }
         this.loading = false;
