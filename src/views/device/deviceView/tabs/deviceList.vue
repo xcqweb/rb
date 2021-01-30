@@ -193,7 +193,7 @@ export default {
     //删除设备
     removeDeviceHandler({id}) {
       this.$API.delDeviceById({id}).then(() => {
-        this.$message.success('操作成功！')
+        this.$message.success('删除成功！')
         if (this.tableData.length <= 1 && this.pagination.current > 1) {
           this.pagination.current --
         }

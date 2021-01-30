@@ -130,7 +130,7 @@ export default {
       }  
       return <a class='expand-icon' style={{marginRight:isEmun ? '10px' : '26px'}} onClick={() => {
         props.onExpand(props.record)
-      }}><span class={isEmun ? 'iconfont iconjiantouxiangzuoshangyitiao' : ''}></span></a>
+      }}><span class={isEmun ? 'iconfont iconjiantouxiangyouxiayitiao' : ''}></span></a>
     },
     expandhandler(modelAttributeId) {
       if (!modelAttributeId) {

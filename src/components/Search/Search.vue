@@ -3,7 +3,7 @@
     <p-select v-model="selectType" @change="changeSelect" v-if="isSelect" style="min-width:90px" :class="{noBoder: isSelect}">
       <p-select-option v-for="(item, index) in selectList" :value='item.key' :key='index'>{{item.name}}</p-select-option>
     </p-select>
-    <p-range-picker v-if="extra" style="width: 160px;margin-right: 10px;" v-model="keyword"  @change="onSearch"/>
+    <p-range-picker v-if="extra" style="width: 300px;margin-right: 10px;" show-time format="YYYY-MM-DD HH:mm:ss" v-model="keyword"  @change="onSearch"/>
     <p-input-search v-if="!extra"  allow-clear v-model.trim="keyword" :placeholder="`请输入${comLabel}`" style="width: 160px;margin-right: 10px;" @search="onSearch" />
     <p-button class="reset" v-debounce="reset" icon="reload" />
   </div>

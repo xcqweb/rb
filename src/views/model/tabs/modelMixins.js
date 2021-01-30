@@ -38,7 +38,7 @@ export default {
       }  
       return <a class='expand-icon' style="margin-right:10px" onClick={() => {
         props.onExpand(props.record)
-      }}><span class={isExpand ? "iconfont iconjiantouxiangzuoshangyitiao" : ''}></span></a>
+      }}><span class={isExpand ? "iconfont iconjiantouxiangyouxiayitiao" : ''}></span></a>
     },
     expand(expanded, record) {
       const id = record.id || record.modelParamId

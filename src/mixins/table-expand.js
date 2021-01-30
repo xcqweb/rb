@@ -21,7 +21,7 @@ export default {
       }  
       return <a class='expand-icon' style="margin-right:10px" onClick={() => {
         props.onExpand(props.record)
-      }}><span class="iconfont iconjiantouxiangzuoshangyitiao"></span></a>
+      }}><span class="iconfont iconjiantouxiangyouxiayitiao"></span></a>
     },
     expand(expanded, record) {
       const id = record.id || record.alarmId

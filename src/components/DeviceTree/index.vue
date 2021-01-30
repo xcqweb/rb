@@ -122,23 +122,25 @@ export default {
   //     deep: true
   //   }
   },
-  mounted() {
+  activated() {
     // console.log(JSON.parse(sessionStorage.getItem('treeData')))
     if (this.showOperator) { //只在有操作页面缓存树节点
-      this.treeData = JSON.parse(sessionStorage.getItem(this.cacheDataKey[0]))
-      this.loadedKeys = JSON.parse(sessionStorage.getItem(this.cacheDataKey[1])) || []
-      this.expandedKeys = JSON.parse(sessionStorage.getItem(this.cacheDataKey[2])) || []
-      const selectObj = JSON.parse(sessionStorage.getItem(this.cacheDataKey[3])) || {}
-      this.defaultSelectedKeys = selectObj.id ? [selectObj.id] : []
-      if (selectObj) {
-        this.$emit('input', selectObj)
-        this.$emit('change', selectObj)
-      }
+      // this.treeData = JSON.parse(sessionStorage.getItem(this.cacheDataKey[0]))
+      // this.loadedKeys = JSON.parse(sessionStorage.getItem(this.cacheDataKey[1])) || []
+      // this.expandedKeys = JSON.parse(sessionStorage.getItem(this.cacheDataKey[2])) || []
+      // const selectObj = JSON.parse(sessionStorage.getItem(this.cacheDataKey[3])) || {}
+      // this.defaultSelectedKeys = selectObj.id ? [selectObj.id] : []
+      // if (selectObj) {
+      //   this.$emit('input', selectObj)
+      //   this.$emit('change', selectObj)
+      // }
       if (!this.treeData || (this.treeData && !this.treeData.length)) {
         this.initTree()
       }
     }else{
-      this.initTree()
+      if (!this.treeData || (this.treeData && !this.treeData.length)) {
+        this.initTree()
+      }
     }
   },
   methods: {
@@ -187,7 +189,7 @@ export default {
       return this.$API.queryChildLocation(params)
     },
     onLoadData(treeNode) {
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         if (treeNode.dataRef.children) {
           resolve();
           return;
@@ -200,6 +202,9 @@ export default {
           this.$set(treeNode.dataRef, 'children', reData)
           this.treeData = [...this.treeData];
           resolve();
+        }).catch( () => {
+          resolve();
+          this.treeData = []
         });
       });
     },
