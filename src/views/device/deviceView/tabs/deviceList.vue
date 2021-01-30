@@ -28,7 +28,7 @@
       row-key="id"
     >
       <span slot="deviceName" slot-scope="item" class="viewDetail" @click="view('/device/viewDevice',item, 'device')">{{item.deviceName}}</span>
-      <span slot="modelName" slot-scope="item" class="viewDetail" @click="viewModel('/model/viewModel',item.modelId)">{{item.modelName}}</span>
+      <span slot="modelName" slot-scope="item" class="viewDetail" @click="viewModel('/model/viewModel',item)">{{item.modelName}}</span>
       <template slot="operation" slot-scope="item">
         <a href="javascript:;" @click="view('/device/viewDevice',item,'device')">查看</a>
         <a class="ml6 mr6" href="javascript:;" @click="move(item)">移动</a>
@@ -228,10 +228,10 @@ export default {
     view(path, {id,deviceName,modelId,deviceMark,modelMark,tenantId}, type) {
       this.$router.push({path,query:{id,modelId,type,deviceName,deviceMark,modelMark,tenantId}})
     },
-    viewModel(path, id) {
+    viewModel(path, {modelId,modelName}) {
       this.$router.push({
         path,
-        query: {id}
+        query: {id:modelId,modelName}
       })
     },
   },

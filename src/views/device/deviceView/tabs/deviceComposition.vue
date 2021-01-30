@@ -239,19 +239,19 @@ export default {
     view(item) {
       this.$router.push({
         path: '/device/viewComponsition',
-        query: {id: item.id}
+        query: {id: item.id,deviceName: item.name}
       })
     },
     viewDevice(item) {
       this.$router.push({
         path: '/device/viewDevice',
-        query: {type: 'device',id: item.deviceId}
+        query: {type: 'device',id: item.deviceId,deviceName: item.deviceName}
       })
     },
     viewModel(item) {
       this.$router.push({
         path: '/model/viewModel',
-        query: {id: item.modelId}
+        query: {id: item.modelId,modelName: item.modelName}
       })
     }
   },
