@@ -66,7 +66,7 @@ import Monitor from '../modal/monitor'
 import BtnTabs from '../../device/deviceView/children/btnTabs'
 import { mapState } from 'vuex'
 import {paramType,paramTypeList,formualMap,useOption,paramTypeNumList} from '@/utils/baseData'
-import {analysisFormula,formatnumber,isType} from '@/utils/util'
+import {analysisFormula,formatnumber,isType,isNullOrEmpty} from '@/utils/util'
 function formualTransfrom({limit, firstVal,secondVal}) {
   const isBetween = limit === '<>' || limit === '><'
   return formualMap[limit] + (isBetween ? `${firstVal} ~ ${secondVal}` : firstVal)
@@ -221,7 +221,7 @@ export default {
       const isNum = paramTypeNumList.includes(paramType)
       const isNotNullVal = isType(paramValue, 'null') //null
       const val = paramValue ? formatnumber(paramValue,paramPrecision) : formatnumber(paramValue)
-      const numVal = paramPrecision ? val : paramValue
+      const numVal = isNullOrEmpty(paramPrecision) ? paramValue : val
       if ((isNum && !isNaN(paramValue) || !isNum) && !isNotNullVal) { //过滤参数是数值上报是数据不是数值的值 null
         this.$set(item, 'paramValue', isNum ? numVal : paramValue + '')
         this.$set(item, 'reportTime', this.$formatDate(ts))
