@@ -88,10 +88,10 @@
           :modelMarkProps='modelMark' 
           :deviceMarkProps='deviceMark'
           :tenantMark='tenantMark'
-          :activeTabkey='activeTab' 
-          v-if="isDevice"
+          :activeTabkey='activeTab'
+          :deviceList='deviceList'
+          :composeDeviceMark='composeDeviceMark'
         />
-        <Log class="mr20" :composeDeviceMark='composeDeviceMark' :activeTabkey='activeTab' :deviceList='deviceList' v-else/>
       </p-tab-pane>
     </p-tabs>
   </page>

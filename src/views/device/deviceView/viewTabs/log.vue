@@ -136,6 +136,7 @@ export default {
         this.deviceMarkData = ''
         this.modelMarkData = ''
       }
+      this.getTableData()
     },
     changeTab({symbol}) {
       this.currentTab = symbol
