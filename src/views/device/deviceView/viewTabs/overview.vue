@@ -71,6 +71,7 @@ export default {
     label: String, //‘组合’或‘设备’
     isDevice: Boolean, //在设备中使用否则在组合中
     value: Array, //设备列表
+    loadingDetail: Boolean
   },
   data() {
     return{
@@ -84,7 +85,6 @@ export default {
       isError: '',
       errorInfo: '',
       loading: false,
-      loadingDetail: false
     }
   },
   watch: {
@@ -172,14 +172,14 @@ export default {
       }
       //设备/组合 详情
       let fun = this.$API[this.isDevice ? 'getDeviceDetailById' : 'getCompositionDetailById']
-      this.loadingDetail = true
+      this.$emit('update:loadingDetail', true)
       fun({id: this.comDeviceId}).then( res => {
         const reData = res.data
         this.model = reData
         dataCopy = this.$deepCopy(this.model)
-        this.loadingDetail = false
+        this.$emit('update:loadingDetail', false)
       }).catch( () => {
-        this.loadingDetail = false
+        this.$emit('update:loadingDetail', false)
       })
     }
   }

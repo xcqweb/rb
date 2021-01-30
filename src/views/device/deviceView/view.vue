@@ -1,11 +1,12 @@
 <template>
   <page :content='deviceName' @back='back'>
     <p-tabs v-model="activeTab" @change="changeType">
-      <p-tab-pane key="view">
+      <p-tab-pane key="view" :forceRender='!isDevice'>
         <span slot="tab">概览</span>
         <Overview
           class="mr20"
           v-model="deviceList"
+          :loadingDetail.sync='loadingDetail'
           :isDevice='isDevice'
           :label='comLabel'
         />
@@ -25,7 +26,7 @@
           v-if="isDevice"
         />
         <!-- 组合数据 -->
-        <Collapse-list class="mr20" :deviceList='deviceList' v-else>
+        <Collapse-list class="mr20" :deviceList='deviceList' :loading='loadingDetail' v-else>
           <Data
             slot-scope='{item}'
             search 
@@ -53,7 +54,7 @@
           v-if="isDevice" 
         />
         <!-- 组合指令 -->
-        <Collapse-list class="mr20" :deviceList='deviceList' v-else>
+        <Collapse-list class="mr20" :deviceList='deviceList' :loading='loadingDetail' v-else>
           <Command 
             slot-scope='{item}' 
             search 
@@ -182,9 +183,9 @@ export default {
     back() {
       this.$router.go(-1)
     },
-    comLoading(tab) {
-      return this.loadingDetail && this.activeTab === tab
-    }
+    // comLoading(tab) {
+    //   return this.loadingDetail && this.activeTab === tab
+    // }
   }
 }
 </script>

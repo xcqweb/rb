@@ -65,6 +65,7 @@ import tableMixins from '@/mixins/tableMixins'
 import tableExpandMixins from '@/mixins/table-expand'
 import {deviceNetType,deviceStatusType,deviceNetTypeList,deviceStatusTypeList,netStatusClass,statusClass} from '@/utils/baseData'
 import {commomColumns} from '@/views/base'
+import {mapState} from 'vuex'
 export default {
   mixins: [tableMixins,tableExpandMixins],
   props: {
@@ -86,6 +87,9 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      tenantId: state => state.user.userInfo.tenantId,
+    }),
     //选中位置节点后才可以进行新增操作
     disabledBtnAdd() {
       return !this.chooseNode.id
@@ -239,7 +243,7 @@ export default {
     view(item) {
       this.$router.push({
         path: '/device/viewComponsition',
-        query: {id: item.id,deviceName: item.name}
+        query: {id: item.id,deviceName: item.name,mark: item.mark,tenantId: item.tenantId || this.tenantId}
       })
     },
     viewDevice(item) {
