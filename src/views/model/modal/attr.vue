@@ -44,7 +44,7 @@
               {message: '枚举值仅支持中文、字母、数字（整数和小数）或下划线“_”',pattern: pattern.name4Reg},
               {type: 'string',max: 25,message: '枚举值长度限制为25个字符'}]"
             >
-              <p-input class="mr6 w160" v-model.trim="item.enumKey" :disabled='moreEdit && item.id' placeholder="请输入枚举值" />
+              <p-input class="mr6 w160" @change="valid" v-model.trim="item.enumKey" :disabled='moreEdit && item.id' placeholder="请输入枚举值" />
             </p-form-model-item>
             <p-form-model-item
             class="ml6"
@@ -53,7 +53,7 @@
               {message: '显示名称仅支持中文、字母、数字或下划线“_”',pattern: pattern.name2Reg},
               {type: 'string',max: 25,message: '显示名称长度限制为25个字符'}]"
             >
-              <p-input class="w160" v-model.trim="item.enumValue" :disabled='item.id && moreEdit' placeholder="请输入显示名称" />
+              <p-input class="w160" @change="valid" v-model.trim="item.enumValue" :disabled='item.id && moreEdit' placeholder="请输入显示名称" />
             </p-form-model-item>
             <p-icon class="ml6 mr6 f14 icon" type="delete" @click="delEmun(index)" v-show="!(moreEdit && item.id)" />
           </div>
@@ -147,6 +147,7 @@ export default {
     addEmun() {
       this.paramsValidateForm.emunList.push({enumKey: '',enumValue: ''})
       this.$refs.paramsValidateForm.clearValidate()
+      this.valid()
     },
     delEmun(index) {
       this.paramsValidateForm.emunList.splice(index,1)
@@ -154,6 +155,7 @@ export default {
         this.paramsValidateForm.emunList = [{enumKey: '',enumValue: ''}]
       }
       this.$refs.paramsValidateForm.clearValidate()
+      this.valid()
     },
     cancel() {
       this.loading = false

@@ -58,7 +58,7 @@
               },
             ]"
             >
-              <p-input v-model="item.commandVarMark" :disabled='item.extendType === 1' placeholder="请输入变量标识" />
+              <p-input @change="valid" v-model="item.commandVarMark" :disabled='item.extendType === 1' placeholder="请输入变量标识" />
             </p-form-model-item>
             <p-form-model-item
             class="mr6"
@@ -101,7 +101,7 @@
 <script>
 import modalMixins from '@/mixins/modal'
 import pattern from '@/utils/pattern'
-
+import {validateRepeat} from '@/utils/util'
 export default {
   mixins: [modalMixins],
   props: {
@@ -181,9 +181,20 @@ export default {
         }))
       })
     },
+    valid() {
+      return validateRepeat({
+        list: this.paramsValidateForm.varList,
+        ref: this.$refs.paramsValidateForm.$el,
+        tip: '变量标识重复!',
+        key: 'commandVarMark',
+        that: this,
+        fix: 1,
+      })
+    },
     addVar() {
       this.paramsValidateForm.varList.unshift(this.moreEdit ? {modelCommandId: this.options.id} : {})
       this.$refs.paramsValidateForm.clearValidate()
+      this.valid()
     },
     delVar(index) {
       this.paramsValidateForm.varList.splice(index, 1)
@@ -191,6 +202,7 @@ export default {
         this.paramsValidateForm.varList = [this.moreEdit ? {modelCommandId: this.options.id} : {}]
       }
       this.$refs.paramsValidateForm.clearValidate()
+      this.valid()
     },
     cancel() {
       this.loading = false
@@ -203,6 +215,9 @@ export default {
       this.$refs.form.validate(valid => {
         this.$refs.paramsValidateForm.validate( valid2 => {
           if (valid && valid2) {
+            if (this.valid()) {
+              return
+            }
             const modelCommandVarAddParamList = this.$deepCopy(this.paramsValidateForm.varList)
             this.model.commandTemplateId = this.model.commandTemplateIdObj.key
             const data = Object.assign({modelCommandVarAddParamList}, this.model)
