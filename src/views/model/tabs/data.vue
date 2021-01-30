@@ -218,12 +218,12 @@ export default {
     setRealData(dataItem, item) {
       const {paramValue,ts} = dataItem
       const {paramPrecision,paramType} = item
-      const isNum = paramTypeNumList.includes(paramType)
+      const isNum = paramTypeNumList.includes(paramType) //数值型
       const isNotNullVal = isType(paramValue, 'null') //null
-      const val = paramValue ? formatnumber(paramValue,paramPrecision) : formatnumber(paramValue)
-      const numVal = isNullOrEmpty(paramPrecision) ? paramValue : val
-      if ((isNum && !isNaN(paramValue) || !isNum) && !isNotNullVal) { //过滤参数是数值上报是数据不是数值的值 null
-        this.$set(item, 'paramValue', isNum ? numVal : paramValue + '')
+      const pres = isNullOrEmpty(paramPrecision) ? 0 : paramPrecision
+      const val = formatnumber(paramValue,pres)
+      if (!isNotNullVal) { //过滤参数是数值上报是null
+        this.$set(item, 'paramValue', isNum ? val : paramValue + '')
         this.$set(item, 'reportTime', this.$formatDate(ts))
       }
     },
