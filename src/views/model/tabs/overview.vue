@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <p-spin :spinning='loading'>
     <page-title>基本信息</page-title>
     <div class="content">
       <Label label='模型名称'>
@@ -32,7 +32,7 @@
       <Label label='创建人'>{{model.createBy}}</Label>
       <Label label='创建时间'>{{$formatDate(model.createTime)}}</Label>
     </div>
-  </div>
+  </p-spin>
 </template>
 
 <script>
@@ -43,7 +43,6 @@ export default {
   props: {
     modelId: String,
     registerDeviceNum: Number,
-    modelName: String,
     loading: Boolean
   },
   data() {
@@ -53,7 +52,7 @@ export default {
       judgeTypeList,
       model: {},
       isError: '',
-      errorInfo: ''
+      errorInfo: '',
     }
   },
   mounted() {
@@ -65,11 +64,10 @@ export default {
       this.$API.getModelById({id: this.modelId}).then(res => {
         this.model = res.data
         dataCopy = this.$deepCopy(this.model)
-        this.$emit('update:registerDeviceNum', res.data.registerDeviceNum)
-        this.$emit('update:modelName', res.data.modelName)
         this.$emit('update:loading', false)
+        this.$emit('update:registerDeviceNum', res.data.registerDeviceNum)
       }).catch(() => {
-        this.$emit('update:loading', false) 
+        this.$emit('update:loading', false)
       })
     },
     save() {

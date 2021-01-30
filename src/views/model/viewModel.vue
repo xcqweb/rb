@@ -10,9 +10,8 @@
           class="mr20"
           :is="item.key"
           :modelId='modelId'
-          :loading.sync='loading'
-          :modelName.sync='modelName'
           :registerDeviceNum.sync='registerDeviceNum'
+          :loading.sync='loading'
           search
           addBtn
           filter
@@ -32,8 +31,6 @@ export default {
   components: {Overview,Data,Attr,Command},
   data() {
     return {
-      registerDeviceNum: 0,
-      modelName: '-',
       activeTab: 'Overview',
       loading: false,
       tabList: [
@@ -48,7 +45,7 @@ export default {
     modelId() {
       return this.$route.query.id
     },
-    comModelName() {
+    modelName() {
       return this.$route.query.modelName
     },
   },

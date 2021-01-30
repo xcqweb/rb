@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <p-spin :spinning="loadingDetail">
     <page-title>基本信息</page-title>
     <div class="content">
       <Label :label="`${label}名称`">
@@ -48,7 +48,7 @@
         </tempalte>
       </Collapse-list>
     </template>
-  </div>
+  </p-spin>
 </template>
 
 <script>
@@ -70,13 +70,7 @@ export default {
   props: {
     label: String, //‘组合’或‘设备’
     isDevice: Boolean, //在设备中使用否则在组合中
-    modelId: String, //模型id
     value: Array, //设备列表
-    deviceName: String, //设备名称
-    deviceMark: String, //设备标识
-    modelMark: String, //模型标识
-    loadingDetail: Boolean,
-    composeDeviceMark: String, //组合设备标识
   },
   data() {
     return{
@@ -89,7 +83,8 @@ export default {
       ////校验
       isError: '',
       errorInfo: '',
-      loading: false
+      loading: false,
+      loadingDetail: false
     }
   },
   watch: {
@@ -177,21 +172,14 @@ export default {
       }
       //设备/组合 详情
       let fun = this.$API[this.isDevice ? 'getDeviceDetailById' : 'getCompositionDetailById']
-      this.$emit('update:loadingDetail',true)
+      this.loadingDetail = true
       fun({id: this.comDeviceId}).then( res => {
         const reData = res.data
         this.model = reData
         dataCopy = this.$deepCopy(this.model)
-        this.$emit('update:modelId', reData.modelId)
-        this.$emit('update:deviceName', reData.deviceName || reData.name)
-        this.$emit('update:loadingDetail',false)
-        if (this.isDevice) {
-          this.$emit('update:modelMark', reData.modelMark)
-          this.$emit('update:deviceMark', reData.deviceMark)
-          this.$emit('update:loadingDetail',false)
-        }else{//组合
-          this.$emit('update:composeDeviceMark',reData.mark)
-        }
+        this.loadingDetail = false
+      }).catch( () => {
+        this.loadingDetail = false
       })
     }
   }

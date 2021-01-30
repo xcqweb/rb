@@ -1,27 +1,17 @@
 <template>
   <page :content='deviceName' @back='back'>
     <p-tabs v-model="activeTab" @change="changeType">
-      <p-tab-pane key="view" forceRender :disabled='tabDisabled'>
-        <span slot="tab">概览
-          <p-spin v-show="comLoading('view')"><p-icon class="f12" slot="indicator" type="loading" spin /></p-spin>
-        </span>
+      <p-tab-pane key="view">
+        <span slot="tab">概览</span>
         <Overview
           class="mr20"
           v-model="deviceList"
           :isDevice='isDevice'
-          :modelId.sync='modelId'
-          :deviceName.sync='deviceName'
-          :deviceMark.sync='deviceMark'
-          :modelMark.sync='modelMark'
-          :composeDeviceMark.sync='composeDeviceMark'
-          :loadingDetail.sync='loadingDetail'
           :label='comLabel'
         />
       </p-tab-pane>
-      <p-tab-pane key="data" :disabled='tabDisabled'>
-        <span slot="tab">数据
-          <p-spin v-show="comLoading('data')"><p-icon class="f12" slot="indicator" type="loading" spin /></p-spin>
-        </span>
+      <p-tab-pane key="data">
+        <span slot="tab">数据</span>
         <!-- 设备数据 -->
         <Data
           class="mr20"
@@ -31,6 +21,7 @@
           :deviceId='comDeviceId'
           :modelMark='modelMark'
           :deviceMark='deviceMark'
+          :tenantMark='tenantMark'
           v-if="isDevice"
         />
         <!-- 组合数据 -->
@@ -43,14 +34,13 @@
             :activeTabkey='activeTab' 
             :deviceId='item.deviceId' 
             :modelMark='item.modelMark' 
-            :deviceMark='item.deviceMark' 
+            :deviceMark='item.deviceMark'
+            :tenantMark='tenantMark'
           />
         </Collapse-list>
       </p-tab-pane>
-      <p-tab-pane key="command" :disabled='tabDisabled'>
-        <span slot="tab">指令
-          <p-spin v-show="comLoading('command')"><p-icon class="f12" slot="indicator" type="loading" spin /></p-spin>
-        </span>
+      <p-tab-pane key="command">
+        <span slot="tab">指令</span>
         <!-- 设备指令 -->
         <Command 
           class="mr20"
@@ -77,28 +67,26 @@
         <!-- 发送记录 -->
         <Send-record class="mr20" />
       </p-tab-pane>
-      <p-tab-pane key="alarm" v-if="isDevice" :disabled='tabDisabled'>
-        <span slot="tab">报警
-          <p-spin v-show="comLoading('alarm')"><p-icon class="f12" slot="indicator" type="loading" spin /></p-spin>
-        </span>
+      <p-tab-pane key="alarm" v-if="isDevice">
+        <span slot="tab">报警</span>
         <Alarm 
           class="mr20"
           :deviceId='comDeviceId' 
           :modelMark='modelMark' 
           :deviceMark='deviceMark'
+          :tenantMark='tenantMark'
           :activeTabkey='activeTab' 
         />
       </p-tab-pane>
-      <p-tab-pane key="log" :disabled='tabDisabled'>
-        <span slot="tab">日志
-          <p-spin v-show="comLoading('log')"><p-icon class="f12" slot="indicator" type="loading" spin /></p-spin>
-        </span>
+      <p-tab-pane key="log">
+        <span slot="tab">日志</span>
         <Log 
           class="mr20"
           :isDevice='isDevice' 
           :deviceIdProps='comDeviceId' 
           :modelMarkProps='modelMark' 
           :deviceMarkProps='deviceMark'
+          :tenantMark='tenantMark'
           :activeTabkey='activeTab' 
           v-if="isDevice"
         />
@@ -129,11 +117,6 @@ export default {
   data() {
     return{
       activeTab: 'view',
-      modelId: '',
-      deviceName: '-',
-      modelMark: '',
-      deviceMark: '',
-      composeDeviceMark: '',
       deviceList: [], //设备列表
       loadingDetail: false
     }
@@ -144,9 +127,6 @@ export default {
     }
   },
   computed: {
-    tabDisabled() {
-      return this.loadingDetail
-    },
     comType() {
       const {type} = this.$route.query
       return type
@@ -160,8 +140,26 @@ export default {
     comDeviceId() {
       return this.$route.query.id
     },
-    comDeviceName() {
+    deviceName() {
       return this.$route.query.deviceName
+    },
+    deviceMark() {
+      return this.$route.query.deviceMark
+    },
+    modelMark() {
+      return this.$route.query.modelMark
+    },
+    deviceMark() {
+      return this.$route.query.deviceMark
+    },
+    tenantMark() {
+      return this.$route.query.tenantId
+    },
+    modelId() {
+      return this.$route.query.modelId
+    },
+    composeDeviceMark() {
+      return this.$route.query.mark
     }
   },
   created() {
@@ -185,7 +183,7 @@ export default {
       this.$router.go(-1)
     },
     comLoading(tab) {
-      return this.tabDisabled && this.activeTab === tab
+      return this.loadingDetail && this.activeTab === tab
     }
   }
 }

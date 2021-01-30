@@ -27,10 +27,10 @@
       class="platform-org-table"
       row-key="id"
     >
-      <span slot="deviceName" slot-scope="item" class="viewDetail" @click="view('/device/viewDevice',item.id, 'device',path)">{{item.deviceName}}</span>
-      <span slot="modelName" slot-scope="item" class="viewDetail" @click="view('/model/viewModel',item.modelId)">{{item.modelName}}</span>
+      <span slot="deviceName" slot-scope="item" class="viewDetail" @click="view('/device/viewDevice',item, 'device')">{{item.deviceName}}</span>
+      <span slot="modelName" slot-scope="item" class="viewDetail" @click="viewModel('/model/viewModel',item.modelId)">{{item.modelName}}</span>
       <template slot="operation" slot-scope="item">
-        <a href="javascript:;" @click="view('/device/viewDevice',item.id,'device')">查看</a>
+        <a href="javascript:;" @click="view('/device/viewDevice',item,'device')">查看</a>
         <a class="ml6 mr6" href="javascript:;" @click="move(item)">移动</a>
         <a href="javascript:;" @click="remove(item, removeDeviceHandler)">删除</a>
       </template>
@@ -225,8 +225,14 @@ export default {
         this.getTableData()
       })
     },
-    view(path, id, type) {
-      this.$router.push({path,query:{id,type}})
+    view(path, {id,deviceName,modelId,deviceMark,modelMark,tenantId}, type) {
+      this.$router.push({path,query:{id,modelId,type,deviceName,deviceMark,modelMark,tenantId}})
+    },
+    viewModel(path, id) {
+      this.$router.push({
+        path,
+        query: {id}
+      })
     },
   },
 }

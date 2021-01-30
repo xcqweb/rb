@@ -36,6 +36,7 @@ export default {
     modelMarkProps: String,
     composeDeviceMark: String,
     activeTabkey: String,
+    tenantMark: String, //租户标识
     deviceList: {
       type: Array,
       default: function() {
@@ -63,9 +64,6 @@ export default {
     isCurrent() {
       return this.currentTab === 'status'
     },
-    ...mapState({
-      tenantMark: state => state.user.userInfo.tenantId
-    }),
     comChangeType() {
       return this.isCurrent ? (this.filteredInfo1.changeType && this.filteredInfo1.changeType[0]) : 
       (this.filteredInfo2.changeType && this.filteredInfo2.changeType[0])
@@ -104,12 +102,6 @@ export default {
     } 
   },
   watch: {
-    tenantMark(val) {
-      this.getTableData()
-    },
-    deviceMarkProps() {
-      this.getTableData()
-    },
     deviceList: {
       handler(val) {
         this.setSelectInit(this.deviceList)
@@ -120,10 +112,7 @@ export default {
       if (key === 'log') {
         this.getTableData()
       }
-    }
-  },
-  mounted() {
-
+    },
   },
   methods: {
     changeDevice(deviceId) {

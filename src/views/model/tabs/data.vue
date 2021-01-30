@@ -80,6 +80,7 @@ export default {
   props: {
     deviceMark: String, //设备标识
     modelMark: String, //模型标识
+    tenantMark: String, //租户标识
   },
   data() {
     return {
@@ -99,12 +100,6 @@ export default {
         this.clearIntervalHanadler()
       }
     },
-    tenantMark() {
-      this.isDevice && this.getLastData(this.tableData)
-    },
-    deviceMark() {
-      this.isDevice && this.getLastData(this.tableData)
-    }
   },
   deactivated() {
     this.clearIntervalHanadler()
@@ -115,7 +110,6 @@ export default {
   computed: {
     ...mapState({
       alarmLevelList: state => state.dic.alarmLevelMap,
-      tenantMark: state => state.user.userInfo.tenantId
     }),
     innerColumns() {
       const that = this

@@ -82,9 +82,6 @@ export default {
       ]
     } 
   },
-  mounted() {
-    this.getTableData()
-  },
   methods: {
     getTableData(){
       const {keyword,searchKey = this.selectList[0].key} = this.keyword.keyword

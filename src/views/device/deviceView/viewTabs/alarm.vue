@@ -52,6 +52,7 @@ export default {
     modelId: String,
     deviceMark: String, //设备标识
     modelMark: String, //模型标识
+    tenantMark: String, //租户标识
     activeTabkey: String
   },
   data() {
@@ -77,9 +78,6 @@ export default {
     isCurrent() {
       return this.currentTab === 'current'
     },
-    ...mapState({
-      tenantMark: state => state.user.userInfo.tenantId
-    }),
     signCommon() {
       const signCommon = {
         tenantMark: this.tenantMark,
@@ -128,14 +126,6 @@ export default {
     } 
   },
   watch: {
-    tenantMark(val) {
-      this.getTableData()
-      this.getAlarmCount()
-    },
-    deviceMark() {
-      this.getTableData()
-      this.getAlarmCount()
-    },
     activeTabkey(key) {
       if (key === 'alarm') {
         this.getTableData()
