@@ -110,6 +110,8 @@ export default {
             copyData = this.$deepCopy(this.list)
             this.loading = false
           }).catch( () => {
+            console.log(this.list)
+            this.list = []
             this.loading = false
           })
         }

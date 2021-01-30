@@ -148,7 +148,7 @@ export default {
           this.tableData.forEach( item => {
             this.$set(item, 'innerData', [])
           })
-          this.expandhandler(this.expandedRowKeys[0])
+          this.expandedRowKeys[0] && this.expandhandler(this.expandedRowKeys[0])
           this.pagination.total = res.data.total;
         }
         this.loading = false;

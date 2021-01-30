@@ -61,7 +61,7 @@ export default {
         {title: '当前报警',symbol: 'current', extra: 0},
         {title: '历史报警',symbol: 'history', extra: 0},
       ],
-      now: +new Date(), //当前时间戳
+      now: 0, //当前时间戳
       timer: null,
       currentTab: 'current',
       time: [],
@@ -114,7 +114,7 @@ export default {
         {title: '报警时间',dataIndex: 'startTs',ellipsis: true,customRender: date => $formatDate(date)},
       ]
       const clearFix = a => +(a + '').replace(/(\d{3})$/, '000')
-      const smtap =  a => a ? clearFix(+new Date(a)) : clearFix(now)
+      const smtap =  a => a ? clearFix(+new Date(a)) : clearFix(now || +new Date())
       
       const arr3 = [
         {title: '持续时间',ellipsis: true, customRender: ({startTs, endTs}) => formatDuration(smtap()  - smtap(startTs))},
@@ -158,6 +158,7 @@ export default {
     },
     changeTab({symbol}) {
       this.currentTab = symbol
+      this.tableData = []
       this.getTableData()
       !this.isCurrent && this.clearTimer()
     },
