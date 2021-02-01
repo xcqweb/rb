@@ -67,7 +67,7 @@ export default {
       sessionStorage.setItem('model_view_tab',key)
     },
     back() {
-      this.$router.go(-1)
+      this.$router.push('/model')
     }
   }
 }

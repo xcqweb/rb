@@ -138,7 +138,7 @@ export default {
       })
     },
     cancel() {
-      this.$router.go(-1)
+      this.$router.push('/model')
       this.model = {attrData: [],paramData: [],commandData: []}
       this.form.resetFields()
     },

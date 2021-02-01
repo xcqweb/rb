@@ -181,7 +181,7 @@ export default {
       sessionStorage.setItem('device_view_tab',key)
     },
     back() {
-      this.$router.go(-1)
+      this.$router.push('/device/deviceView')
     },
     // comLoading(tab) {
     //   return this.loadingDetail && this.activeTab === tab

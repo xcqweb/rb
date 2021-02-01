@@ -272,10 +272,11 @@ export default {
           const reData = res.data.records
           if (isGetInterval) {
             //解决拉取数据时显示空的问题
-            const valList = this.tableData.map(({paramValue,reportTime}) => {
+            const valList = this.tableData.map(({paramValue,reportTime,innerData}) => {
               return {
                 paramValue,
-                reportTime
+                reportTime,
+                innerData,
               }
             })
             this.tableData = reData.map( (el,index) => {
