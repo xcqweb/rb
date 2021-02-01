@@ -161,6 +161,9 @@ export default {
     },
     composeDeviceMark() {
       return this.$route.query.mark
+    },
+    comFrom() {
+      return this.$route.query.from
     }
   },
   created() {
@@ -181,7 +184,7 @@ export default {
       sessionStorage.setItem('device_view_tab',key)
     },
     back() {
-      this.$router.push('/device/deviceView')
+      this.comFrom ? this.$router.push(this.comFrom) : this.$router.push('/device/deviceView')
     },
     // comLoading(tab) {
     //   return this.loadingDetail && this.activeTab === tab

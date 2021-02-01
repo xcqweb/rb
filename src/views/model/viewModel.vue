@@ -48,6 +48,9 @@ export default {
     modelName() {
       return this.$route.query.modelName
     },
+    comFrom() {
+      return this.$route.query.from
+    }
   },
   created() {
     const cacheTab = sessionStorage.getItem('model_view_tab')
@@ -67,7 +70,7 @@ export default {
       sessionStorage.setItem('model_view_tab',key)
     },
     back() {
-      this.$router.push('/model')
+      this.comFrom ? this.$router.push(this.comFrom) : this.$router.push('/model') 
     }
   }
 }

@@ -85,6 +85,9 @@ export default {
     disabledBtnAdd() {
       return !this.chooseNode.id
     },
+    comPath() {
+      return this.$route.fullPath
+    },
     columns() {
       let {$formatDate,$arrayItemToString, filteredInfo1, filtersList1, filtersList2 } = this;
       const that = this
@@ -227,12 +230,12 @@ export default {
       })
     },
     view(path, {id,deviceName,modelId,deviceMark,modelMark,tenantId}, type) {
-      this.$router.push({path,query:{id,modelId,type,deviceName,deviceMark,modelMark,tenantId}})
+      this.$router.push({path,query:{id,modelId,type,deviceName,deviceMark,modelMark,tenantId,from: this.comPath}})
     },
     viewModel(path, {modelId,modelName}) {
       this.$router.push({
         path,
-        query: {id:modelId,modelName}
+        query: {id:modelId,modelName,from: this.comPath}
       })
     },
   },

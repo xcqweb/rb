@@ -80,7 +80,7 @@ router.beforeEach(async function(to, from, next) {
       await store.dispatch('requestMenus')
       router.addRoutes([
         ...createRouteByMenus(),
-        ...defaultRoute,
+        // ...defaultRoute,
         { path: '*', redirect: '/404' }
       ])
       next({ ...to, replace: true })

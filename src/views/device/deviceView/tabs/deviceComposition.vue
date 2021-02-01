@@ -90,6 +90,9 @@ export default {
     ...mapState({
       tenantId: state => state.user.userInfo.tenantId,
     }),
+    comPath() {
+      return this.$route.fullPath
+    },
     //选中位置节点后才可以进行新增操作
     disabledBtnAdd() {
       return !this.chooseNode.id
@@ -243,19 +246,19 @@ export default {
     view(item) {
       this.$router.push({
         path: '/device/viewComponsition',
-        query: {id: item.id,deviceName: item.name,mark: item.mark,tenantId: item.tenantId || this.tenantId}
+        query: {id: item.id,deviceName: item.name,mark: item.mark,tenantId: item.tenantId || this.tenantId,from: this.comPath}
       })
     },
     viewDevice(item) {
       this.$router.push({
         path: '/device/viewDevice',
-        query: {type: 'device',id: item.deviceId,deviceName: item.deviceName}
+        query: {type: 'device',id: item.deviceId,deviceName: item.deviceName,from: this.comPath}
       })
     },
     viewModel(item) {
       this.$router.push({
         path: '/model/viewModel',
-        query: {id: item.modelId,modelName: item.modelName}
+        query: {id: item.modelId,modelName: item.modelName,from: this.comPath}
       })
     }
   },
