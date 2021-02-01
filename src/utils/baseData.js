@@ -130,9 +130,9 @@ export const deviceNetTypeList = ['在线','离线','未激活']
 export const deviceStatusType = [
   {text: '正常',value: 0},
   {text: '故障',value: 1},
-  {text: '未激活',value: 2},
+  {text: '未启用',value: 2},
 ]
-export const deviceStatusTypeList = ['正常','故障','未激活']
+export const deviceStatusTypeList = ['正常','故障','未启用']
 
 //发送状态
 export const sendType = [

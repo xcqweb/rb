@@ -222,7 +222,7 @@ export default {
       const isNum = paramTypeNumList.includes(paramType) //数值型
       const isNotNullVal = isType(paramValue, 'null') //null
       const pres = isNullOrEmpty(paramPrecision) ? 0 : paramPrecision
-      const val = formatnumber(paramValue,pres)
+      const val = isNaN(paramValue) ? paramValue : formatnumber(paramValue,pres)
       if (!isNotNullVal) { //过滤参数是数值上报是null
         this.$set(item, 'paramValue', isNum ? val : paramValue + '')
         this.$set(item, 'reportTime', this.$formatDate(ts))

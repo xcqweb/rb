@@ -119,7 +119,7 @@ export default {
       const smtap =  a => a ? clearFix(+new Date(a)) : clearFix(now || +new Date())
       
       const arr3 = [
-        {title: '持续时间',ellipsis: true, customRender: ({startTs, endTs}) => formatDuration(smtap()  - smtap(startTs))},
+        {title: '持续时间',ellipsis: true, customRender: ({startTs, endTs}) => formatDuration((smtap() < smtap(startTs)) ? 0 : smtap()  - smtap(startTs))},
       ]
       const arr4 = [
         {title: '持续时间',ellipsis: true, customRender: ({startTs, endTs}) => endTs ? formatDuration(smtap(endTs)  - smtap(startTs)) : ''},
