@@ -11,6 +11,7 @@
         rowKey="alarmId"
         @change="tableChange"
         @expand="expand"
+        :locale="{filterReset: '清除'}"
         :loading="loading"
         :pagination="pagination"
         :expandIcon="customExpandIcon"

@@ -20,6 +20,7 @@
     <p-table
       :scroll="{ y: 'calc(100vh - 310px)' }"
       @change="tableChange"
+      :locale="{filterReset: '清除'}"
       :pagination="pagination"
       :columns="columns"
       :data-source="tableData"

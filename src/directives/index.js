@@ -20,6 +20,17 @@ Vue.directive("visible", {
     deal(el, isVisible);
   }
 });
+Vue.directive("lowercase", {
+  inserted: function(el, {value}, vNode) {
+    const that = vNode.context
+    const instance = that.$watch(`model.${value}`, (val) => {
+      if (!val) {
+        instance()
+      }
+      that.model[value] = val && val.toLowerCase()
+    })
+  }
+});
 Vue.directive("focus", {
   inserted: function(el) {
     el.focus();

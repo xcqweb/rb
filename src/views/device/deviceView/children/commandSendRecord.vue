@@ -9,6 +9,7 @@
       <p-table
         rowKey="id"
         @change="tableChange"
+        :locale="{filterReset: '清除'}"
         :loading="loading"
         :pagination="pagination"
         :columns="columns"

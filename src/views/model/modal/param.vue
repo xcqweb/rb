@@ -18,7 +18,7 @@
       label-align="left"
     >
       <p-form-model-item label="参数标识" prop="paramMark">
-        <p-input v-model="model.paramMark" :disabled='moreEdit' placeholder="请输入参数标识" />
+        <p-input v-model="model.paramMark" v-lowercase="'paramMark'" :disabled='moreEdit' placeholder="请输入参数标识" />
       </p-form-model-item>
       <p-form-model-item label="参数名称" prop="paramName">
         <p-input v-model.trim="model.paramName" placeholder="请输入参数名称" />
@@ -97,6 +97,7 @@ export default {
         const {used} = this.model
         const obj = {0: ['存储'],1: ['显示'],2: ['存储','显示']}
         this.$set(this.model, 'checkedList', used === null ? [] : obj[used])
+        this.$refs.form && this.$refs.form.resetFields()
       }
     });
   },
@@ -104,7 +105,7 @@ export default {
     cancel() {
       this.visible = false
       this.loading = false
-      this.$refs.form.resetFields()
+      this.$refs.form && this.$refs.form.resetFields()
     },
     confirm() {
       this.$refs.form.validate(valid => {

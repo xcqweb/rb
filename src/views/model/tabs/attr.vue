@@ -8,6 +8,7 @@
       <p-table
         @change="tableChange"
         @expand="expand"
+        :locale="{filterReset: '清除'}"
         :loading="loading"
         :pagination="add ? false : pagination"
         :expandIcon="customExpandIcon"

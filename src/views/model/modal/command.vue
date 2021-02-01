@@ -18,7 +18,7 @@
       label-align="left"
     >
       <p-form-model-item label="指令标识" prop="commandMark">
-        <p-input v-model="model.commandMark" :disabled='moreEdit' placeholder="请输入指令标识" />
+        <p-input v-model="model.commandMark" v-lowercase="'commandMark'" :disabled='moreEdit' placeholder="请输入指令标识" />
       </p-form-model-item>
       <p-form-model-item label="指令名称" prop="commandName">
         <p-input v-model.trim="model.commandName" placeholder="请输入指令名称" />
@@ -154,6 +154,8 @@ export default {
             }))
           })
         }
+        this.$refs.form &&this.$refs.form.resetFields()
+        this.$refs.paramsValidateForm && this.$refs.paramsValidateForm.resetFields()
       }
     });
   },

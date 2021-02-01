@@ -9,6 +9,7 @@
         :row-key="isDevice ? 'modelParamId' : 'id'"
         @change="tableChange"
         @expand="expand"
+        :locale="{filterReset: '清除'}"
         :loading="loading"
         :pagination="add ? false : pagination"
         :expandIcon="customExpandIcon"
@@ -221,8 +222,8 @@ export default {
       const {paramPrecision,paramType} = item
       const isNum = paramTypeNumList.includes(paramType) //数值型
       const isNotNullVal = isType(paramValue, 'null') //null
-      const pres = isNullOrEmpty(paramPrecision) ? 0 : paramPrecision
-      const val = isNaN(paramValue) ? paramValue : formatnumber(paramValue,pres)
+      const val2 = isNullOrEmpty(paramPrecision) ? paramValue : formatnumber(paramValue,paramPrecision)
+      const val = isNaN(paramValue) ? paramValue : val2
       if (!isNotNullVal) { //过滤参数是数值上报是null
         this.$set(item, 'paramValue', isNum ? val : paramValue + '')
         this.$set(item, 'reportTime', this.$formatDate(ts))
@@ -263,12 +264,13 @@ export default {
         paramType: this.filteredInfo1.paramType && this.filteredInfo1.paramType[0],
         deviceId: this.isDevice ? this.deviceId : undefined
       }
-      !getInterval && (this.loading = true);
+      const isGetInterval = getInterval === 'getInterval'
+      !isGetInterval && (this.loading = true);
       let fun = this.$API[this.isDevice ? 'getDeviceParamList' : 'getModelParamsList']
       fun(param).then( res =>{
         if ( res.code === 0 ){
           const reData = res.data.records
-          if (getInterval) {
+          if (isGetInterval) {
             //解决拉取数据时显示空的问题
             const valList = this.tableData.map(({paramValue,reportTime}) => {
               return {
@@ -301,7 +303,7 @@ export default {
           
           if (this.isDevice) {//设备或组合里面才去请求
             //最后一笔数据
-            this.getLastData(this.tableData,getInterval)
+            this.getLastData(this.tableData,isGetInterval)
             this.setIntervalHanadler()
           }
           //加载已展开的子列表

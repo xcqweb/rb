@@ -13,6 +13,7 @@
     <p-table
         rowKey="ts"
         @change="tableChange"
+        :locale="{filterReset: '清除'}"
         :loading="loading"
         :pagination="pagination"
         :columns="columns"

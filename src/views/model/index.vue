@@ -11,6 +11,7 @@
         :scroll="{y: 'calc(100vh - 252px)'}"
         rowKey="id"
         @change="tableChange"
+        :locale="{filterReset: '清除'}"
         :loading="loading"
         :pagination="pagination"
         :columns="columns"
