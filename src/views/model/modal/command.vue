@@ -116,7 +116,7 @@ export default {
       },
       commandTemplateList: [],
       model: {},
-      rules: {
+      rules: Object.freeze({
         commandName: [
           {required: true,message: '请输入指令名称'},
           {type: 'string',max: 25,message: '指令名称长度限制为25个字符'},
@@ -128,7 +128,7 @@ export default {
           {type: 'string',message: '指令标识仅支持数字、字母或下划线“_”',pattern: pattern.nameReg},
         ],
         remark: {max: 50, message: '描述长度限制为50个字符'}
-      }
+      })
     }
   },
   computed: {

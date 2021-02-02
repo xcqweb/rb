@@ -40,11 +40,11 @@ export default {
     return {
       filtersList1: sendType,
       filtersList2: resultType,
-      selectList: [
+      selectList: Object.freeze([
         {name:'指令名称',key: 'commandName'},
         {name:'指令标识',key: 'commandMark'},
         {name:'发送时间',key: 'createTime'},
-      ]
+      ])
     };
   },
   computed: {

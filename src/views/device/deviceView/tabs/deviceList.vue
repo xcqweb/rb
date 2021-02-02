@@ -73,12 +73,11 @@ export default {
       selectModel: {label: '全部模型', value: 'all'},
       filtersList1: deviceNetType,
       filtersList2: deviceStatusType,
-      data: [],
-      selectList: [
+      selectList: Object.freeze([
         {name:'设备名称',key: 'deviceName'},
         {name:'创建人',key: 'createBy'},
         {name:'创建时间',key: 'createTime'},
-      ]
+      ])
     }
   },
   computed: {
@@ -216,9 +215,10 @@ export default {
         }
       })
     },
-    move({id, modelId}) {
+    move({id, modelId,deviceName}) {
       this.visible = true
       this.componentId = 'ModalSelectTree'
+      this.options.subTitle = deviceName
       this.moveDeviceData = {id, modelId}
     },
     //移动设备

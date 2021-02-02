@@ -96,11 +96,11 @@ export default {
   },
   data() {
     return {
-      tabList: [
+      tabList: Object.freeze([
         {tab: '属性',key: 'Attr', dataKey: 'modelAttributeAddParamList'},
         {tab: '数据',key: 'Data', dataKey: 'modelParamAddParamList'},
         {tab: '指令',key: 'Command', dataKey: 'modelCommandAddParamList'},
-      ],
+      ]),
       model: {modelAttributeAddParamList: [], modelParamAddParamList: [], modelCommandAddParamList: []},
       form: this.$form.createForm(this),
       loading: false,

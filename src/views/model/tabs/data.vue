@@ -86,10 +86,10 @@ export default {
   },
   data() {
     return {
-      selectList: [
+      selectList: Object.freeze([
         {name:'参数名称',key: 'paramName'},
         {name:'参数标识',key: 'paramMark'},
-      ],
+      ]),
       filtersList: this.filter ? paramType : [],
       lastLoading: false
     };
@@ -381,7 +381,7 @@ export default {
         title: '确定要删除吗？',
         icon: h => <p-icon class="exclamation" type="exclamation-circle" />,
         content: (h, params) => {
-          const str = type === 'param' ? `确定删除该参数"${pRow.paramName || ''}（${pRow.paramMark}）"吗？` : `确定要删除监控 "阈值${formualTransfrom(row)}" `;
+          const str = type === 'param' ? `确定要删除参数"${pRow.paramName || ''}（${pRow.paramMark}）"吗？` : `确定要删除监控 "阈值${formualTransfrom(row)}" `;
           return h('div', {
           }, str);
         },
@@ -511,9 +511,6 @@ export default {
 
 <style lang="less" scoped>
 .data{
-  .c_searchArea{
-    padding-top: 1px;
-  }
   /deep/.tableCon{
     .noExpand {
       .expand-icon{

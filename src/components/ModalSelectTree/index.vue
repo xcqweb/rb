@@ -3,10 +3,10 @@
 <template>
   <p-modal
     v-model="visible"
-    :title="title"
     @ok='confirm'
     :width='640'
   >
+    <div slot="title">{{title}} <span class="c-text-2 f12" v-if="options.subTitle">({{options.subTitle}})</span></div>
     <div class="content">
       <span class="required-doc">移动至：</span>
       <Device-tree ref="tree" class="content_border f1" v-model="chooseNode" :moveNodeId='moveNodeId' showLine showIcon/>

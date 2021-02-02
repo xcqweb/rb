@@ -57,7 +57,7 @@ export default {
       paramType,
       plainOptions: useOption.slice(0,2),
       model: {checkedList: []},
-      rules: {
+      rules: Object.freeze({
         paramName: [
           {type: 'string',max: 25,message: '参数名称长度限制为25个字符'},
           {type: 'string',message: '参数名称仅支持中文、字母、数字或下划线“_”',pattern: pattern.name2Reg},
@@ -78,7 +78,7 @@ export default {
             }
           },
         }],
-      }
+      })
     }
   },
   computed: {

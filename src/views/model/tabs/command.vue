@@ -81,16 +81,16 @@ export default {
       clearFilters: null,
       templateIds: [],
       belongModel: {value: 'all',label: '全部'},
-      selectList: [
+      selectList: Object.freeze([
         {name:'指令名称',key: 'commandName'},
         {name:'指令标识',key: 'commandMark'},
-      ],
+      ]),
       filtersList: [],
-      innerColumns: [
+      innerColumns: Object.freeze([
         {dataIndex: 'commandVarMark',title: '变量标识',ellipsis: true},
         {dataIndex: 'commandVarValue',title: '默认值',ellipsis: true},
         {dataIndex: 'remark',title: '注释',ellipsis: true},
-      ],
+      ]),
     };
   },
   computed: {
@@ -187,7 +187,7 @@ export default {
         title: type === 'command' ? '确定要发送指令吗' : '确定要删除吗？',
         icon: h => <p-icon class="exclamation" type="exclamation-circle" />,
         content: (h, params) => {
-          const str = type === 'command' ? `确定要向设备 "${that.deviceName}" 发送指令 停机 吗？` : `确定删除指令"${row.commandName}"吗？`;
+          const str = type === 'command' ? `确定要向设备 "${that.deviceName}" 发送指令 停机 吗？` : `确定要删除指令"${row.commandName}"吗？`;
           return h('div', str);
         },
         onOk() {

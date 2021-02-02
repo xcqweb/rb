@@ -186,9 +186,6 @@ export default {
     back() {
       this.comFrom ? this.$router.push(this.comFrom) : this.$router.push('/device/deviceView')
     },
-    // comLoading(tab) {
-    //   return this.loadingDetail && this.activeTab === tab
-    // }
   }
 }
 </script>

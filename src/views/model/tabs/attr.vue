@@ -63,14 +63,14 @@ export default {
     return {
       filtersList1: this.filter ? attrType : [],
       filtersList2: this.filter ? getType : [],
-      selectList: [
+      selectList: Object.freeze([
         {name:'属性名称',key: 'attributeName'},
         {name:'属性标识',key: 'attributeMark'},
-      ],
-      innerColumns: [
+      ]),
+      innerColumns: Object.freeze([
         {dataIndex: 'enumKey',title: '枚举值',ellipsis: true},
         {dataIndex: 'enumValue',title: '显示名称',ellipsis: true},
-      ],
+      ]),
     };
   },
   computed: {
@@ -216,7 +216,7 @@ export default {
         title: '确定要删除吗？',
         icon: h => <p-icon class="exclamation" type="exclamation-circle" />,
         content: (h, params) => {
-          const str = `确定删除属性"${attributeName ? `${attributeName}(${attributeMark})` : `${attributeMark}`}"吗？`;
+          const str = `确定要删除属性"${attributeName ? `${attributeName}(${attributeMark})` : `${attributeMark}`}"吗？`;
           return h('div', str);
         },
         onOk() {

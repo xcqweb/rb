@@ -43,7 +43,6 @@ import tableMixins from '@/mixins/tableMixins'
 import tableExpandMixins from '@/mixins/table-expand'
 import BtnTabs from '../children/btnTabs'
 import {alarmSourceTextList,alarmLevelTextList,alarmSourceList,alarmLevelList} from '@/utils/baseData'
-import {mapState} from 'vuex'
 import {formatDuration} from '@/utils/format'
 import {isType} from '@/utils/util'
 let timer = null
@@ -70,11 +69,11 @@ export default {
       time: [],
       filtersList1: alarmLevelTextList,
       filtersList2: alarmSourceTextList,
-      innerColumns: [
+      innerColumns: Object.freeze([
         {title: '参数',ellipsis: true,customRender: ({paramName,paramMark}) => paramName ? `${paramName}(${paramMark})` : `(${paramMark})`},
         {dataIndex: 'formulaView',title: '监控',ellipsis: true},
         {dataIndex: 'val',title: '数值',ellipsis: true,customRender: val => isType(val, 'null') ? '' : val + ''},
-      ],
+      ]),
     }
   },
   computed: {

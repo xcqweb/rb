@@ -33,12 +33,12 @@ export default {
     return {
       activeTab: 'Overview',
       loading: false,
-      tabList: [
+      tabList: Object.freeze([
         {tab: '概览',key: 'Overview'},
         {tab: '属性',key: 'Attr'},
         {tab: '数据',key: 'Data'},
         {tab: '指令',key: 'Command'},
-      ]
+      ])
     }
   },
   computed: {

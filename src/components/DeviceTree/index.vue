@@ -317,7 +317,8 @@ export default {
       this.componentId = 'ModalSelectTree'
       this.moveNode = item
       this.options =  {
-        id: item.id
+        id: item.id,
+        subTitle: item.locationName
       }
     },
     addNode(item) {

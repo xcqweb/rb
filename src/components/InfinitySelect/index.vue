@@ -24,7 +24,6 @@
 
 <script>
 import {debounce} from 'lodash'
-import {dealArrayToString} from '@/utils/util'
 export default {
   name: 'InfinitySelect',
   props: {

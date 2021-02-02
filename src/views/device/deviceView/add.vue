@@ -67,8 +67,6 @@ export default {
   data() {
     return{
       loading: false,
-      modelList: [],
-      bindDada: [],
       model: {modelId: {}},
       error: false, //输入错误提示
     }

@@ -37,11 +37,11 @@ export default {
   data() {
     return {
       filtersList: judgeType,
-      selectList: [
+      selectList: Object.freeze([
         {name:'模型名称',key: 'modelName'},
         {name:'创建人',key: 'createBy'},
         {name:'创建时间',key: 'createTime'},
-      ]
+      ])
     };
   },
   computed: {
@@ -116,7 +116,7 @@ export default {
         title: '确定要删除吗？',
         icon: h => <p-icon class="exclamation" type="exclamation-circle" />,
         content: (h, params) => {
-          const str = `确定删除该模型"${modelName}"吗？`;
+          const str = `确定要删除模型"${modelName}"吗？`;
           return h('div', {
           }, str);
         },

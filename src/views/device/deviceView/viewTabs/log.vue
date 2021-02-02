@@ -26,7 +26,9 @@
 import tableMixins from '@/mixins/tableMixins'
 import BtnTabs from '../children/btnTabs'
 import {logType,operatorType} from '@/utils/baseData'
-import { mapState } from 'vuex'
+
+let deviceMarkData = '',
+modelMarkData = '';
 export default {
   components: {BtnTabs},
   mixins: [tableMixins],
@@ -47,18 +49,16 @@ export default {
   },
   data() {
     return {
-      deviceIdData: '',
-      deviceMarkData: '',
-      modelMarkData: '',
-      tabs: [
+      tabs: Object.freeze([
         {title: '状态变更',symbol: 'status'},
         {title: '信息变更',symbol: 'info'},
-      ],
+      ]),
       currentTab: 'status',
       time: [],
       filteredInfo2: {},
       filtersList1: logType,
       filtersList2: operatorType,
+      deviceIdData: '',
     }
   },
   computed: {
@@ -121,8 +121,8 @@ export default {
       if (findItem) {
         const {deviceId, deviceMark, modelMark} = findItem
         this.deviceIdData = deviceId
-        this.deviceMarkData = deviceMark
-        this.modelMarkData = modelMark
+        deviceMarkData = deviceMark
+        modelMarkData = modelMark
         this.getTableData()
       }
     },
@@ -130,12 +130,12 @@ export default {
       if (data[0]) {
         const {deviceId, deviceMark, modelMark} = data[0]
         this.deviceIdData = deviceId
-        this.deviceMarkData = deviceMark
-        this.modelMarkData = modelMark
+        deviceMarkData = deviceMark
+        modelMarkData = modelMark
       }else{
         this.deviceIdData = ''
-        this.deviceMarkData = ''
-        this.modelMarkData = ''
+        deviceMarkData = ''
+        modelMarkData = ''
       }
       this.getTableData()
     },
@@ -144,7 +144,6 @@ export default {
       this.getTableData()
     },
     getTableData(){
-      const {deviceMarkData, modelMarkData} = this
       const {deviceMarkProps, modelMarkProps} = this
       const deviceMark = this.isDevice ? deviceMarkProps : this.isCurrent ? deviceMarkData : this.composeDeviceMark
       const modelMark = this.isDevice ? modelMarkProps : this.isCurrent ? modelMarkData : this.tenantMark

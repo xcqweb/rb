@@ -49,11 +49,11 @@
         <a href="javascript:;" slot="operation" slot-scope="item" @click="unbind(item)">解绑</a>
       </p-table>
     </p-table>
-    <!-- 移动设备 -->
+    <!-- 移动组合 -->
     <component
       :is="componentId"
       v-model="visible"
-      title="移动设备"
+      title="移动组合"
       :options='options'
       @callback='callback'
     />
@@ -63,7 +63,7 @@
 <script>
 import tableMixins from '@/mixins/tableMixins'
 import tableExpandMixins from '@/mixins/table-expand'
-import {deviceNetType,deviceStatusType,deviceNetTypeList,deviceStatusTypeList,netStatusClass,statusClass} from '@/utils/baseData'
+import {deviceNetTypeList,deviceStatusTypeList,netStatusClass,statusClass} from '@/utils/baseData'
 import {commomColumns} from '@/views/base'
 import {mapState} from 'vuex'
 export default {
@@ -75,11 +75,11 @@ export default {
   data() {
     return {
       moveDeviceId: '', //移动的设备id
-      selectList: [
+      selectList: Object.freeze([
         {name:'组合名称',key: 'name'},
         {name:'创建人',key: 'createBy'},
         {name:'创建时间',key: 'createTime'},
-      ],
+      ]),
       deviceNetTypeList,
       deviceStatusTypeList,
       netStatusClass,
@@ -229,6 +229,7 @@ export default {
     move(item) {
       this.visible = true
       this.componentId = 'ModalSelectTree'
+      this.options.subTitle = item.name
       this.moveDeviceId = item.id
     },
     //移动设备

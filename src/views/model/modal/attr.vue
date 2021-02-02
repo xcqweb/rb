@@ -92,7 +92,7 @@ export default {
         emunList: [{enumKey: '',enumValue: ''}],
       },
       model: {},
-      rules: {
+      rules: Object.freeze({
         attributeName: [
           {type: 'string',max: 25,message: '属性名称长度限制为25个字符'},
           {type: 'string',message: '属性名称仅支持中文、字母、数字或下划线“_”',pattern: pattern.name2Reg},
@@ -102,7 +102,7 @@ export default {
           {max: 20,message: '属性标识长度限制为20个字符'},
           {type: 'string',message: '属性标识仅支持数字、字母或下划线“_”',pattern: pattern.nameReg},
         ],
-      }
+      })
     }
   },
   computed: {
