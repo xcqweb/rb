@@ -31,7 +31,7 @@
           </p-select>
         </p-form-model-item>
         <p-form-model-item prop="firstVal">
-            <p-input class="f1 mr6 ml6 w160" @blur="blurFun('firstVal')" v-model="model.firstVal" placeholder="请输入阈值" />
+            <p-input class="f1 mr6 ml6 w160" @blur="blurFun('firstVal')" v-focus v-model="model.firstVal" placeholder="请输入阈值" />
         </p-form-model-item>
         <p-form-model-item prop="secondVal" v-if="isBetween">
             <p-input class="f1 w160" @blur="blurFun('secondVal')" v-model="model.secondVal" placeholder="请输入阈值" />

@@ -4,13 +4,13 @@
     <div class="content">
       <Label :label="`${label}名称`">
         <Edit :ref="namekey" v-model="model[namekey]" :error="isError === namekey" normal @submit="save" @cancel='cancel'>
-          <p-input v-model="model[namekey]" @change="validate(namekey)"></p-input>
+          <p-input v-model="model[namekey]" v-focus @change="validate(namekey)"></p-input>
         </Edit>
         <p class="poros-form-explain" v-show="isError === namekey">{{errorInfo}}</p>
       </Label>
       <Label v-if="!isDevice" label='描述'>
         <Edit ref="remark" v-model="model.remark" normal :error="isError === 'remark'" @submit="save" @cancel='cancel'>
-          <p-input v-model="model.remark" @change="validate('remark')"></p-input>
+          <p-input v-model="model.remark" v-focus @change="validate('remark')"></p-input>
         </Edit>
         <p class="poros-form-explain" v-show="isError ==='remark'">{{errorInfo}}</p>
       </Label>

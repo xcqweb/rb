@@ -16,7 +16,7 @@
         <span class="c-text-4">{{locationNamePath}}</span>
       </p-form-model-item>
       <p-form-model-item :label="`${this.comLabel}名称`" prop='name'>
-        <p-input v-model="model.name" class="w-medium"/>
+        <p-input v-model="model.name" v-focus class="w-medium"/>
       </p-form-model-item>
       <p-form-model-item label="所属模型" v-if="isDevice" prop='modelId'>
         <Infinity-select

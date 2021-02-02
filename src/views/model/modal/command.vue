@@ -18,10 +18,11 @@
       label-align="left"
     >
       <p-form-model-item label="指令标识" prop="commandMark">
-        <p-input v-model="model.commandMark" v-lowercase="'commandMark'" :disabled='moreEdit' placeholder="请输入指令标识" />
+        <p-input v-model="model.commandMark" v-focus v-lowercase="'commandMark'" :disabled='moreEdit' placeholder="请输入指令标识" />
       </p-form-model-item>
       <p-form-model-item label="指令名称" prop="commandName">
-        <p-input v-model.trim="model.commandName" placeholder="请输入指令名称" />
+        <p-input v-model.trim="model.commandName" v-focus v-if="moreEdit" placeholder="请输入指令名称" />
+        <p-input v-model.trim="model.commandName" v-else placeholder="请输入指令名称" />
       </p-form-model-item>
       <p-form-model-item label="指令模板" prop="commandTemplateIdObj">
         <p-select v-model="model.commandTemplateIdObj" labelInValue @change="getCommandAttrList">

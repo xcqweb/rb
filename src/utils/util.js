@@ -42,6 +42,9 @@ export const isPlainObject = val => isType(val, 'object')
 // 是否是函数
 export const isFunction = val => isType(val, 'function')
 
+// 是否是布尔值
+export const isBoolean = val => isType(val, 'boolean')
+
 // 是否是数组
 export const isArray = val => isType(val, 'array')
 

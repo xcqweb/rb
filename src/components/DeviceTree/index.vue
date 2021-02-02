@@ -26,7 +26,10 @@
         <span class="floder_add_des iconfont"></span>
       </template>
       <template slot="custom" slot-scope="item">
-        <span class="tree-name">{{ item.locationName }}</span>
+        <div class="flex">
+          <i class="iconfont iconwenjianjiawenjian" v-if="!item.isLeaf" style="padding:1px 3px 0  0"/>
+          <span class="tree-name">{{ item.locationName }}</span>
+        </div>
         <div class="tree-operator" v-if="showOperator">
           <p-dropdown :trigger="['hover']" >
             <i class="iconfont iconellipsis" style="padding: 4px 6px" @click.prevent.stop/>

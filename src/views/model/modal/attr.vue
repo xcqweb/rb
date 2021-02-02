@@ -18,10 +18,11 @@
       label-align="left"
     >
       <p-form-model-item label="属性标识" prop="attributeMark">
-        <p-input v-model="model.attributeMark" v-lowercase="'attributeMark'" placeholder="请输入属性标识" :disabled='moreEdit' />
+        <p-input v-model="model.attributeMark" v-focus v-lowercase="'attributeMark'" placeholder="请输入属性标识" :disabled='moreEdit' />
       </p-form-model-item>
       <p-form-model-item label="属性名称" prop="attributeName">
-        <p-input v-model.trim="model.attributeName" placeholder="请输入属性名称" />
+        <p-input v-model.trim="model.attributeName" v-focus v-if="moreEdit" placeholder="请输入属性名称" />
+        <p-input v-model.trim="model.attributeName" v-else placeholder="请输入属性名称" />
       </p-form-model-item>
       <p-form-model-item label="属性类型" prop="attributeType">
         <p-select v-model="model.attributeType" :disabled='moreEdit' @change="changeAttr">
@@ -137,7 +138,6 @@ export default {
             this.paramsValidateForm.emunList = res.data.records
           })
         }
-      }else{
         this.$refs.form && this.$refs.form.resetFields()
         this.$refs.paramsValidateForm && this.$refs.paramsValidateForm.resetFields()
       }

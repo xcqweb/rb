@@ -10,8 +10,8 @@
     >
       <p-form-item label="模型名称">
         <p-input
+          v-focus
           style="width:500px"
-          autocomplete='off'
           v-decorator="[
             'modelName',
             { rules: [

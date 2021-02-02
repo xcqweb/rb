@@ -1,7 +1,7 @@
 import Vue from "vue";
 import ElementResize from 'element-resize-detector'
 const eleResize = ElementResize()
-import { isFunction, isPlainObject } from '../utils/util.js'
+import { isFunction, isPlainObject, isBoolean } from '../utils/util.js'
 import {debounce} from 'lodash'
 
 function deal(el, isVisible) {
@@ -32,10 +32,22 @@ Vue.directive("lowercase", {
   }
 });
 Vue.directive("focus", {
-  inserted: function(el) {
-    el.focus();
-    el.select();
-  }
+  inserted: function(el,{value}, vNode) {
+    const that = vNode.context
+    if (isBoolean(that.visible)) {
+      that.$watch('visible', (val) => {
+        if (val) {
+          that.$nextTick( () => {
+            el.focus();
+            el.select();
+          })
+        }
+      }, {immediate: true})
+    }else{
+      el.focus();
+      el.select();
+    }
+  },
 });
 Vue.directive("clickOutSide", {
   bind: function(el, {value}) {

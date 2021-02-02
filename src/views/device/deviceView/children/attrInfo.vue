@@ -40,7 +40,7 @@
               @cancel='cancel'
             >
               <!-- 文本 -->
-              <p-input v-model="item.attributeText" @change="validate(item.id)" v-if="item.attributeType === 0"/>
+              <p-input v-model="item.attributeText" v-focus @change="validate(item.id)" v-if="item.attributeType === 0"/>
               <!-- 日期 -->
               <p-date-picker class="w100" v-model="item.attributeText" v-if="item.attributeType === 1"/>
               <!-- 枚举 -->
@@ -49,7 +49,7 @@
               </p-select>
               <!-- 数值 -->
               <div class="flex w100" v-if="item.attributeType === 2">
-                <p-input class="f1 mr6" @change="validate(item.id)" v-model="item.attributeText"/>
+                <p-input class="f1 mr6" v-focus @change="validate(item.id)" v-model="item.attributeText"/>
                 <span>{{item.unit}}</span>
               </div>
             </Edit>

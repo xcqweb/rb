@@ -1,7 +1,7 @@
 <template>
   <div class="edit">
     <template v-if="isEdit">
-      <p-input class="edit_input" allow-clear v-model="keyword" placeholder="请输入" v-if="!normal" :style="{width:comWidth}" />
+      <p-input class="edit_input" allow-clear v-model="keyword" v-focus placeholder="请输入" v-if="!normal" :style="{width:comWidth}" />
       <slot else></slot>
       <p-button class="ml6" type='primary' @click="submit" :disabled='error' icon="check" />
       <p-button class="edit_close" @click="cancel" icon="close" />

@@ -18,10 +18,11 @@
       label-align="left"
     >
       <p-form-model-item label="参数标识" prop="paramMark">
-        <p-input v-model="model.paramMark" v-lowercase="'paramMark'" :disabled='moreEdit' placeholder="请输入参数标识" />
+        <p-input v-model="model.paramMark" v-focus v-lowercase="'paramMark'" :disabled='moreEdit' placeholder="请输入参数标识" />
       </p-form-model-item>
       <p-form-model-item label="参数名称" prop="paramName">
-        <p-input v-model.trim="model.paramName" placeholder="请输入参数名称" />
+        <p-input v-model.trim="model.paramName" v-focus v-if="moreEdit" placeholder="请输入参数名称" />
+        <p-input v-model.trim="model.paramName" v-else placeholder="请输入参数名称" />
       </p-form-model-item>
       <p-form-model-item label="参数类型" prop="paramType" placeholder="请选择参数类型">
         <p-select v-model="model.paramType">

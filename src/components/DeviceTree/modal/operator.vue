@@ -21,7 +21,7 @@
         <p-input :value="model.parentName" disabled />
       </p-form-model-item>
       <p-form-model-item label="节点名称" prop="locationName">
-        <p-input v-model="model.locationName" placeholder="请输入节点名称" />
+        <p-input v-model="model.locationName" v-focus placeholder="请输入节点名称" />
       </p-form-model-item>
     </p-form-model>
   </p-modal>
