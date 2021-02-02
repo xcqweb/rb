@@ -1,5 +1,10 @@
 <template>
-  <p-spin :spinning="loadingDetail">
+<p-skeleton
+  :paragraph="{ rows: 23,width: comWidths }"
+  :title='false'
+  :loading='loadingDetail'
+  active 
+  >
     <page-title>基本信息</page-title>
     <div class="content">
       <Label :label="`${label}名称`">
@@ -48,7 +53,7 @@
         </tempalte>
       </Collapse-list>
     </template>
-  </p-spin>
+  </p-skeleton>
 </template>
 
 <script>
@@ -100,6 +105,16 @@ export default {
     },
     namekey() {
       return this.isDevice ? 'deviceName' : 'name'
+    },
+    comWidths() {
+      const arr = new Array(23)
+      arr.fill('100px',0,1)
+      arr.fill('500px',1,10)
+      arr.fill('100px',10,12)
+      arr.fill('100%',12,18)
+      arr.fill('100px',18,19)
+      arr.fill('100%',19,23)
+      return arr
     }
   },
   mounted() {

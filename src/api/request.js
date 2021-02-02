@@ -40,6 +40,7 @@ instance.interceptors.request.use(config => {
   config.cancelToken = new CancelToken((cancel)=>{//此处设置，便于在切换路由时候，请求还未完成，就取消请求
     store.commit('pushToken', {
         cancelToken: cancel,
+        config,
     });
   });
   const token = getToken()

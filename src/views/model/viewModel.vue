@@ -5,7 +5,7 @@
       <p v-else>{{`注册设备数：${registerDeviceNum}`}}</p>
     </div>
     <p-tabs @change="changeType" v-model="activeTab">
-      <p-tab-pane v-for="item in tabList" :key="item.key" :tab='item.tab' :forceRender="item.key === 'Overview'">
+      <p-tab-pane v-for="item in tabList" :key="item.key" :tab='item.tab'>
         <component
           class="mr20"
           :is="item.key"

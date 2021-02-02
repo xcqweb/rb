@@ -1,5 +1,10 @@
 <template>
-  <p-spin :spinning='loading'>
+  <p-skeleton
+  :paragraph="{ rows: 7,width: ['100px','500px','500px','500px','500px','500px','500px'] }"
+  :title='false'
+  :loading='loading'
+  active 
+  >
     <page-title>基本信息</page-title>
     <div class="content">
       <Label label='模型名称'>
@@ -32,7 +37,7 @@
       <Label label='创建人'>{{model.createBy}}</Label>
       <Label label='创建时间'>{{$formatDate(model.createTime)}}</Label>
     </div>
-  </p-spin>
+  </p-skeleton>
 </template>
 
 <script>

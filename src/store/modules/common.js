@@ -17,11 +17,11 @@ export default{
     },
     ///////////////
     pushToken (state, payload) {
-      state.cancelTokenArr.push(payload.cancelToken)
+      state.cancelTokenArr.push(payload)
     },
     clearToken (state) {
       state.cancelTokenArr.forEach(item => {
-        item('取消请求')
+        item.cancelToken(`取消请求: ${item.config.url}`)
       })
       state.cancelTokenArr = []
     },
