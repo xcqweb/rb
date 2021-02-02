@@ -33,11 +33,11 @@ Vue.directive("lowercase", {
 });
 Vue.directive("focus", {
   inserted: function(el,{value}, vNode) {
-    const that = vNode.context
-    if (isBoolean(that.visible)) {
-      that.$watch('visible', (val) => {
+    el.that = vNode.context
+    if (isBoolean(el.that.visible)) { //弹窗
+      el.watch = el.that.$watch('visible', (val) => {
         if (val) {
-          that.$nextTick( () => {
+          el.that.$nextTick( () => {
             el.focus();
             el.select();
           })
@@ -48,6 +48,12 @@ Vue.directive("focus", {
       el.select();
     }
   },
+  unbind(el) {
+    if (isBoolean(el.that.visible)) {
+      el.watch()
+      el.that = null
+    }
+  }
 });
 Vue.directive("clickOutSide", {
   bind: function(el, {value}) {
