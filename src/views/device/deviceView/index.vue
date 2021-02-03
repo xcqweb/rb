@@ -8,7 +8,7 @@
         </div>
         <div class="platform-org-left" ref="drag" :style="{width: `${comWidth}px`}">
           <div class="tree-content">
-            <Device-tree v-model="chooseNode" showIcon showOperator checkRoot />
+            <Device-tree v-model="chooseNode" showLine showIcon showOperator checkRoot />
           </div>
         </div>
       </div>
