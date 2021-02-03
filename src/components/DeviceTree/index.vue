@@ -560,8 +560,8 @@ export default {
   right: auto;
   border-width: 1px;
 }
-/deep/.tree-line > .poros-tree-treenode-switcher-open::before{
-  // display: none;
+/deep/ .tree-line > .poros-tree-treenode-switcher-open::before{
+  display: none;
 }
 .tree-line /deep/ li:after {
   content: "";
