@@ -36,6 +36,7 @@ module.exports = {
   chainWebpack(config) {
     config.plugin('html').tap(args => {
       args[0].baseUrl = isDev ? '' : system.baseUrl
+      args[0].title = system.name
       args[0].isDev = isDev
       return args
     })
