@@ -1,6 +1,6 @@
 <template>
   <p-spin :spinning='loading'>
-    <p-collapse v-if="deviceList.length" destroyInactivePanel>
+    <p-collapse v-if="deviceList.length" destroyInactivePanel class="mr20">
       <p-collapse-panel v-for="(item, index) in deviceList" :key="index" :header="item.deviceName">
         <slot :item='item'></slot>
       </p-collapse-panel>

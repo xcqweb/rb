@@ -20,8 +20,8 @@
           <span class="viewDetail" :title="record.modelName" @click="viewClick(record)">{{record.modelName}}</span>
         </template>
         <template slot="operation" slot-scope="record">
-          <span  class="operateBtn" @click="viewClick(record)">查看</span>
-          <span  class="operateBtn" @click="delClick(record)">删除</span>
+          <span class="operateBtn" @click="viewClick(record)">查看</span>
+          <span class="operateBtn" @click="delClick(record)">删除</span>
         </template>
       </p-table>
     </div>

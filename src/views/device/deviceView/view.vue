@@ -27,7 +27,7 @@
           v-if="isDevice"
         />
         <!-- 组合数据 -->
-        <Collapse-list class="mr20" :deviceList='deviceList' :loading='loadingDetail' v-else>
+        <Collapse-list :deviceList='deviceList' :loading='loadingDetail' v-else>
           <Data
             slot-scope='{item}'
             search 
@@ -55,7 +55,7 @@
           v-if="isDevice" 
         />
         <!-- 组合指令 -->
-        <Collapse-list class="mr20" :deviceList='deviceList' :loading='loadingDetail' v-else>
+        <Collapse-list :deviceList='deviceList' :loading='loadingDetail' v-else>
           <Command 
             slot-scope='{item}' 
             search 

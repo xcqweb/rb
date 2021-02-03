@@ -1,5 +1,5 @@
 <template>
-  <div class="bindDevice mt20">
+  <div class="bindDevice mt20 mr20">
     <div class="c_searchArea">
       <p-button @click="bind" type="primary" :disabled='showAddBind'>绑定设备</p-button>
     </div>
