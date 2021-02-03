@@ -7,11 +7,9 @@
             <svg-icon type="cell"/>
           </div>
         </p-sys-nav>
-
         <div :class="{'system-logo':true,'system-nav2': system.sysNavType == 2}">
           <Svg-icon type='logo' width='138' height='28'></Svg-icon>
         </div>
-
         <p-sys-nav2 v-if="system.sysNavType == 2"/>
       </div>
       <div class="right">
@@ -61,8 +59,7 @@
     </p-layout-header>
 
     <div class="content-wrap">
-      <p-sider-menu ref='slider' :collapsed="false" />
-
+      <p-sider-menu :collapsed="false" />
       <p-layout-content class="layout-content">
         <p-router-tabs scroll/>
       </p-layout-content>
@@ -158,9 +155,6 @@
       // 获取登录用户信息
       this.$store.dispatch('requireUserInfo')
       this.$store.dispatch('requestSysUid')
-      this.$nextTick( () => {
-        this.$store.commit('setBarInstance',this.$refs.slider.$el)
-      })
     },
     watch: {
       systemName (val) {
