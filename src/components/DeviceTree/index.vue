@@ -20,7 +20,8 @@
         @select='selectTree'
         @expand='expand'
         @load='load'
-        class="tree-wrap"
+        class="tree-wrap tree"
+        :class="{'showLine': !showLine}"
       > 
       <template slot="switcherIcon">
         <span class="floder_add_des iconfont"></span>
@@ -535,4 +536,56 @@ export default {
       }
     }
   }
+
+
+/* 树形结构节点添加连线 */
+.tree-wrap /deep/ li {
+  position: relative;
+}
+.tree-wrap /deep/ li :last-child:before {
+  height: 18px;
+}
+ 
+.tree-wrap /deep/ .tree-wrap > li:before {
+  border-left: none;
+}
+ 
+.device-tree /deep/ .tree-wrap > li:after {
+  border-top: none;
+}
+ 
+.tree-wrap /deep/ li:before {
+  content: "";
+  left: -8px;
+  position: absolute;
+  right: auto;
+  border-width: 1px;
+}
+/deep/.tree-wrap > .poros-tree-treenode-switcher-open::before{
+  display: none;
+}
+.tree-wrap /deep/ li:after {
+  content: "";
+  left: -8px;
+  position: absolute;
+  right: auto;
+  border-width: 1px;
+  z-index: 1;
+}
+ 
+.tree-wrap /deep/ li:before {
+  border-left: 1px dashed #b8b9bb;
+  bottom: 0px;
+  height: 100%;
+  top: -6px;
+  width: 1px;
+}
+ 
+.tree-wrap /deep/ li:after {
+  border-top: 1px dashed #b8b9bb;
+  height: 20px;
+  top: 12px;
+  width: 12px;
+}
+ 
 </style>
