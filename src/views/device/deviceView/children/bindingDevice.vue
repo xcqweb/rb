@@ -11,6 +11,8 @@
         :pagination="false"
         :columns="columns"
         :data-source="tableData">
+        <span slot="deviceName" slot-scope="item" class="viewDetail" @click="viewDevice(item)">{{item.deviceName}}</span>
+        <span slot="deviceModel" slot-scope="item" class="viewDetail" @click="viewModel(item)">{{item.modelName}}</span>
         <p slot="netStatus" slot-scope="status">
           <span :class="netStatusClass[status]"></span>
           <span>{{deviceNetTypeList[status]}}</span>
@@ -62,6 +64,9 @@ export default {
     };
   },
   computed: {
+    comPath() {
+      return this.$route.fullPath
+    },
     selectedDevceIds() {
       return this.tableData.map( item => item && item.id || item.deviceId)
     },
@@ -70,7 +75,9 @@ export default {
     },
     columns(){
       return [
-        ...commomColumns,
+        {title: '设备名称',ellipsis: true,scopedSlots: { customRender: 'deviceName' }},
+        {title: '所属模型',ellipsis: true,scopedSlots: { customRender: 'deviceModel' }},
+        ...commomColumns.slice(2),
         {title: '操作',dataIndex: 'operate',align: 'right',width: 80,scopedSlots: { customRender: 'operation' }},
       ]
     } 
@@ -144,6 +151,18 @@ export default {
     tableChange(){
       this.getTableData(); 
     },
+    viewDevice(item) {
+      this.$router.push({
+        path: '/device/viewDevice',
+        query: {type: 'device',id: item.deviceId,from: this.comPath}
+      })
+    },
+    viewModel(item) {
+      this.$router.push({
+        path: '/model/viewModel',
+        query: {id: item.modelId,from: this.comPath}
+      })
+    }
   }
 };
 </script>
