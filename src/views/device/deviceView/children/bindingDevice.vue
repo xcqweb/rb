@@ -74,7 +74,10 @@ export default {
       return this.tableData.length >= 20
     },
     columns(){
-      return [
+      return !this.overview ? [
+        ...commomColumns,
+        {title: '操作',dataIndex: 'operate',align: 'right',width: 80,scopedSlots: { customRender: 'operation' }},
+      ] : [
         {title: '设备名称',ellipsis: true,scopedSlots: { customRender: 'deviceName' }},
         {title: '所属模型',ellipsis: true,scopedSlots: { customRender: 'deviceModel' }},
         ...commomColumns.slice(2),
