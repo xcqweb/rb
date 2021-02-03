@@ -247,19 +247,19 @@ export default {
     view(item) {
       this.$router.push({
         path: '/device/viewComponsition',
-        query: {id: item.id,deviceName: item.name,mark: item.mark,tenantId: item.tenantId || this.tenantId,from: this.comPath}
+        query: {id: item.id,mark: item.mark,tenantId: item.tenantId || this.tenantId,from: this.comPath}
       })
     },
     viewDevice(item) {
       this.$router.push({
         path: '/device/viewDevice',
-        query: {type: 'device',id: item.deviceId,deviceName: item.deviceName,from: this.comPath}
+        query: {type: 'device',id: item.deviceId,from: this.comPath}
       })
     },
     viewModel(item) {
       this.$router.push({
         path: '/model/viewModel',
-        query: {id: item.modelId,modelName: item.modelName,from: this.comPath}
+        query: {id: item.modelId,from: this.comPath}
       })
     }
   },

@@ -456,7 +456,7 @@ export default {
     }
     & li{
       ul{
-        padding: 0 0 0 24px;
+        padding: 0 0 0 20px;
       }
       padding: 0;
       // 叶子节点图标

@@ -48,7 +48,8 @@ export default {
   props: {
     modelId: String,
     registerDeviceNum: Number,
-    loading: Boolean
+    loading: Boolean,
+    modelName: String
   },
   data() {
     return{
@@ -71,6 +72,7 @@ export default {
         dataCopy = this.$deepCopy(this.model)
         this.$emit('update:loading', false)
         this.$emit('update:registerDeviceNum', res.data.registerDeviceNum)
+        this.$emit('update:modelName',res.data.modelName)
       }).catch(() => {
         this.$emit('update:loading', false)
       })
@@ -82,6 +84,7 @@ export default {
       const params = {id: this.modelId, ...this.model}
       this.$API.editModel(params).then(res => {
         this.$message.success('提交成功！')
+        this.$emit('update:modelName',this.model.modelName)
         dataCopy = this.$deepCopy(this.model)
       }).catch(() => {
         this.cancel()

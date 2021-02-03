@@ -5,13 +5,14 @@
       <p v-else>{{`注册设备数：${registerDeviceNum}`}}</p>
     </div>
     <p-tabs @change="changeType" v-model="activeTab">
-      <p-tab-pane v-for="item in tabList" :key="item.key" :tab='item.tab'>
+      <p-tab-pane v-for="item in tabList" :key="item.key" :tab='item.tab' :forceRender="item.key === 'Overview'">
         <component
           class="mr20"
           :is="item.key"
           :modelId='modelId'
           :registerDeviceNum.sync='registerDeviceNum'
           :loading.sync='loading'
+          :modelName.sync='modelName'
           search
           addBtn
           filter
@@ -33,6 +34,7 @@ export default {
     return {
       activeTab: 'Overview',
       loading: false,
+      modelName: '',
       tabList: Object.freeze([
         {tab: '概览',key: 'Overview'},
         {tab: '属性',key: 'Attr'},
@@ -44,9 +46,6 @@ export default {
   computed: {
     modelId() {
       return this.$route.query.id
-    },
-    modelName() {
-      return this.$route.query.modelName
     },
     comFrom() {
       return this.$route.query.from

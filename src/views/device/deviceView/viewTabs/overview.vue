@@ -76,7 +76,8 @@ export default {
     label: String, //‘组合’或‘设备’
     isDevice: Boolean, //在设备中使用否则在组合中
     value: Array, //设备列表
-    loadingDetail: Boolean
+    loadingDetail: Boolean,
+    deviceName: String
   },
   data() {
     return{
@@ -137,6 +138,7 @@ export default {
       let fun = this.isDevice ? this.$API.editDevice : this.$API.editComposition
       fun(params).then(res => {
         this.$message.success('操作成功！')
+        this.$emit('update:deviceName', this.isDevice ? this.model.deviceName : this.model.name)
         this.loading = false
       }).catch( () => {
         this.cancel()
@@ -147,9 +149,6 @@ export default {
       this.model = this.$deepCopy(dataCopy)
       this.isError = ''
     },
-    // hide(key) {
-    //   this.$refs[key] && this.$refs[key].cancel()
-    // },
     //校验
     validate(key) {
         const rurleMap = {
@@ -192,6 +191,7 @@ export default {
         const reData = res.data
         this.model = reData
         dataCopy = this.$deepCopy(this.model)
+        this.$emit('update:deviceName', reData.deviceName || reData.name)
         this.$emit('update:loadingDetail', false)
       }).catch( () => {
         this.$emit('update:loadingDetail', false)

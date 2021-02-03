@@ -185,9 +185,6 @@ export default {
         })
       })
     },
-    hide(key) {
-      this.$refs[key] && this.$refs[key][0] && this.$refs[key][0].cancel()
-    },
     cancel() {
       this.list = this.$deepCopy(copyData)
     },

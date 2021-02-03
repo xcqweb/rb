@@ -229,13 +229,13 @@ export default {
         this.getTableData()
       })
     },
-    view(path, {id,deviceName,modelId,deviceMark,modelMark,tenantId}, type) {
-      this.$router.push({path,query:{id,modelId,type,deviceName,deviceMark,modelMark,tenantId,from: this.comPath}})
+    view(path, {id,modelId,deviceMark,modelMark,tenantId}, type) {
+      this.$router.push({path,query:{id,modelId,type,deviceMark,modelMark,tenantId,from: this.comPath}})
     },
-    viewModel(path, {modelId,modelName}) {
+    viewModel(path, {modelId}) {
       this.$router.push({
         path,
-        query: {id:modelId,modelName,from: this.comPath}
+        query: {id:modelId,from: this.comPath}
       })
     },
   },

@@ -1,12 +1,13 @@
 <template>
   <page :content='deviceName' @back='back'>
     <p-tabs v-model="activeTab" @change="changeType">
-      <p-tab-pane key="view" :forceRender='!isDevice'>
+      <p-tab-pane key="view" forceRender>
         <span slot="tab">概览</span>
         <Overview
           class="mr20"
           v-model="deviceList"
           :loadingDetail.sync='loadingDetail'
+          :deviceName.sync='deviceName'
           :isDevice='isDevice'
           :label='comLabel'
         />
@@ -119,7 +120,8 @@ export default {
     return{
       activeTab: 'view',
       deviceList: [], //设备列表
-      loadingDetail: false
+      loadingDetail: false,
+      deviceName: '-',
     }
   },
   watch: {
@@ -140,9 +142,6 @@ export default {
     },
     comDeviceId() {
       return this.$route.query.id
-    },
-    deviceName() {
-      return this.$route.query.deviceName
     },
     deviceMark() {
       return this.$route.query.deviceMark
