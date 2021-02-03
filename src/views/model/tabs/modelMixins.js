@@ -42,11 +42,6 @@ export default {
     },
     expand(expanded, record) {
       const id = record.id || record.modelParamId
-      // if(this.expandedRowKeys.includes(id) && !expanded){
-      //   this.expandedRowKeys = this.expandedRowKeys.filter( item => item !== id)
-      // } else {
-      //   this.expandedRowKeys.push(id)
-      // }
       this.expandedRowKeys = expanded ? [id] : []
       if (this.expandhandler && !this.add && expanded) { //新增模型时不走此方法
         this.expandhandler(id)

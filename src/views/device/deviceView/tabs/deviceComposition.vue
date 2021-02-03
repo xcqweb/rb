@@ -122,7 +122,10 @@ export default {
   },
   watch: {
     'chooseNode.id'() {
-      !(this.activeKey === 'deviceList') && this.getTableData()
+      if (!(this.activeKey === 'deviceList')) {
+        this.pagination.current = 1
+        this.getTableData()
+      }
     },
     activeKey(val) {
       this.activeKey === 'deviceCompose' && this.getTableData()

@@ -130,7 +130,7 @@ export default {
   },
   watch: {
     'chooseNode.id'() {
-      !(this.activeKey === 'deviceCompose') && this.getTableData()
+      !(this.activeKey === 'deviceCompose') && this.changeSelect()
     },
     activeKey(val) {
       this.activeKey === 'deviceList' && this.getTableData()
